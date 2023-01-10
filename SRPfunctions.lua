@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
-script_version("10.01.2023")
-script_version_number(4)
+script_version("11.01.2023")
+script_version_number(5)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки]--------------------------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -10,6 +10,7 @@ imgui.ToggleButton = require('imgui_addons').ToggleButton
 local vkeys = require 'vkeys'
 local rkeys = require 'rkeys'
 local inicfg = require 'inicfg'
+local ffi = require 'ffi'
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
@@ -31,7 +32,9 @@ local config = {
 		['Таймер до МП']           = false,
 		['Прорисовка']             = false,
 		['Статус']           	   = false,
-		['Сквад']           	   = false
+		['Сквад']           	   = false,
+		['ХП транспорта']          = false,
+		['Информация под чатом']   = false
 	},
 	hotkey = {
 		['Контекстная клавиша']    = "0",
@@ -91,7 +94,9 @@ togglebools = {
 	['Таймер до МП']           = srp_ini.bools['Таймер до МП']           and imgui.ImBool(true) or imgui.ImBool(false),
 	['Прорисовка']             = srp_ini.bools['Прорисовка']             and imgui.ImBool(true) or imgui.ImBool(false),
 	['Статус']           	   = srp_ini.bools['Статус']                 and imgui.ImBool(true) or imgui.ImBool(false),
-	['Сквад']           	   = srp_ini.bools['Сквад']                  and imgui.ImBool(true) or imgui.ImBool(false)
+	['Сквад']           	   = srp_ini.bools['Сквад']                  and imgui.ImBool(true) or imgui.ImBool(false),
+	['ХП транспорта']          = srp_ini.bools['ХП транспорта']          and imgui.ImBool(true) or imgui.ImBool(false),
+	['Информация под чатом']   = srp_ini.bools['Информация под чатом']   and imgui.ImBool(true) or imgui.ImBool(false)
 }
 
 buffer = {
@@ -128,6 +133,17 @@ local updatingprefix = u8:decode"{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}"
 local antiflood = 0
 
 local menu = {main = imgui.ImBool(false), automatic = imgui.ImBool(true), binds = imgui.ImBool(false), overlay = imgui.ImBool(false), information = imgui.ImBool(false)}
+local overlay = {
+	['Дата и время']           = imgui.ImBool(true),
+	['Ник']           		   = imgui.ImBool(true),
+	['Пинг']           		   = imgui.ImBool(true),
+	['Нарко']         		   = imgui.ImBool(true),
+	['Таймер до МП']           = imgui.ImBool(true),
+	['Прорисовка']             = imgui.ImBool(true),
+	['Статус']           	   = imgui.ImBool(true),
+	['Сквад']           	   = imgui.ImBool(true),
+	['Информация под чатом']   = imgui.ImBool(true)
+}
 imgui.ShowCursor = false
 local style = imgui.GetStyle()
 local colors = style.Colors
@@ -151,6 +167,15 @@ local rCache = {
         y = 0
 	}
 }
+local keybbb = {KeyboardLayoutName = ffi.new("char[?]", 32), LocalInfo = ffi.new("char[?]", 32)}
+ffi.cdef[[
+	int SendMessageA(int, int, int, int);
+	unsigned int GetModuleHandleA(const char* lpModuleName);
+	short GetKeyState(int nVirtKey);
+	bool GetKeyboardLayoutNameA(char* pwszKLID);
+	int GetLocaleInfoA(int Locale, int LCType, char* lpLCData, int cchData);
+]]
+local sym = {["myid"] = -1, ["mynick"] = -1, [1] = 144 - 7, ["s"] = 132 - 15, ["w"] = 134 - 20, ["me"] = 116 - 2, ["do"] = 136 - 10, ["try"] = 116 - 2, ["todo"] = 82 - 23, ["m"] = 114 - 21, ["r"] = 178 - 49, ["f"] = 178 - 49, ["fs"] = 121 - 18, ["u"] = 121 - 18, ["report"] = 218 - 29, ["b"] = 117 - 8, ["dep"] = 161 - 41} 
 local suspendkeys = 2 -- 0 хоткеи включены, 1 -- хоткеи выключены -- 2 хоткеи необходимо включить
 local CTaskArr = {
 	[1] = {}, -- ID событий
@@ -181,7 +206,7 @@ local CTaskArr = {
 	}
 }
 local ImVec4 = imgui.ImVec4
-local imfonts = {mainFont = nil, font = nil, ovFont = nil, ovFontSquad = nil, ovFontSquadRender = nil}
+local imfonts = {mainFont = nil, font = nil, ovFont = nil, ovFontSquad = nil, ovFontSquadRender = nil, ovFontCars = nil}
 
 local strings = {
 	acceptrepair = u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
@@ -242,6 +267,7 @@ local vehicles = {"Landstalker", "Bravura", "Buffalo", "Linerunner", "Perrenial"
 	"Tug", "Trailer", "Emperor", "Wayfarer", "Euros", "Hotdog", "Club", "FreightBox", "Trailer", "Andromada", "Dodo", "RCCam", "Launch", "PoliceCar", "PoliceCar",
 	"PoliceCar", "PoliceRanger", "Picador", "S.W.A.T", "Alpha", "Phoenix", "GlendaleShit", "SadlerShit", "Luggage A", "Luggage B", "Stairs", "Boxville", "Tiller",
 "UtilityTrailer"}
+local motos = {[522] = "NRG-500", [463] = "Freeway", [461] = "PCJ-600", [581] = "BF-400", [521] = "FCR-900", [468] = "Sanchez", [462] = "Faggio"}	
 -------------------------------------------------------------------------[MAIN]--------------------------------------------------------------------------------------------
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
@@ -296,7 +322,6 @@ function main()
 		end
 	end
 	
-	if srp_ini.bools['Статус'] then lua_thread.create(function() CTask() end) end
 	if srp_ini.bools['Нарко'] and not checkedBoost then lua_thread.create(function() isBoost = true wait(1300) sampSendChat('/boostinfo') end) end -- проверка множителя КД нарко
 	
 	while true do
@@ -307,6 +332,7 @@ function main()
 			rkeys.registerHotKey(makeHotKey("Сменить клист"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end setclist() end)
 			suspendkeys = 0
 		end
+		if srp_ini.bools['Статус'] then lua_thread.create(function() CTask() end) end
 		if not menu.main.v then imgui.ShowCursor = false if suspendkeys == 1 then suspendkeys = 2 sampSetChatDisplayMode(3) end end
 		if SetMode then
 			if isKeyDown(vkeys.VK_MBUTTON) then
@@ -354,6 +380,7 @@ function apply_custom_styles()
 	imfonts.ovFont2           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
 	imfonts.ovFontSquad       = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic()) --trebuchet
 	imfonts.ovFontSquadRender = renderCreateFont("times", 11, 12)
+	imfonts.ovFontCars 		  = renderCreateFont("times", 14, 12)
 	
 	imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 14.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
 	imgui.RebuildFonts()
@@ -478,14 +505,16 @@ function imgui.OnDrawFrame()
 		if not menu.automatic.v and not menu.binds.v and menu.overlay.v and not menu.information.v then
 			imgui.Text("Что бы изменить положение элемента, пропишите команду /setov")
 			imgui.Text("Далее просто нужно курсором перенести все элементы")
-			if imgui.ToggleButton("overlay1", togglebools['Дата и время'])   then srp_ini.bools['Дата и время']   = togglebools['Дата и время'].v   inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
-			if imgui.ToggleButton("overlay2", togglebools['Ник'])            then srp_ini.bools['Ник']            = togglebools['Ник'].v            inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
-			if imgui.ToggleButton("overlay3", togglebools['Пинг'])           then srp_ini.bools['Пинг']           = togglebools['Пинг'].v           inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение текущего пинга")
-			if imgui.ToggleButton("overlay4", togglebools['Нарко']) 		 then srp_ini.bools['Нарко']          = togglebools['Нарко'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
-			if imgui.ToggleButton("overlay5", togglebools['Таймер до МП'])   then srp_ini.bools['Таймер до МП']   = togglebools['Таймер до МП'].v   inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
-			if imgui.ToggleButton("overlay6", togglebools['Прорисовка'])     then srp_ini.bools['Прорисовка']     = togglebools['Прорисовка'].v     inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
-			if imgui.ToggleButton("overlay7", togglebools['Статус'])         then srp_ini.bools['Статус']         = togglebools['Статус'].v         inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши")
-			if imgui.ToggleButton("overlay8", togglebools['Сквад'])          then srp_ini.bools['Сквад']          = togglebools['Сквад'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
+			if imgui.ToggleButton("overlay1", togglebools['Дата и время'])           then srp_ini.bools['Дата и время']          = togglebools['Дата и время'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
+			if imgui.ToggleButton("overlay2", togglebools['Ник'])                    then srp_ini.bools['Ник']                   = togglebools['Ник'].v                   inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
+			if imgui.ToggleButton("overlay3", togglebools['Пинг'])                   then srp_ini.bools['Пинг']                  = togglebools['Пинг'].v                  inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение текущего пинга")
+			if imgui.ToggleButton("overlay4", togglebools['Нарко']) 		         then srp_ini.bools['Нарко']                 = togglebools['Нарко'].v                 inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
+			if imgui.ToggleButton("overlay5", togglebools['Таймер до МП'])           then srp_ini.bools['Таймер до МП']          = togglebools['Таймер до МП'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
+			if imgui.ToggleButton("overlay6", togglebools['Прорисовка'])             then srp_ini.bools['Прорисовка']            = togglebools['Прорисовка'].v            inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
+			if imgui.ToggleButton("overlay7", togglebools['Статус'])                 then srp_ini.bools['Статус']                = togglebools['Статус'].v                inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши")
+			if imgui.ToggleButton("overlay8", togglebools['Сквад'])                  then srp_ini.bools['Сквад']                 = togglebools['Сквад'].v                 inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
+			if imgui.ToggleButton("overlay9", togglebools['ХП транспорта'])          then srp_ini.bools['ХП транспорта']         = togglebools['ХП транспорта'].v         inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
+			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом'])  then srp_ini.bools['Информация под чатом']  = togglebools['Информация под чатом'].v  inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
 		end
 		
 		if not menu.automatic.v and not menu.binds.v and not menu.overlay.v and menu.information.v then
@@ -534,7 +563,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Дата и время'] then -- показывать время
 		if not SetMode then	imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Дата и времяX'], srp_ini.overlay['Дата и времяY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Дата и времяX'], srp_ini.overlay['Дата и времяY']))	end end
-		imgui.Begin('#empty_field', srp_ini.bools['Дата и время'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field', overlay['Дата и время'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont)
 		imgui.TextColoredRGB('{FFFF00}' .. os.date("%d.%m.%y %X") .. '')
 		imgui.PopFont()
@@ -549,7 +578,7 @@ function imgui.OnDrawFrame()
 			local name = sampGetPlayerNickname(id)
 			local clist = string.sub(string.format('%x', sampGetPlayerColor(id)), 3)
 			local clist = clist == "ffff" and "fffafa" or clist
-			imgui.Begin('#empty_field1', srp_ini.bools['Ник'], 1 + 32 + 2 + SetModeCond + 64)
+			imgui.Begin('#empty_field1', overlay['Ник'], 1 + 32 + 2 + SetModeCond + 64)
 			imgui.PushFont(imfonts.ovFont)
 			imgui.TextColoredRGB('{' .. clist .. '}' .. name .. '')
 			imgui.SameLine()
@@ -562,7 +591,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Пинг'] then -- пинг на экране
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['ПингX'], srp_ini.overlay['ПингY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['ПингX'], srp_ini.overlay['ПингY']))	end	end
-		imgui.Begin('#empty_field2', srp_ini.bools['Пинг'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field2', overlay['Пинг'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont2)
 		local ping = sampGetPlayerPing(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
 		if ping ~= nil then imgui.TextColoredRGB((ping > 80 and "{FF0000}" or "{00FF00}") .. u8:decode"Пинг: " .. ping) end
@@ -573,7 +602,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Нарко'] then -- КД нарко на экране
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['НаркоX'], srp_ini.overlay['НаркоY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['НаркоX'], srp_ini.overlay['НаркоY']))	end	end
-		imgui.Begin('#empty_field3', srp_ini.bools['Нарко'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field3', overlay['Нарко'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont2)
 		if (os.time() - srp_ini.values['Нарко']) < drugtimer then
 			sec = drugtimer - (os.time() - srp_ini.values['Нарко'])
@@ -591,7 +620,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Таймер до МП'] then -- таймеры до начала системных МП
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Таймер до МПX'], srp_ini.overlay['Таймер до МПY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Таймер до МПX'], srp_ini.overlay['Таймер до МПY']))	end	end
-		imgui.Begin('#empty_field4', srp_ini.bools['Таймер до МП'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field4', overlay['Таймер до МП'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont1)
 		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся таймеры МП") end
 		for k, v in pairs(srp_ini.ivent) do
@@ -616,7 +645,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Прорисовка'] then -- количество игроков в зоне прорисовки на экране 
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['ПрорисовкаX'], srp_ini.overlay['ПрорисовкаY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['ПрорисовкаX'], srp_ini.overlay['ПрорисовкаY']))	end	end
-		imgui.Begin('#empty_field5', srp_ini.bools['Прорисовка'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field5', overlay['Прорисовка'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont1)
 		imgui.TextColoredRGB(u8:decode'Количество персонажей в прорисовке: ' .. (sampGetPlayerCount(true) - 1) .. '')
 		imgui.PopFont()
@@ -626,7 +655,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Статус'] then -- статус контекстной клавиши на экране 
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СтатусX'], srp_ini.overlay['СтатусY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СтатусX'], srp_ini.overlay['СтатусY']))	end	end
-		imgui.Begin('#empty_field6', srp_ini.bools['Статус'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field6', overlay['Статус'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont1)
 		local CStatus = CTaskArr["CurrentID"] == 0 and "{FFFAFA}" .. u8:decode"Ожидание события" or "" .. u8:decode(CTaskArr["n"][CTaskArr[1][CTaskArr["CurrentID"]]]) .. " " .. u8:decode((indexof(CTaskArr[1][CTaskArr["CurrentID"]], CTaskArr["nn"]) ~= false and CTaskArr[3][CTaskArr["CurrentID"]] or "")) .. ""
 		imgui.TextColoredRGB(u8:decode'Статус контекстной клавиши: ' .. CStatus .. '')
@@ -637,7 +666,7 @@ function imgui.OnDrawFrame()
 	
 	if srp_ini.bools['Сквад'] and ((not sampIsChatInputActive() and not isSampfuncsConsoleActive() and rCache.enable) or SetMode) then -- улучшенный сквад на экране
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СквадX'], srp_ini.overlay['СквадY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СквадX'], srp_ini.overlay['СквадY']))	end	end
-		imgui.Begin('#empty_field7', srp_ini.bools['Сквад'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.Begin('#empty_field7', overlay['Сквад'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFontSquad)
 		local count = 0
 		for k in pairs(smem) do count = count + 1 end				
@@ -669,6 +698,57 @@ function imgui.OnDrawFrame()
 				if ARM ~= 0 then renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + ((sampGetPlayerHealth(v.id) > 100 and 144/160 or 90/100) * ARM), y + 22, 5.0, 0xFFC0C0C0) end
 			end
 		end
+		imgui.PopFont()
+		imgui.End()
+	end
+	
+	if srp_ini.bools['ХП транспорта'] then -- показывать ХП машин вокруг
+		local carhandles = getcars() -- получаем все машины вокруг
+		if carhandles ~= nil then -- если машина обнаружена
+			for k, v in pairs(carhandles) do -- перебор всех машин в прорисовке
+				if doesVehicleExist(v) and isCarOnScreen(v) then -- если машина на экране
+					local idcar = getCarModel(v) -- получаем ид модельки
+					local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
+					local cX, cY, cZ = getCarCoordinates(v) -- получаем координаты машины
+					local distanse = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) -- расстояние между мной и машиной
+					if isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) and distanse <= 20 then
+						-- если между мной и машиной нет стен (персонажи и машины не считаются за стены) и расстояние не более 20 то...
+						local cHP = getCarHealth(v) -- получаем хп машины
+						local cPosX, cPosY = convert3DCoordsToScreen(cX, cY, cZ) -- переводим 3Д координаты мира в координаты на экране
+						local col = cHP > 800 and 0xFF00FF00 or cHP > 500 and 0xFFFFFF00 or 0xFFFFFAFA -- получаем цвет текста в зависимости от ХП машины
+						local col = motos[idcar] ~= nil and isCarTireBurst(v, 1) and 0xFFFF0000 or col -- если колесо МОТОЦИКЛА пробито то цвет ХП всегда красный
+						local ctext = cHP
+						renderFontDrawText(imfonts.ovFontCars, ctext, cPosX - (renderGetFontDrawTextLength(imfonts.ovFontCars, ctext, false) / 2), cPosY, col, false) -- рисуем текст
+					end
+				end
+			end
+		end
+	end
+	
+	if srp_ini.bools['Информация под чатом'] and sampIsChatInputActive() then -- раскладка, капс, символы под строкой чата
+		local in1 = sampGetInputInfoPtr()
+		local in1_1 = getStructElement(in1, 0x8, 4)
+		local in2 = getStructElement(--[[int]] in1_1, --[[int]] 0x8, --[[int]] 4)
+		local in3 = getStructElement(--[[int]] in1_1, --[[int]] 0xC, --[[int]] 4)
+		local fib = in3 + 40
+		local fib2 = in2 + 5
+		local success = ffi.C.GetKeyboardLayoutNameA(keybbb.KeyboardLayoutName)
+		local errorCode = ffi.C.GetLocaleInfoA(tonumber(ffi.string(keybbb.KeyboardLayoutName), 16), 0x00000002, keybbb.LocalInfo, 32)
+		local localName = ffi.string(keybbb.LocalInfo)
+		local capsState = ffi.C.GetKeyState(20)
+		imgui.SetNextWindowPos(imgui.ImVec2(fib2, fib))
+		imgui.Begin('#empty_field8', overlay['Информация под чатом'], 1 + 32 + 2 + SetModeCond + 64)
+		imgui.PushFont(imfonts.exFontsquad)
+		local a = sampGetChatInputText()
+		local b = a:match("%/(%a+) .*")
+		local c = (b == nil or sym[b] == nil) and sym[1] or sym[b]
+		if sym.myid == -1 then
+			sym.myid = #tostring(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
+			sym.mynick = #sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
+		end
+		local d = c - sym.myid - sym.mynick
+		local e = #a > d and "{FF0000}" .. #a .. "" or #a
+		imgui.TextColoredRGB(u8:decode"Раскладка: {ffffff}" .. localName .. "; CAPS: " .. getStrByState(capsState) .. u8:decode", Символы: " .. e .. "/" .. d .. ".")
 		imgui.PopFont()
 		imgui.End()
 	end
@@ -978,7 +1058,7 @@ function ct()
 		if key == 0 then chatmsg(u8:decode"Событие не найдено") return end
 		if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then
 			wait(300)
-			if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then goto done end
+			if isKeyDown(makeHotKey("Контекстная клавиша")[1]) and key ~= 1 then goto done end
 		end
 		
 		if CTaskArr[1][key] == 1 then sampSendChat("/repairkit") end
@@ -1094,7 +1174,6 @@ function cmd_setoverlay()
 		srp_ini.overlay['ПрорисовкаX'],     srp_ini.overlay['ПрорисовкаY']     = soverlay['Прорисовка'].x,     soverlay['Прорисовка'].y   
 		srp_ini.overlay['СтатусX'],         srp_ini.overlay['СтатусY']         = soverlay['Статус'].x,         soverlay['Статус'].y 
 		srp_ini.overlay['СквадX'],          srp_ini.overlay['СквадY']          = soverlay['Сквад'].x,          soverlay['Сквад'].y
-		inicfg.save(config, "SRPfunctions.ini")
 		
 		chatmsg(u8:decode"Местоположения всех элементов успешно задано")
 		srp_ini.bools['Дата и время']   = togglebools['Дата и время'].v   and true or false
@@ -1105,6 +1184,7 @@ function cmd_setoverlay()
 		srp_ini.bools['Прорисовка']     = togglebools['Прорисовка'].v     and true or false
 		srp_ini.bools['Статус']         = togglebools['Статус'].v         and true or false
 		srp_ini.bools['Сквад']          = togglebools['Сквад'].v          and true or false
+		inicfg.save(config, "SRPfunctions.ini")
 		SetMode, SetModeFirstShow, imgui.ShowCursor, imgui.LockPlayer = false, false, false, false
 	end
 end
@@ -1150,6 +1230,25 @@ function chatmsg(t)
 	sampAddChatMessage(prefix .. t, main_color)
 end
 
+function getcars()
+	local chandles = {}
+	local tableIndex = 1
+	local vehicles = getAllVehicles()
+	local fcarhandle = isCharInAnyCar(PLAYER_PED) and storeCarCharIsInNoSave(PLAYER_PED) or 12
+	for k, v in pairs(vehicles) do
+		if doesVehicleExist(v) and v ~= fcarhandle then table.insert(chandles, tableIndex, v) tableIndex = tableIndex + 1 end
+	end
+	
+	if table.maxn (chandles) == 0 then return nil else return chandles end
+end
+
+function getStrByState(keyState)
+	if keyState == 0 then
+		return "{ff8533}OFF{ffffff}"
+	end
+	return "{85cf17}ON{ffffff}"
+end
+
 function indexof(var, arr)
 	for k, v in ipairs(arr) do if v == var then return k end end return false
 end
@@ -1187,126 +1286,126 @@ function imgui.Hotkey(name, numkey, width)
 	imgui.Text(hstr)
 	imgui.PopItemWidth()
 	imgui.EndChild()
-	if imgui.IsItemClicked() then
-		lua_thread.create(
-			function()
-				local curkeys = ""
-				local tbool = false
-				while true do
-					wait(0)
-					if not tbool then
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
-								if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
-									if not curkeys:find(sv) then
-										curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									end
-								end
-							end
-						end
-						
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									tbool = true
-								end
-							end
-						end
-						else
-						tbool2 = false
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								tbool2 = true
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-								end
-							end
-						end
-						
-						if not tbool2 then break end
-					end
-				end
-				
-				local keys = ""
-				if tonumber(curkeys) == vkeys.VK_BACK then
-					srp_ini.hotkey[numkey] = "0"
-					else
-					local tNames = string.split(curkeys, " ")
-					for _, v in ipairs(tNames) do
-						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
-					end
-				end
-				
-				srp_ini.hotkey[numkey] = keys
-				inicfg.save(config, "SRPfunctions.ini")
-			end
-		)
-	end
+if imgui.IsItemClicked() then
+lua_thread.create(
+function()
+local curkeys = ""
+local tbool = false
+while true do
+wait(0)
+if not tbool then
+for k, v in pairs(vkeys) do
+sv = tostring(v)
+if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
+if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
+if not curkeys:find(sv) then
+curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+end
+end
+end
+end
+
+for k, v in pairs(vkeys) do
+sv = tostring(v)
+if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+if not curkeys:find(sv) then
+curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+tbool = true
+end
+end
+end
+else
+tbool2 = false
+for k, v in pairs(vkeys) do
+sv = tostring(v)
+if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+tbool2 = true
+if not curkeys:find(sv) then
+curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+end
+end
+end
+
+if not tbool2 then break end
+end
+end
+
+local keys = ""
+if tonumber(curkeys) == vkeys.VK_BACK then
+srp_ini.hotkey[numkey] = "0"
+else
+local tNames = string.split(curkeys, " ")
+for _, v in ipairs(tNames) do
+local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
+keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+end
+end
+
+srp_ini.hotkey[numkey] = keys
+inicfg.save(config, "SRPfunctions.ini")
+end
+)
+end
 end
 
 function checkUpdates() -- проверка обновлений
-	local fpath = os.tmpname()
-	if doesFileExist(fpath) then os.remove(fpath) end
-	downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
-		if status == 58 then
-			if doesFileExist(fpath) then
-				local file = io.open(fpath, 'r')
-				if file then
-					local info = decodeJson(file:read('*a'))
-					file:close()
-					os.remove(fpath)
-					script.v.num = info.version_num
-					script.v.date = info.version_date
-					script.url = info.version_url
-					script.upd.changes = info.version_upd
-					if script.upd.changes then
-						for k in pairs(script.upd.changes) do
-							table.insert(script.upd.sort, k)
-						end
-						table.sort(script.upd.sort, function(a, b) return a > b end)
-					end
-					script.checked = true
-					if info['version_num'] > thisScript()['version_num'] then
-						script.available = true
-						sampRegisterChatCommand('srpup', updateScript)
-						chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления") 
-						return true
-					end
-					else
-					chatmsg(u8:decode"Не удалось получить информацию про обновления(") 
-				end
-				else
-				chatmsg(u8:decode"Не удалось получить информацию про обновления(") 
-			end
-		end
-	end)
+local fpath = os.tmpname()
+if doesFileExist(fpath) then os.remove(fpath) end
+downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
+if status == 58 then
+if doesFileExist(fpath) then
+local file = io.open(fpath, 'r')
+if file then
+local info = decodeJson(file:read('*a'))
+file:close()
+os.remove(fpath)
+script.v.num = info.version_num
+script.v.date = info.version_date
+script.url = info.version_url
+script.upd.changes = info.version_upd
+if script.upd.changes then
+for k in pairs(script.upd.changes) do
+table.insert(script.upd.sort, k)
+end
+table.sort(script.upd.sort, function(a, b) return a > b end)
+end
+script.checked = true
+if info['version_num'] > thisScript()['version_num'] then
+script.available = true
+sampRegisterChatCommand('srpup', updateScript)
+chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления") 
+return true
+end
+else
+chatmsg(u8:decode"Не удалось получить информацию про обновления(") 
+end
+else
+chatmsg(u8:decode"Не удалось получить информацию про обновления(") 
+end
+end
+end)
 end
 
 function updateScript()
-	script.update = true
-	downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
-		if status == 6 then
-			chatmsg(updatingprefix .. u8:decode"Скрипт был обновлён!")
-			if script.find("ML-AutoReboot") == nil then
-				thisScript():reload()
-			end
-		end
-	end)
+script.update = true
+downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
+if status == 6 then
+chatmsg(updatingprefix .. u8:decode"Скрипт был обновлён!")
+if script.find("ML-AutoReboot") == nil then
+thisScript():reload()
+end
+end
+end)
 end
 
 function onScriptTerminate(s, bool)
-	if s == thisScript() and not bool then
-		if not script.reload then
-			if not script.update then 
-				chatmsg(u8:decode"Скрипт крашнулся: откройте консоль sampfuncs (кнопка ~), скопируйте текст ошибки и отправьте разработчику") 
-				else
-				chatmsg(updatingprefix .. u8:decode"Старый скрипт был выгружен, загружаю обновлённую версию...") 
-			end
-		end
-	end
+if s == thisScript() and not bool then
+if not script.reload then
+if not script.update then 
+chatmsg(u8:decode"Скрипт крашнулся: откройте консоль sampfuncs (кнопка ~), скопируйте текст ошибки и отправьте разработчику") 
+else
+chatmsg(updatingprefix .. u8:decode"Старый скрипт был выгружен, загружаю обновлённую версию...") 
+end
+end
+end
 end																																
