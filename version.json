@@ -1,5 +1,11 @@
 {
-  "version_num": 2,
-  "version_date": "09.01.2023",
-  "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua"
+  "version_num": 3,
+  "version_date": "10.01.2023",
+  "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
+   "version_upd": {
+             "1": "Функции распределены по разделам для удобной работы", 
+             "2": "Добавлено множество элементов оверлея",
+             "3": "Добавлены первые 3 функции в раздел клавиш и команд",
+             "4": "На гитхабе появились все (и даже больше) библиотеки для скрипта"
+  }
 }
