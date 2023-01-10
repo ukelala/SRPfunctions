@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
 script_version("10.01.2023")
-script_version_number(3)
+script_version_number(4)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки]--------------------------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -40,21 +40,21 @@ local config = {
 	},
 	overlay = {
 		['Дата и времяX']          = 300,
-		['Дата и времяY']          = 100,
+		['Дата и времяY']          = 300,
 		['НикX']                   = 300,
-		['НикY']                   = 200,
+		['НикY']                   = 350,
 		['ПингX']                  = 300,
-		['ПингY']                  = 300,
-		['НаркоX']        		   = 300,
-		['НаркоY']        		   = 400,
-		['Таймер до МПX']          = 300,
-		['Таймер до МПY']          = 500,
-		['ПрорисовкаX']            = 300,
-		['ПрорисовкаY']            = 600,
-		['СтатусX']                = 300,
-		['СтатусY']                = 700,
-		['СквадX']                 = 300,
-		['СквадY']                 = 800
+		['ПингY']                  = 400,
+		['НаркоX']        		   = 500,
+		['НаркоY']        		   = 300,
+		['Таймер до МПX']          = 500,
+		['Таймер до МПY']          = 350,
+		['ПрорисовкаX']            = 500,
+		['ПрорисовкаY']            = 400,
+		['СтатусX']                = 600,
+		['СтатусY']                = 300,
+		['СквадX']                 = 850,
+		['СквадY']                 = 350
 	},
 	values = {
 		['Заправка у механика']    = 1500,
@@ -313,21 +313,21 @@ function main()
 				wait(300)
 				if isKeyDown(vkeys.VK_MBUTTON) then
 					srp_ini.overlay['Дата и времяX']          = 300
-					srp_ini.overlay['Дата и времяY']          = 100
+					srp_ini.overlay['Дата и времяY']          = 300
 					srp_ini.overlay['НикX']                   = 300
-					srp_ini.overlay['НикY']                   = 200
+					srp_ini.overlay['НикY']                   = 350
 					srp_ini.overlay['ПингX']                  = 300
-					srp_ini.overlay['ПингY']                  = 300
-					srp_ini.overlay['НаркоX']        		  = 300
-					srp_ini.overlay['НаркоY']        		  = 400
-					srp_ini.overlay['Таймер до МПX']          = 300
-					srp_ini.overlay['Таймер до МПY']          = 500
-					srp_ini.overlay['ПрорисовкаX']            = 300
-					srp_ini.overlay['ПрорисовкаY']            = 600
-					srp_ini.overlay['СтатусX']                = 300
-					srp_ini.overlay['СтатусY']                = 700
-					srp_ini.overlay['СквадX']                 = 300
-					srp_ini.overlay['СквадY']                 = 800
+					srp_ini.overlay['ПингY']                  = 400
+					srp_ini.overlay['НаркоX']        		  = 500
+					srp_ini.overlay['НаркоY']        		  = 300
+					srp_ini.overlay['Таймер до МПX']          = 500
+					srp_ini.overlay['Таймер до МПY']          = 350
+					srp_ini.overlay['ПрорисовкаX']            = 500
+					srp_ini.overlay['ПрорисовкаY']            = 400
+					srp_ini.overlay['СтатусX']                = 600
+					srp_ini.overlay['СтатусY']                = 300
+					srp_ini.overlay['СквадX']                 = 850
+					srp_ini.overlay['СквадY']                 = 350
 					inicfg.save(config, "SRPfunctions.ini")
 					SetMode, SetModeFirstShow = true, true
 					chatmsg(u8:decode"Координаты элементов были успешно сброшены")
@@ -593,6 +593,7 @@ function imgui.OnDrawFrame()
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Таймер до МПX'], srp_ini.overlay['Таймер до МПY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['Таймер до МПX'], srp_ini.overlay['Таймер до МПY']))	end	end
 		imgui.Begin('#empty_field4', srp_ini.bools['Таймер до МП'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont1)
+		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся таймеры МП") end
 		for k, v in pairs(srp_ini.ivent) do
 			if v ~= false and tonumber(v) ~= nil then
 				local sec = tonumber(v) - os.time()
@@ -634,7 +635,7 @@ function imgui.OnDrawFrame()
 		imgui.End()
 	end
 	
-	if srp_ini.bools['Сквад'] and not sampIsChatInputActive() and not isSampfuncsConsoleActive() and rCache.enable then -- улучшенный сквад на экране
+	if srp_ini.bools['Сквад'] and ((not sampIsChatInputActive() and not isSampfuncsConsoleActive() and rCache.enable) or SetMode) then -- улучшенный сквад на экране
 		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СквадX'], srp_ini.overlay['СквадY'])) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay['СквадX'], srp_ini.overlay['СквадY']))	end	end
 		imgui.Begin('#empty_field7', srp_ini.bools['Сквад'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFontSquad)
@@ -673,27 +674,27 @@ function imgui.OnDrawFrame()
 	end
 	
 	SetModeFirstShow = false
-	end
-	-------------------------------------------------------------------------[ФУНКЦИИ]-----------------------------------------------------------------------------------------
-	function ev.onServerMessage(col, text)
-		if col == strings.color.mechanic then
-			if srp_ini.bools['Починка у механика'] then -- починка у механика
-				if text:match(strings.acceptrepair) then sampSendChat("/ac repair") return end
-			end
-			if srp_ini.bools['Заправка у механика'] then -- заправка у механика
-				local cost = tonumber(text:match(strings.acceptrefill))
-				if cost ~= nil then
-					local ncost = tonumber(srp_ini.values['Заправка у механика'])
-					if ncost ~= nil and cost <= ncost then sampSendChat("/ac refill") return end
-				end
+end
+-------------------------------------------------------------------------[ФУНКЦИИ]-----------------------------------------------------------------------------------------
+function ev.onServerMessage(col, text)
+	if col == strings.color.mechanic then
+		if srp_ini.bools['Починка у механика'] then -- починка у механика
+			if text:match(strings.acceptrepair) then sampSendChat("/ac repair") return end
+		end
+		if srp_ini.bools['Заправка у механика'] then -- заправка у механика
+			local cost = tonumber(text:match(strings.acceptrefill))
+			if cost ~= nil then
+				local ncost = tonumber(srp_ini.values['Заправка у механика'])
+				if ncost ~= nil and cost <= ncost then sampSendChat("/ac refill") return end
 			end
 		end
-		if col == strings.color.jfchat then
-			if srp_ini.bools['Цвет ника в профе'] then -- окраска цветов в чате профсоюза
-				local nick, stringid, rank, txt = text:match(strings.jfchat)
-				id = tonumber(stringid)
-				if id ~= nil then
-					local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
+	end
+	if col == strings.color.jfchat then
+		if srp_ini.bools['Цвет ника в профе'] then -- окраска цветов в чате профсоюза
+			local nick, stringid, rank, txt = text:match(strings.jfchat)
+			id = tonumber(stringid)
+			if id ~= nil then
+				local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
 				local color2 = "{" .. ("%06x"):format(bit.band(bit.rshift(col, 8), 0xFFFFFF)) .. "}"
 				text = clist .. nick .. "[" .. id .. "]" .. color2 .. "<" .. rank .. "> " .. txt
 				return {col, text}
@@ -829,108 +830,108 @@ function ev.onSendPickedUpPickup(id)
 end
 
 function ev.onSetPlayerColor(id, color)
-    if rCache.enable and saveid[id] then
-        local r, g, b, a = explode_argb(color)
-        smem[saveid[id]].color = join_argb(230.0, r, g, b)
-        smem[saveid[id]].colorns = join_argb(150.0, r, g, b)
+	if rCache.enable and saveid[id] then
+		local r, g, b, a = explode_argb(color)
+		smem[saveid[id]].color = join_argb(230.0, r, g, b)
+		smem[saveid[id]].colorns = join_argb(150.0, r, g, b)
 	end
 end
 
 function ev.onShowTextDraw(id, data)
-    if data.text:find("SQUAD") then
-        rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(data.position.x + 1, data.position.y + 25)
-        rCache.enable = true
-        td = id
-        smem = {}
-        saveid = {}
-        local list = data.text:split("~n~")
-        table.remove(list, 1)
-        for k, v in ipairs(list) do
-            local id = sampGetPlayerIdByNickname(v)
-            if id then
-                local color = sampGetPlayerColor(id)
-                local a, r, g, b = explode_argb(color)
-                table.insert(smem, {
-                    id = id,
-                    name = v,
-                    color = join_argb(230.0, r, g, b),
-                    colorns = join_argb(150.0, r, g, b),
+	if data.text:find("SQUAD") then
+		rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(data.position.x + 1, data.position.y + 25)
+		rCache.enable = true
+		td = id
+		smem = {}
+		saveid = {}
+		local list = data.text:split("~n~")
+		table.remove(list, 1)
+		for k, v in ipairs(list) do
+			local id = sampGetPlayerIdByNickname(v)
+			if id then
+				local color = sampGetPlayerColor(id)
+				local a, r, g, b = explode_argb(color)
+				table.insert(smem, {
+					id = id,
+					name = v,
+					color = join_argb(230.0, r, g, b),
+					colorns = join_argb(150.0, r, g, b),
 				})
-                saveid[id] = #smem
+				saveid[id] = #smem
 			end
 		end
-        data.position.x = 1488
-        data.position.y = 1488
-        return {id, data}
+		data.position.x = 1488
+		data.position.y = 1488
+		return {id, data}
 	end
 end
 
 function ev.onTextDrawSetString(id, str)
-    if td == nil then
-        if str:find("SQUAD") then
-            local x, y = sampTextdrawGetPos(id)
-            rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x + 1, y + 25)
-            rCache.enable = true
-            td = id
-            if sampTextdrawIsExists(id) then
-                sampTextdrawSetPos(id, 1488, 1488)
+	if td == nil then
+		if str:find("SQUAD") then
+			local x, y = sampTextdrawGetPos(id)
+			rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x + 1, y + 25)
+			rCache.enable = true
+			td = id
+			if sampTextdrawIsExists(id) then
+				sampTextdrawSetPos(id, 1488, 1488)
 			end
 		end
 	end
-    if id == td and str then
-        smem = {}
-        saveid = {}
-        local list = str:split("~n~")
-        table.remove(list, 1)
-        for k, v in ipairs(list) do
-            local id = sampGetPlayerIdByNickname(v)
-            if id then
-                local color = sampGetPlayerColor(id)
-                local a, r, g, b = explode_argb(color)
-                table.insert(smem, {
-                    id = id,
-                    name = v,
-                    color = join_argb(230.0, r, g, b),
-                    colorns = join_argb(150.0, r, g, b),
+	if id == td and str then
+		smem = {}
+		saveid = {}
+		local list = str:split("~n~")
+		table.remove(list, 1)
+		for k, v in ipairs(list) do
+			local id = sampGetPlayerIdByNickname(v)
+			if id then
+				local color = sampGetPlayerColor(id)
+				local a, r, g, b = explode_argb(color)
+				table.insert(smem, {
+					id = id,
+					name = v,
+					color = join_argb(230.0, r, g, b),
+					colorns = join_argb(150.0, r, g, b),
 				})
-                saveid[id] = #smem
+				saveid[id] = #smem
 			end
 		end
 	end
 end
 
 function ev.onTextDrawHide(id)
-    if id == td then
-        rCache.enable = false
-        smem = {}
-        saveid = {}
+	if id == td then
+		rCache.enable = false
+		smem = {}
+		saveid = {}
 	end
 end
 
 function sampGetPlayerIdByNickname(name)
-    local name = tostring(name)
-    local _, localId = sampGetPlayerIdByCharHandle(PLAYER_PED)
-    for i = 0, 1000 do
-        if (sampIsPlayerConnected(i) or localId == i) and sampGetPlayerNickname(i) == name then
-            return i
+	local name = tostring(name)
+	local _, localId = sampGetPlayerIdByCharHandle(PLAYER_PED)
+	for i = 0, 1000 do
+		if (sampIsPlayerConnected(i) or localId == i) and sampGetPlayerNickname(i) == name then
+			return i
 		end
 	end
 end
 
 function join_argb(a, r, g, b)
-    local argb = b  -- b
-    argb = bit.bor(argb, bit.lshift(g, 8))  -- g
-    argb = bit.bor(argb, bit.lshift(r, 16)) -- r
-    argb = bit.bor(argb, bit.lshift(a, 24)) -- a
-    return argb
+	local argb = b  -- b
+	argb = bit.bor(argb, bit.lshift(g, 8))  -- g
+	argb = bit.bor(argb, bit.lshift(r, 16)) -- r
+	argb = bit.bor(argb, bit.lshift(a, 24)) -- a
+	return argb
 end
 
 function explode_argb(argb)
-    local a = bit.band(bit.rshift(argb, 24), 0xFF)
-    local r = bit.band(bit.rshift(argb, 16), 0xFF)
-    local g = bit.band(bit.rshift(argb, 8), 0xFF)
-    local b = bit.band(argb, 0xFF)
-    return a, r, g, b
+	local a = bit.band(bit.rshift(argb, 24), 0xFF)
+	local r = bit.band(bit.rshift(argb, 16), 0xFF)
+	local g = bit.band(bit.rshift(argb, 8), 0xFF)
+	local b = bit.band(argb, 0xFF)
+	return a, r, g, b
 end
 
 function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
