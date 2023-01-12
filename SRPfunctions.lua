@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
 script_version("12.01.2023")
-script_version_number(6)
+script_version_number(7)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, quest = {}, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки]--------------------------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -454,7 +454,7 @@ function main()
 			if srp_ini.bools['Нарко']              and not checkedBoost     then isBoost     = true secondBoost     = true end
 			if srp_ini.bools['Ежедневные задания'] and not checkedQuest     then isQuest     = true secondQuest     = true end
 			if srp_ini.bools['Инвентарь']          and not checkedInventory then isInventory = true secondInventory = true end
-			if secondBoost or secondQuest or secondInventory then chatmsg(u8:decode'Не удалось получить необходимую информацию, пропишите: ' .. (secondBoost and '/boostinfo' or '') .. (secondQuest and (secondBoost and '/equest' or '; /equest') or '') .. (secondInventory and ((secondBoost or secondQuest) and '; /inventory' or '/inventory') or '')) end
+			if secondBoost or secondQuest or secondInventory then chatmsg(u8:decode'Не удалось получить необходимую информацию, пропишите: ' .. (secondBoost and '/boostinfo' or '') .. (secondQuest and (secondBoost and '; /equest' or '/equest') or '') .. (secondInventory and ((secondBoost or secondQuest) and '; /inventory' or '/inventory') or '')) end
 		end
 	end
 	
@@ -721,15 +721,15 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("overlay1",  togglebools['Дата и время'])           then srp_ini.bools['Дата и время']          = togglebools['Дата и время'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
 			if imgui.ToggleButton("overlay2",  togglebools['Ник'])                    then srp_ini.bools['Ник']                   = togglebools['Ник'].v                   inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
 			if imgui.ToggleButton("overlay3",  togglebools['Пинг'])                   then srp_ini.bools['Пинг']                  = togglebools['Пинг'].v                  inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение текущего пинга")
-			if imgui.ToggleButton("overlay4",  togglebools['Нарко']) 		          then srp_ini.bools['Нарко']                 = togglebools['Нарко'].v                 inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Нарко']             then lua_thread.create(function() isBoost = true wait(1300) sampSendChat("/boostinfo") end)	 end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
+			if imgui.ToggleButton("overlay4",  togglebools['Нарко']) 		          then srp_ini.bools['Нарко']                 = togglebools['Нарко'].v                 inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Нарко']             then lua_thread.create(function() isBoost      = true secondBoost = true     wait(1300) sampSendChat("/boostinfo") end) end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
 			if imgui.ToggleButton("overlay5",  togglebools['Таймер до МП'])           then srp_ini.bools['Таймер до МП']          = togglebools['Таймер до МП'].v          inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
 			if imgui.ToggleButton("overlay6",  togglebools['Прорисовка'])             then srp_ini.bools['Прорисовка']            = togglebools['Прорисовка'].v            inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
 			if imgui.ToggleButton("overlay7",  togglebools['Статус'])                 then srp_ini.bools['Статус']                = togglebools['Статус'].v                inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши")
 			if imgui.ToggleButton("overlay8",  togglebools['Сквад'])                  then srp_ini.bools['Сквад']                 = togglebools['Сквад'].v                 inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
 			if imgui.ToggleButton("overlay9",  togglebools['ХП транспорта'])          then srp_ini.bools['ХП транспорта']         = togglebools['ХП транспорта'].v         inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
 			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом'])   then srp_ini.bools['Информация под чатом']  = togglebools['Информация под чатом'].v  inicfg.save(config, "SRPfunctions.ini") end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
-			if imgui.ToggleButton("overlay11", togglebools['Ежедневные задания'])     then srp_ini.bools['Ежедневные задания']    = togglebools['Ежедневные задания'].v    inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Ежедневные задания'] then lua_thread.create(function() isQuest     = true wait(1300) sampSendChat("/equest")    end) end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг @Imikhailovich название и описание задания") imgui.EndTooltip() end imgui.SameLine(750) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer['Разница часовых поясов'], timezones) then srp_ini.values['Разница часовых поясов'] = tostring(u8:decode(buffer['Разница часовых поясов'].v) - 14) inicfg.save(config, "SRPfunctions.ini") end
-			if imgui.ToggleButton("overlay12", togglebools['Инвентарь'])              then srp_ini.bools['Инвентарь']             = togglebools['Инвентарь'].v             inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Инвентарь']          then lua_thread.create(function() isInventory = true wait(1300) sampSendChat("/inventory") end) end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine(355) imgui.PushFont(imfonts.smainFont2) if imgui.Button("Настроить предметы инвентаря", imgui.ImVec2(215.0, 23.0)) then menu.inventory.v = true end imgui.PopFont()
+			if imgui.ToggleButton("overlay11", togglebools['Ежедневные задания'])     then srp_ini.bools['Ежедневные задания']    = togglebools['Ежедневные задания'].v    inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Ежедневные задания'] then lua_thread.create(function() isQuest     = true secondQuest      = true wait(1300) sampSendChat("/equest")    end) end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг @Imikhailovich название и описание задания") imgui.EndTooltip() end imgui.SameLine(750) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer['Разница часовых поясов'], timezones) then srp_ini.values['Разница часовых поясов'] = tostring(u8:decode(buffer['Разница часовых поясов'].v) - 14) inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Ежедневные задания'] then lua_thread.create(function() isQuest = true secondQuest = true wait(1300) sampSendChat("/equest")    end) end end
+			if imgui.ToggleButton("overlay12", togglebools['Инвентарь'])              then srp_ini.bools['Инвентарь']             = togglebools['Инвентарь'].v             inicfg.save(config, "SRPfunctions.ini") if srp_ini.bools['Инвентарь']          then lua_thread.create(function() isInventory = true secondInventory  = true wait(1300) sampSendChat("/inventory") end) end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine(355) imgui.PushFont(imfonts.smainFont2) if imgui.Button("Настроить предметы инвентаря", imgui.ImVec2(215.0, 23.0)) then menu.inventory.v = true end imgui.PopFont()
 		end
 		
 		if menu.inventory.v then
@@ -1110,7 +1110,7 @@ function ev.onServerMessage(col, text)
 		end
 	end
 	if col == strings.color.boost then if text:match(strings.boost) and isBoost then return false end end
-	if col == strings.color.noboost then if text:match(strings.noboost) and isBoost then isBoost = false checkedBoost = true return false end end
+	if col == strings.color.noboost then if text:match(strings.noboost) and isBoost then isBoost = false checkedBoost = true if secondBoost then chatmsg(u8:decode"Информация для множителя нарко успешно получена") secondBoost = false end return false end end
 	if col == strings.color.narko then
 		if srp_ini.bools['Нарко'] then -- КД нарко
 			if text:match(strings.narko) then
@@ -1187,7 +1187,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				end
 			end
 			checkedBoost = true
-			if isBoost then sampCloseCurrentDialogWithButton(0) isBoost = false if secondBoost then chatmsg("Информация для множителя нарко успешно получена") end return false end
+			if isBoost then sampCloseCurrentDialogWithButton(0) isBoost = false if secondBoost then chatmsg(u8:decode"Информация для множителя нарко успешно получена") secondBoost = false end return false end
 		end
 	end
 	if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) and connected then
@@ -1214,7 +1214,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 			end
 			inicfg.save(config, "SRPfunctions.ini")
 			checkedQuest = true
-			if isQuest then sampCloseCurrentDialogWithButton(0) isQuest = false if secondQuest then chatmsg("Информация для рендера квестов успешно получена") end return false end
+			if isQuest then sampCloseCurrentDialogWithButton(0) isQuest = false if secondQuest then chatmsg(u8:decode"Информация для рендера квестов успешно получена") secondQuest = false end return false end
 		end
 		
 		if dialogid == strings.dialog.description.id and style == strings.dialog.description.style and title == strings.dialog.description.title then
@@ -1242,7 +1242,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 			end
 			checkedInventory = true
 			inicfg.save(config, "SRPfunctions.ini")
-			if isInventory then sampCloseCurrentDialogWithButton(0) isInventory = false if secondBoost then chatmsg("Информация для рендера инвентаря успешно получена") end return false end
+			if isInventory then sampCloseCurrentDialogWithButton(0) isInventory = false if secondInventory then chatmsg(u8:decode"Информация для рендера инвентаря успешно получена") secondInventory = false end return false end
 		end
 	end
 end
