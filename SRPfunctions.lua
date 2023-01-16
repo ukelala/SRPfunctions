@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
 script_version("16.01.2023")
-script_version_number(10)
+script_version_number(11)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]--------------------------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -132,7 +132,7 @@ local config = {
 	},
 	['Инвентарь']            		= {}
 }
-local binder = {
+local bindertable = {
 	list = {}
 }
 -------------------------------------------------------------------------[Переменные и маcсивы]-----------------------------------------------------------------------------
@@ -450,7 +450,7 @@ function main()
 	end
 	
 	if binder_ini == nil then -- загружаем биндер
-		binder_ini = inicfg.load(binder, binds)
+		binder_ini = inicfg.load(bindertable, binds)
 		inicfg.save(binder_ini, binds)
 	end
 	
