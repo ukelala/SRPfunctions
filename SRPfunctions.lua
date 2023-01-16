@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
 script_version("16.01.2023")
-script_version_number(11)
+script_version_number(12)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]--------------------------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -223,6 +223,7 @@ local isBoost          = false
 local checkedBoost     = false
 local isQuest          = false
 local checkedQuest     = false
+local noequest         = false
 local isInventory      = false
 local checkedInventory = false
 local isFlood          = false
@@ -363,6 +364,7 @@ local strings = {
 	lomka              = u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
 	plswait            = u8:decode"^ Пожалуйста подождите$",
 	spam               = u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
+	noequest		   = u8:decode"^ Доступно со 2 уровня",
 	
 	color = {
 		mechanic       =  1790050303,
@@ -412,7 +414,8 @@ local strings = {
 		wasAFK         = -2769921,
 		lomka          = -1627389697,
 		plswait        = -1347440641,
-		spam           = -65281
+		spam           = -65281,
+		noequest       = -1347440641
 	},
 	
 	dialog = {
@@ -677,14 +680,6 @@ function main()
 			end
 		end
 		if needtohold and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() and (wasKeyPressed(vkeys.VK_W) or wasKeyPressed(vkeys.VK_S)) then needtohold = false end
-		if srp_ini ~= nil then
-			if srp_ini.bools['Ежедневные задания'] then
-				while os.difftime(srp_ini.quest['Обновление заданий'], os.time()) < 0 do
-					wait(10000)
-					checkdialogs()
-				end
-			end
-		end
 	end
 end
 -------------------------------------------------------------------------[IMGUI]-------------------------------------------------------------------------------------------
@@ -706,68 +701,68 @@ function apply_custom_styles()
 	imgui.GetStyle().GrabMinSize = 7.0
 	imgui.GetStyle().GrabRounding = 6.0
 	imgui.GetStyle().ChildWindowRounding = 6.0
-	imgui.GetStyle().FrameRounding = 6.0
-	
-	colors[clr.Text]                 = ImVec4(1.00, 1.00, 1.00, 1.00)
-	colors[clr.TextDisabled]         = ImVec4(0.73, 0.75, 0.74, 1.00)
-	colors[clr.WindowBg]             = ImVec4(0.42, 0.48, 0.16, 1.00)
-	colors[clr.ChildWindowBg]        = ImVec4(0.00, 0.00, 0.00, 0.00)
-	colors[clr.PopupBg]              = ImVec4(0.08, 0.08, 0.08, 0.94)
-	colors[clr.Border]               = ImVec4(0.43, 0.43, 0.50, 0.50)
-	colors[clr.BorderShadow]         = ImVec4(0.00, 0.00, 0.00, 0.00)
-	colors[clr.FrameBg]              = ImVec4(0.41, 0.49, 0.24, 0.54)
-	colors[clr.FrameBgHovered]       = ImVec4(0.26, 0.32, 0.13, 0.54)
-	colors[clr.FrameBgActive]        = ImVec4(0.33, 0.39, 0.20, 0.54)
-	colors[clr.TitleBg]              = ImVec4(0.42, 0.48, 0.16, 0.90)
-	colors[clr.TitleBgActive]        = ImVec4(0.42, 0.48, 0.16, 1.00)
-	colors[clr.TitleBgCollapsed]     = ImVec4(0.33, 0.44, 0.26, 0.67)
-	colors[clr.MenuBarBg]            = ImVec4(0.60, 0.67, 0.44, 0.54)
-	colors[clr.ScrollbarBg]          = ImVec4(0.02, 0.02, 0.02, 0.53)
-	colors[clr.ScrollbarGrab]        = ImVec4(0.42, 0.48, 0.16, 0.54)
-	colors[clr.ScrollbarGrabHovered] = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.ScrollbarGrabActive]  = ImVec4(0.51, 0.51, 0.51, 1.00)
-	colors[clr.ComboBg]              = colors[clr.PopupBg]
-	colors[clr.CheckMark]            = ImVec4(1.00, 1.00, 1.00, 1.00)
-	colors[clr.SliderGrab]           = ImVec4(0.35, 0.43, 0.16, 0.84)
-	colors[clr.SliderGrabActive]     = ImVec4(0.53, 0.53, 0.53, 1.00)
-	colors[clr.Button]               = ImVec4(0.42, 0.48, 0.16, 0.54)
-	colors[clr.ButtonHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.ButtonActive]         = ImVec4(0.62, 0.75, 0.32, 1.00)
-	colors[clr.Header]               = ImVec4(0.33, 0.42, 0.15, 0.54)
-	colors[clr.HeaderHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.HeaderActive]         = ImVec4(0.84, 0.66, 0.66, 0.00)
-	colors[clr.Separator]            = ImVec4(0.43, 0.43, 0.50, 0.50)
-	colors[clr.SeparatorHovered]     = ImVec4(0.43, 0.54, 0.18, 0.54)
-	colors[clr.SeparatorActive]      = ImVec4(0.52, 0.62, 0.28, 0.54)
-	colors[clr.ResizeGrip]           = ImVec4(0.66, 0.80, 0.35, 0.54)
-	colors[clr.ResizeGripHovered]    = ImVec4(0.44, 0.48, 0.34, 0.54)
-	colors[clr.ResizeGripActive]     = ImVec4(0.37, 0.37, 0.35, 0.54)
-	colors[clr.CloseButton]          = ImVec4(0.41, 0.41, 0.41, 1.00)
-	colors[clr.CloseButtonHovered]   = ImVec4(0.52, 0.63, 0.26, 0.54)
-	colors[clr.CloseButtonActive]    = ImVec4(0.81, 1.00, 0.37, 0.54)
-	colors[clr.PlotLines]            = ImVec4(0.61, 0.61, 0.61, 1.00)
-	colors[clr.PlotLinesHovered]     = ImVec4(0.79, 1.00, 0.32, 0.54)
-	colors[clr.PlotHistogram]        = ImVec4(0.90, 0.70, 0.00, 1.00)
-	colors[clr.PlotHistogramHovered] = ImVec4(1.00, 0.60, 0.00, 1.00)
-	colors[clr.TextSelectedBg]       = ImVec4(0.26, 0.59, 0.98, 0.35)
-	colors[clr.ModalWindowDarkening] = ImVec4(0.80, 0.80, 0.80, 0.35)
-	
-	
-	imgui.GetIO().Fonts:Clear()
-	imfonts.mainFont          = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont1        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 18.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont2        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 16.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	
-	imfonts.ovFont            = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 28.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont1           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont2           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFontSquad       = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic()) --trebuchet
-	
-	imfonts.ovFontCars = renderCreateFont("times", 14, 12)
-	imfonts.ovFontSquadRender = renderCreateFont("times", 11, 12)
-	
-	imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 14.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imgui.RebuildFonts()
+imgui.GetStyle().FrameRounding = 6.0
+
+colors[clr.Text]                 = ImVec4(1.00, 1.00, 1.00, 1.00)
+colors[clr.TextDisabled]         = ImVec4(0.73, 0.75, 0.74, 1.00)
+colors[clr.WindowBg]             = ImVec4(0.42, 0.48, 0.16, 1.00)
+colors[clr.ChildWindowBg]        = ImVec4(0.00, 0.00, 0.00, 0.00)
+colors[clr.PopupBg]              = ImVec4(0.08, 0.08, 0.08, 0.94)
+colors[clr.Border]               = ImVec4(0.43, 0.43, 0.50, 0.50)
+colors[clr.BorderShadow]         = ImVec4(0.00, 0.00, 0.00, 0.00)
+colors[clr.FrameBg]              = ImVec4(0.41, 0.49, 0.24, 0.54)
+colors[clr.FrameBgHovered]       = ImVec4(0.26, 0.32, 0.13, 0.54)
+colors[clr.FrameBgActive]        = ImVec4(0.33, 0.39, 0.20, 0.54)
+colors[clr.TitleBg]              = ImVec4(0.42, 0.48, 0.16, 0.90)
+colors[clr.TitleBgActive]        = ImVec4(0.42, 0.48, 0.16, 1.00)
+colors[clr.TitleBgCollapsed]     = ImVec4(0.33, 0.44, 0.26, 0.67)
+colors[clr.MenuBarBg]            = ImVec4(0.60, 0.67, 0.44, 0.54)
+colors[clr.ScrollbarBg]          = ImVec4(0.02, 0.02, 0.02, 0.53)
+colors[clr.ScrollbarGrab]        = ImVec4(0.42, 0.48, 0.16, 0.54)
+colors[clr.ScrollbarGrabHovered] = ImVec4(0.85, 0.98, 0.26, 0.54)
+colors[clr.ScrollbarGrabActive]  = ImVec4(0.51, 0.51, 0.51, 1.00)
+colors[clr.ComboBg]              = colors[clr.PopupBg]
+colors[clr.CheckMark]            = ImVec4(1.00, 1.00, 1.00, 1.00)
+colors[clr.SliderGrab]           = ImVec4(0.35, 0.43, 0.16, 0.84)
+colors[clr.SliderGrabActive]     = ImVec4(0.53, 0.53, 0.53, 1.00)
+colors[clr.Button]               = ImVec4(0.42, 0.48, 0.16, 0.54)
+colors[clr.ButtonHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
+colors[clr.ButtonActive]         = ImVec4(0.62, 0.75, 0.32, 1.00)
+colors[clr.Header]               = ImVec4(0.33, 0.42, 0.15, 0.54)
+colors[clr.HeaderHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
+colors[clr.HeaderActive]         = ImVec4(0.84, 0.66, 0.66, 0.00)
+colors[clr.Separator]            = ImVec4(0.43, 0.43, 0.50, 0.50)
+colors[clr.SeparatorHovered]     = ImVec4(0.43, 0.54, 0.18, 0.54)
+colors[clr.SeparatorActive]      = ImVec4(0.52, 0.62, 0.28, 0.54)
+colors[clr.ResizeGrip]           = ImVec4(0.66, 0.80, 0.35, 0.54)
+colors[clr.ResizeGripHovered]    = ImVec4(0.44, 0.48, 0.34, 0.54)
+colors[clr.ResizeGripActive]     = ImVec4(0.37, 0.37, 0.35, 0.54)
+colors[clr.CloseButton]          = ImVec4(0.41, 0.41, 0.41, 1.00)
+colors[clr.CloseButtonHovered]   = ImVec4(0.52, 0.63, 0.26, 0.54)
+colors[clr.CloseButtonActive]    = ImVec4(0.81, 1.00, 0.37, 0.54)
+colors[clr.PlotLines]            = ImVec4(0.61, 0.61, 0.61, 1.00)
+colors[clr.PlotLinesHovered]     = ImVec4(0.79, 1.00, 0.32, 0.54)
+colors[clr.PlotHistogram]        = ImVec4(0.90, 0.70, 0.00, 1.00)
+colors[clr.PlotHistogramHovered] = ImVec4(1.00, 0.60, 0.00, 1.00)
+colors[clr.TextSelectedBg]       = ImVec4(0.26, 0.59, 0.98, 0.35)
+colors[clr.ModalWindowDarkening] = ImVec4(0.80, 0.80, 0.80, 0.35)
+
+
+imgui.GetIO().Fonts:Clear()
+imfonts.mainFont          = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imfonts.smainFont1        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 18.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imfonts.smainFont2        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 16.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+
+imfonts.ovFont            = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 28.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imfonts.ovFont1           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imfonts.ovFont2           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imfonts.ovFontSquad       = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic()) --trebuchet
+
+imfonts.ovFontCars = renderCreateFont("times", 14, 12)
+imfonts.ovFontSquadRender = renderCreateFont("times", 11, 12)
+
+imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 14.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+imgui.RebuildFonts()
 end
 apply_custom_styles()
 
@@ -1905,6 +1900,7 @@ function ev.onServerMessage(col, text)
 				chatManager.addMessageToQueue('/t ' .. smsid .. ' СМС попало в спам, попробуй ещё раз написать через 30 сек')
 			end
 		end
+		if col == strings.color.noequest and text:match(strings.noequest) then noequest = true end
 		inicfg.save(srp_ini, settings)
 	end
 end
@@ -1929,163 +1925,163 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 			end
 		end
 		if srp_ini.bools['Ежедневные задания'] then
-			if dialogid == strings.dialog.quest.id and style == strings.dialog.quest.style and title:match(strings.dialog.quest.title) then
-			local date = title:match(strings.dialog.quest.title)
-			local datetime = {}
-			datetime.year, datetime.month, datetime.day, datetime.hour, datetime.min = string.match(date,"(%d%d%d%d)%/(%d%d)%/(%d%d) (%d%d)%:(%d%d)")
-			datetime.hour = tostring(tonumber(datetime.hour) + tonumber(srp_ini.values["Разница часовых поясов"]))
-			srp_ini.quest['Обновление заданий'] = os.time(datetime)
-			srp_ini['Текущие задания'] = {}
-			local list = string.split(text, "\n")
-			for k, v in ipairs(list) do
-				local n, s = v:match(strings.dialog.quest.str)
-				if n ~= nil and n ~= "" then
-					srp_ini['Текущие задания'][u8(n)] = s == u8:decode"[Выполнено]" and true or false
-				end
-			end
-			if isQuest then 
-				sampCloseCurrentDialogWithButton(0) 
-				isQuest = false 
-				if checkedBoost and not checkedQuest and checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
-				checkedQuest = true
-				return false 
-			end
-			end
-			if dialogid == strings.dialog.description.id and style == strings.dialog.description.style and title == strings.dialog.description.title then
-				local name, description
-				local list = string.split(text, "\n")
-				for k, v in ipairs(list) do
-					if v:match(strings.dialog.description.str1) then
-						name = list[k + 1]:match(strings.dialog.description.str3)
-					end
-					if v:match(strings.dialog.description.str2) then
-						description = list[k + 1]:match(strings.dialog.description.str3)
-					end
-				end
-				if name ~= nil and description ~= nil then srp_ini['Описание заданий'][u8(name)] = u8(description) end
-			end
+		if dialogid == strings.dialog.quest.id and style == strings.dialog.quest.style and title:match(strings.dialog.quest.title) then
+		local date = title:match(strings.dialog.quest.title)
+		local datetime = {}
+		datetime.year, datetime.month, datetime.day, datetime.hour, datetime.min = string.match(date,"(%d%d%d%d)%/(%d%d)%/(%d%d) (%d%d)%:(%d%d)")
+		datetime.hour = tostring(tonumber(datetime.hour) + tonumber(srp_ini.values["Разница часовых поясов"]))
+		srp_ini.quest['Обновление заданий'] = os.time(datetime)
+		srp_ini['Текущие задания'] = {}
+		local list = string.split(text, "\n")
+		for k, v in ipairs(list) do
+		local n, s = v:match(strings.dialog.quest.str)
+		if n ~= nil and n ~= "" then
+		srp_ini['Текущие задания'][u8(n)] = s == u8:decode"[Выполнено]" and true or false
+		end
+		end
+		if isQuest then 
+		sampCloseCurrentDialogWithButton(0) 
+		isQuest = false 
+		if checkedBoost and not checkedQuest and checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
+		checkedQuest = true
+		return false 
+		end
+		end
+		if dialogid == strings.dialog.description.id and style == strings.dialog.description.style and title == strings.dialog.description.title then
+		local name, description
+		local list = string.split(text, "\n")
+		for k, v in ipairs(list) do
+		if v:match(strings.dialog.description.str1) then
+		name = list[k + 1]:match(strings.dialog.description.str3)
+		end
+		if v:match(strings.dialog.description.str2) then
+		description = list[k + 1]:match(strings.dialog.description.str3)
+		end
+		end
+		if name ~= nil and description ~= nil then srp_ini['Описание заданий'][u8(name)] = u8(description) end
+		end
 		end
 		if dialogid == strings.dialog.inventory.id and style == strings.dialog.inventory.style and title == strings.dialog.inventory.title then
-			srp_ini['Инвентарь'] = {}
-			for k, v in pairs(srp_ini.inventory) do
-				if text:match(u8:decode(k)) then
-					local amount = tonumber(text:match(u8:decode(k) .. "%s(%d+) %/ %d+"))
-					srp_ini['Инвентарь'][k] = amount ~= nil and amount or 1
-				end
-			end
-			for k, v in pairs(srp_ini.inventory) do if tonumber(srp_ini['Инвентарь'][k]) == nil then srp_ini['Инвентарь'][k] = 0 end end
-			if isInventory then 
-				sampCloseCurrentDialogWithButton(0) 
-				isInventory = false 
-				if checkedBoost and checkedQuest and not checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
-				checkedInventory = true
-				return false 
-			end
+		srp_ini['Инвентарь'] = {}
+		for k, v in pairs(srp_ini.inventory) do
+		if text:match(u8:decode(k)) then
+		local amount = tonumber(text:match(u8:decode(k) .. "%s(%d+) %/ %d+"))
+		srp_ini['Инвентарь'][k] = amount ~= nil and amount or 1
+		end
+		end
+		for k, v in pairs(srp_ini.inventory) do if tonumber(srp_ini['Инвентарь'][k]) == nil then srp_ini['Инвентарь'][k] = 0 end end
+		if isInventory then 
+		sampCloseCurrentDialogWithButton(0) 
+		isInventory = false 
+		if checkedBoost and checkedQuest and not checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
+		checkedInventory = true
+		return false 
+		end
 		end
 		if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) and connected then
-			connected = false
-			if srp_ini.bools['Автологин'] then
-				if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then chatmsg(u8:decode"Автологина не будет, пароль не задан в меню!") return end
-				sampSendDialogResponse(1, 1, 0, srp_ini.values['Пароль'])
-				isLogined = true
-				return false
-			end
+		connected = false
+		if srp_ini.bools['Автологин'] then
+		if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then chatmsg(u8:decode"Автологина не будет, пароль не задан в меню!") return end
+		sampSendDialogResponse(1, 1, 0, srp_ini.values['Пароль'])
+		isLogined = true
+		return false
+		end
 		end
 		if srp_ini.bools['Автоаренда'] then
-			if indexof(dialogid, strings.dialog.autorent.id) and strings.dialog.autorent.style == 0 and title:match(strings.dialog.autorent.title) then
-				local dialid = dialogid
-				local cost = tonumber(text:match(strings.dialog.autorent.str))
-				if cost <= tonumber(srp_ini.values['Автоаренда']) then
-					rent = cost
-					sampSendDialogResponse(dialid, 1, 0, '')
-					return false
-				end
-			end
+		if indexof(dialogid, strings.dialog.autorent.id) and strings.dialog.autorent.style == 0 and title:match(strings.dialog.autorent.title) then
+		local dialid = dialogid
+		local cost = tonumber(text:match(strings.dialog.autorent.str))
+		if cost <= tonumber(srp_ini.values['Автоаренда']) then
+		rent = cost
+		sampSendDialogResponse(dialid, 1, 0, '')
+		return false
+		end
+		end
 		end
 		inicfg.save(srp_ini, settings)
-	end
-end
-
-function ev.onDisplayGameText(style, time, str)
-	if script.loaded then
+		end
+		end
+		
+		function ev.onDisplayGameText(style, time, str)
+		if script.loaded then
 		if srp_ini.bools['Заправка канистрой'] and str == "~r~Fuel has ended" and style == 4 and time == 3000 then -- заправка канистрой
-			chatManager.addMessageToQueue("/fillcar")
+		chatManager.addMessageToQueue("/fillcar")
 		end
-	end
-end
-
-function ev.onCreate3DText(id, color, position, distance, testLOS , attachedPlayerId, attachedVehicleId, text)
-	if script.loaded then
+		end
+		end
+		
+		function ev.onCreate3DText(id, color, position, distance, testLOS , attachedPlayerId, attachedVehicleId, text)
+		if script.loaded then
 		lua_thread.create(function()
-			local cen = tonumber(text:match(strings.gasstation))
-			if cen ~= nil then
-				local ncost = tonumber(srp_ini.values['Заправка на АЗС'])
-				if ncost ~= nil and cen <= ncost then
-					if srp_ini.bools['Покупка канистры'] then chatManager.addMessageToQueue("/get fuel") end
-					if srp_ini.bools['Заправка на АЗС'] then if isCharInAnyCar(PLAYER_PED) and getDriverOfCar(storeCarCharIsInNoSave(PLAYER_PED)) == PLAYER_PED then wait(1300) chatManager.addMessageToQueue("/fill") end end
-				end
-			end
+		local cen = tonumber(text:match(strings.gasstation))
+		if cen ~= nil then
+		local ncost = tonumber(srp_ini.values['Заправка на АЗС'])
+		if ncost ~= nil and cen <= ncost then
+		if srp_ini.bools['Покупка канистры'] then chatManager.addMessageToQueue("/get fuel") end
+		if srp_ini.bools['Заправка на АЗС'] then if isCharInAnyCar(PLAYER_PED) and getDriverOfCar(storeCarCharIsInNoSave(PLAYER_PED)) == PLAYER_PED then wait(1300) chatManager.addMessageToQueue("/fill") end end
+		end
+		end
 		end)
-	end
-end
-
-function ev.onPlayerQuit(id, reason)
-	if script.loaded then
+		end
+		end
+		
+		function ev.onPlayerQuit(id, reason)
+		if script.loaded then
 		if srp_ini.bools['Оповещение о выходе'] and sampGetCharHandleBySampPlayerId(id) then
-			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
-			local reasons = {[0] = u8:decode'рестарт/краш', [1] = u8:decode'/q', [2] = u8:decode'кик'}
-			chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(id) .. u8:decode"[" .. tostring(id) .. u8:decode"] {FFFAFA}вышел с игры. Причина: {FF0000}" .. reasons[reason] .. ".")
+		local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
+		local reasons = {[0] = u8:decode'рестарт/краш', [1] = u8:decode'/q', [2] = u8:decode'кик'}
+		chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(id) .. u8:decode"[" .. tostring(id) .. u8:decode"] {FFFAFA}вышел с игры. Причина: {FF0000}" .. reasons[reason] .. ".")
 		end
-	end
-end
-
-function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
-	if script.loaded then
+		end
+		end
+		
+		function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
+		if script.loaded then
 		if srp_ini.bools['Оповещение о психохиле'] and (message == u8:decode"Употребил психохил" or message == u8:decode"Употребила психохил") then
-			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
-			chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(playerId) .. u8:decode"[" .. playerId .. u8:decode"] {FFFAFA}- употребил психохил")
+		local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
+		chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(playerId) .. u8:decode"[" .. playerId .. u8:decode"] {FFFAFA}- употребил психохил")
 		end
-	end
-end
-
-function ev.onSendTakeDamage(playerId)
-	if playerId ~= 65535 then
+		end
+		end
+		
+		function ev.onSendTakeDamage(playerId)
+		if playerId ~= 65535 then
 		killerid = tonumber(playerId)
-	end
-end
-
-function ev.onSendDeathNotification(reason, id)
-	if tonumber(killerid) ~= nil then
+		end
+		end
+		
+		function ev.onSendDeathNotification(reason, id)
+		if tonumber(killerid) ~= nil then
 		table.insert(CTaskArr[1], 2)
 		table.insert(CTaskArr[2], os.time())
 		table.insert(CTaskArr[3], killerid)
-	end
-end
-
-function ev.onSendPickedUpPickup(id)
-	local x, y, z = getPickupCoordinates(sampGetPickupHandleBySampId(id))
-	local pick = CTaskArr[10][2][x + y + z]
-	if pick ~= nil then
-		if pick ~= 0 then
-			table.insert(CTaskArr[1], 3)
-			table.insert(CTaskArr[2], os.time())
-			table.insert(CTaskArr[3], pick)
-			else
-			local key = indexof(3, CTaskArr[1])
-			if key ~= false then CTaskArr[2][key] = os.time() - 100 end
 		end
-	end
-end
-function ev.onSetPlayerColor(id, color)
-	if rCache.enable and saveid[id] then
+		end
+		
+		function ev.onSendPickedUpPickup(id)
+		local x, y, z = getPickupCoordinates(sampGetPickupHandleBySampId(id))
+		local pick = CTaskArr[10][2][x + y + z]
+		if pick ~= nil then
+		if pick ~= 0 then
+		table.insert(CTaskArr[1], 3)
+		table.insert(CTaskArr[2], os.time())
+		table.insert(CTaskArr[3], pick)
+		else
+		local key = indexof(3, CTaskArr[1])
+		if key ~= false then CTaskArr[2][key] = os.time() - 100 end
+		end
+		end
+		end
+		function ev.onSetPlayerColor(id, color)
+		if rCache.enable and saveid[id] then
 		local r, g, b, a = explode_argb(color)
 		smem[saveid[id]].color = join_argb(230.0, r, g, b)
 		smem[saveid[id]].colorns = join_argb(150.0, r, g, b)
-	end
-end
-
-function ev.onShowTextDraw(id, data)
-	if data.text:find("SQUAD") then
+		end
+		end
+		
+		function ev.onShowTextDraw(id, data)
+		if data.text:find("SQUAD") then
 		rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(data.position.x + 1, data.position.y + 25)
 		rCache.enable = true
 		td = id
@@ -2094,232 +2090,232 @@ function ev.onShowTextDraw(id, data)
 		local list = data.text:split("~n~")
 		table.remove(list, 1)
 		for k, v in ipairs(list) do
-			local id = sampGetPlayerIdByNickname(v)
-			if id then
-				local color = sampGetPlayerColor(id)
-				local a, r, g, b = explode_argb(color)
-				table.insert(smem, {
-					id = id,
-					name = v,
-					color = join_argb(230.0, r, g, b),
-					colorns = join_argb(150.0, r, g, b),
-				})
-				saveid[id] = #smem
-			end
+		local id = sampGetPlayerIdByNickname(v)
+		if id then
+		local color = sampGetPlayerColor(id)
+		local a, r, g, b = explode_argb(color)
+		table.insert(smem, {
+		id = id,
+		name = v,
+		color = join_argb(230.0, r, g, b),
+		colorns = join_argb(150.0, r, g, b),
+		})
+		saveid[id] = #smem
+		end
 		end
 		--data.position.x = 1488
 		--data.position.y = 1488
 		return {id, data}
-	end
-end
-
-function ev.onTextDrawSetString(id, str)
-	if td == nil then
-		if str:find("SQUAD") then
-			local x, y = sampTextdrawGetPos(id)
-			rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x + 1, y + 25)
-			rCache.enable = true
-			td = id
-			--[[if sampTextdrawIsExists(id) then
-				sampTextdrawSetPos(id, 1488, 1488)
-			end]]
 		end
-	end
-	if id == td and str then
+		end
+		
+		function ev.onTextDrawSetString(id, str)
+		if td == nil then
+		if str:find("SQUAD") then
+		local x, y = sampTextdrawGetPos(id)
+		rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x + 1, y + 25)
+		rCache.enable = true
+		td = id
+		--[[if sampTextdrawIsExists(id) then
+		sampTextdrawSetPos(id, 1488, 1488)
+		end]]
+		end
+		end
+		if id == td and str then
 		smem = {}
 		saveid = {}
 		local list = str:split("~n~")
 		table.remove(list, 1)
 		for k, v in ipairs(list) do
-			local id = sampGetPlayerIdByNickname(v)
-			if id then
-				local color = sampGetPlayerColor(id)
-				local a, r, g, b = explode_argb(color)
-				table.insert(smem, {
-					id = id,
-					name = v,
-					color = join_argb(230.0, r, g, b),
-					colorns = join_argb(150.0, r, g, b),
-				})
-				saveid[id] = #smem
-			end
+		local id = sampGetPlayerIdByNickname(v)
+		if id then
+		local color = sampGetPlayerColor(id)
+		local a, r, g, b = explode_argb(color)
+		table.insert(smem, {
+		id = id,
+		name = v,
+		color = join_argb(230.0, r, g, b),
+		colorns = join_argb(150.0, r, g, b),
+		})
+		saveid[id] = #smem
 		end
-	end
-end
-
-function usedrugs(arg)
-	lua_thread.create(function()
+		end
+		end
+		end
+		
+		function usedrugs(arg)
+		lua_thread.create(function()
 		if not isLomka and not needtouse then 
-			if tonumber(arg) == nil then chatManager.addMessageToQueue('/usedrugs') else chatManager.addMessageToQueue('/usedrugs ' .. arg) end
-			else
-			if srp_ini.bools['Ломка без копов'] then 
-				for _, v in ipairs(getAllChars()) do 
-					if v ~= PLAYER_PED then 
-						if copskins[getCharModel(v)] ~= nil and sampGetPlayerIdByCharHandle(v) then 
-							local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
-							local cX, cY, cZ = getCharCoordinates(v) 
-							if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
-								chatmsg(u8:decode"Наркотики не будут употреблены, возле вас стоит коп!") 
-								needtouse = false
-								return 
-							end
-						end
-					end
-				end
-			end
-			chatManager.addMessageToQueue('/usedrugs 1')
-			needtouse = false
+		if tonumber(arg) == nil then chatManager.addMessageToQueue('/usedrugs') else chatManager.addMessageToQueue('/usedrugs ' .. arg) end
+		else
+		if srp_ini.bools['Ломка без копов'] then 
+		for _, v in ipairs(getAllChars()) do 
+		if v ~= PLAYER_PED then 
+		if copskins[getCharModel(v)] ~= nil and sampGetPlayerIdByCharHandle(v) then 
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
+		local cX, cY, cZ = getCharCoordinates(v) 
+		if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
+		chatmsg(u8:decode"Наркотики не будут употреблены, возле вас стоит коп!") 
+		needtouse = false
+		return 
 		end
-	end)
-end
-
-function checkdialogs()
-	chatmsg(u8:decode"Начинаю собирать информацию из диалогов...")
-	if srp_ini.bools['Нарко'] 			   then isBoost 	= true checkedBoost     = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost     = true end -- проверка множителя КД нарко
-	if srp_ini.bools['Ежедневные задания'] then isQuest 	= true checkedQuest     = false chatManager.addMessageToQueue("/equest")    else checkedQuest     = true end -- проверка ежедневных квестов
-	isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") 								 -- проверка предметов инвентаря
-end
-
-function getcars()
-	local chandles = {}
-	local tableIndex = 1
-	local vehicles = getAllVehicles()
-	local fcarhandle = isCharInAnyCar(PLAYER_PED) and storeCarCharIsInNoSave(PLAYER_PED) or 12
-	for k, v in pairs(vehicles) do
+		end
+		end
+		end
+		end
+		chatManager.addMessageToQueue('/usedrugs 1')
+		needtouse = false
+		end
+		end)
+		end
+		
+		function checkdialogs()
+		chatmsg(u8:decode"Начинаю собирать информацию из диалогов...")
+		if srp_ini.bools['Нарко'] 			   then isBoost 	= true checkedBoost     = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost     = true end -- проверка множителя КД нарко
+		if srp_ini.bools['Ежедневные задания'] then isQuest 	= true checkedQuest     = false chatManager.addMessageToQueue("/equest")    else checkedQuest     = true end -- проверка ежедневных квестов
+		isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") 								 -- проверка предметов инвентаря
+		end
+		
+		function getcars()
+		local chandles = {}
+		local tableIndex = 1
+		local vehicles = getAllVehicles()
+		local fcarhandle = isCharInAnyCar(PLAYER_PED) and storeCarCharIsInNoSave(PLAYER_PED) or 12
+		for k, v in pairs(vehicles) do
 		if doesVehicleExist(v) and v ~= fcarhandle then table.insert(chandles, tableIndex, v) tableIndex = tableIndex + 1 end
-	end
-	
-	if table.maxn(chandles) == 0 then return nil else return chandles end
-end
-
-function findsquad()
-	for i = 0, 3000 do
-		if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match(u8:decode"SQUAD") then
-			local x, y = sampTextdrawGetPos(i)
-			rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x == 1488 and x - 1485 or x + 1, y == 1488 and y - 1291 or y + 25)
-			rCache.enable = true
-			td = i
-			smem = {}
-			saveid = {}
-			local list = sampTextdrawGetString(i):split("~n~")
-			table.remove(list, 1)
-			for k, v in ipairs(list) do
-				if v == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then currentNick = v end
-				local id = sampGetPlayerIdByNickname(v)
-				if id then
-					local color = sampGetPlayerColor(id)
-					local a, r, g, b = explode_argb(color)
-					table.insert(smem, {
-						id = id,
-						name = v,
-						color = join_argb(230.0, r, g, b),
-						colorns = join_argb(150.0, r, g, b),
-					})
-					saveid[id] = #smem
-				end
-			end
-			break
 		end
-	end
-end
-
-function ev.onTextDrawHide(id)
-	if id == td then
+		
+		if table.maxn(chandles) == 0 then return nil else return chandles end
+		end
+		
+		function findsquad()
+		for i = 0, 3000 do
+		if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match(u8:decode"SQUAD") then
+		local x, y = sampTextdrawGetPos(i)
+		rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x == 1488 and x - 1485 or x + 1, y == 1488 and y - 1291 or y + 25)
+		rCache.enable = true
+		td = i
+		smem = {}
+		saveid = {}
+		local list = sampTextdrawGetString(i):split("~n~")
+		table.remove(list, 1)
+		for k, v in ipairs(list) do
+		if v == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then currentNick = v end
+		local id = sampGetPlayerIdByNickname(v)
+		if id then
+		local color = sampGetPlayerColor(id)
+		local a, r, g, b = explode_argb(color)
+		table.insert(smem, {
+		id = id,
+		name = v,
+		color = join_argb(230.0, r, g, b),
+		colorns = join_argb(150.0, r, g, b),
+		})
+		saveid[id] = #smem
+		end
+		end
+		break
+		end
+		end
+		end
+		
+		function ev.onTextDrawHide(id)
+		if id == td then
 		rCache.enable = false
 		smem = {}
 		saveid = {}
-	end
-end
-
-function isCarTaxi(vehicleHandle) -- взято из taximate.lua
-	local result, id = sampGetVehicleIdByCarHandle(vehicleHandle)
-	if result then
+		end
+		end
+		
+		function isCarTaxi(vehicleHandle) -- взято из taximate.lua
+		local result, id = sampGetVehicleIdByCarHandle(vehicleHandle)
+		if result then
 		for textId = 0, 2048 do
-			if sampIs3dTextDefined(textId) then
-				local string, _, _, _, _, _, _, _, vehicleId =
-				sampGet3dTextInfoById(textId)
-				if string.find(string, strings.taxi) and vehicleId == id then
-					return true
-				end
-			end
+		if sampIs3dTextDefined(textId) then
+		local string, _, _, _, _, _, _, _, vehicleId =
+		sampGet3dTextInfoById(textId)
+		if string.find(string, strings.taxi) and vehicleId == id then
+		return true
 		end
-	end
-	
-	return false
-end
-
-function sampGetPlayerIdByNickname(name)
-	local name = tostring(name)
-	local _, localId = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	for i = 0, 1000 do
+		end
+		end
+		end
+		
+		return false
+		end
+		
+		function sampGetPlayerIdByNickname(name)
+		local name = tostring(name)
+		local _, localId = sampGetPlayerIdByCharHandle(PLAYER_PED)
+		for i = 0, 1000 do
 		if (sampIsPlayerConnected(i) or localId == i) and sampGetPlayerNickname(i) == name then
-			return i
+		return i
 		end
-	end
-end
-
-function join_argb(a, r, g, b)
-	local argb = b  -- b
-	argb = bit.bor(argb, bit.lshift(g, 8))  -- g
-	argb = bit.bor(argb, bit.lshift(r, 16)) -- r
-	argb = bit.bor(argb, bit.lshift(a, 24)) -- a
-	return argb
-end
-
-function explode_argb(argb)
-	local a = bit.band(bit.rshift(argb, 24), 0xFF)
-	local r = bit.band(bit.rshift(argb, 16), 0xFF)
-	local g = bit.band(bit.rshift(argb, 8), 0xFF)
-	local b = bit.band(argb, 0xFF)
-	return a, r, g, b
-end
-
-function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
-	while true do
+		end
+		end
+		
+		function join_argb(a, r, g, b)
+		local argb = b  -- b
+		argb = bit.bor(argb, bit.lshift(g, 8))  -- g
+		argb = bit.bor(argb, bit.lshift(r, 16)) -- r
+		argb = bit.bor(argb, bit.lshift(a, 24)) -- a
+		return argb
+		end
+		
+		function explode_argb(argb)
+		local a = bit.band(bit.rshift(argb, 24), 0xFF)
+		local r = bit.band(bit.rshift(argb, 16), 0xFF)
+		local g = bit.band(bit.rshift(argb, 8), 0xFF)
+		local b = bit.band(argb, 0xFF)
+		return a, r, g, b
+		end
+		
+		function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
+		while true do
 		wait(0)
 		----------- id 1
 		if isCharOnFoot(PLAYER_PED) then
-			local car = storeClosestEntities(PLAYER_PED)
-			if car ~= -1 and not CTaskArr[10][1] then
-				local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
-				local cX, cY, cZ = getCarCoordinates(car) -- получаем координаты машины
-				local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2)))
-				if (getCarHealth(car) == 300 or (isCarTireBurst(car, 0) or isCarTireBurst(car, 1) or isCarTireBurst(car, 2) or isCarTireBurst(car, 3) or isCarTireBurst(car, 4))) and distance <= 5 then
-					table.insert(CTaskArr[1], 1)
-					table.insert(CTaskArr[2], os.time())
-					table.insert(CTaskArr[3], "")
-					CTaskArr[10][1] = true
-				end
-			end
+		local car = storeClosestEntities(PLAYER_PED)
+		if car ~= -1 and not CTaskArr[10][1] then
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
+		local cX, cY, cZ = getCarCoordinates(car) -- получаем координаты машины
+		local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2)))
+		if (getCarHealth(car) == 300 or (isCarTireBurst(car, 0) or isCarTireBurst(car, 1) or isCarTireBurst(car, 2) or isCarTireBurst(car, 3) or isCarTireBurst(car, 4))) and distance <= 5 then
+		table.insert(CTaskArr[1], 1)
+		table.insert(CTaskArr[2], os.time())
+		table.insert(CTaskArr[3], "")
+		CTaskArr[10][1] = true
+		end
+		end
 		end
 		
 		if CTaskArr[10][1] then -- если отошел от машины то время начала задания смещается на 100 сек. назад для удаления функцией сортировки
-			local bool = false
-			local car = storeClosestEntities(PLAYER_PED)
-			if car == -1 then
-				bool = true
-				else
-				local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
-				local cX, cY, cZ = getCarCoordinates(car) -- получаем координаты машины
-				local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2)))
-				if (getCarHealth(car) > 300 and not isCarTireBurst(car, 0) and not isCarTireBurst(car, 1) and not isCarTireBurst(car, 2) and not isCarTireBurst(car, 3) and not isCarTireBurst(car, 4)) or distance > 5 then
-					local key = indexof(1, CTaskArr[1])
-					if key ~= false then CTaskArr[2][key] = os.time() - 100 end
-				end
-			end
+		local bool = false
+		local car = storeClosestEntities(PLAYER_PED)
+		if car == -1 then
+		bool = true
+		else
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
+		local cX, cY, cZ = getCarCoordinates(car) -- получаем координаты машины
+		local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2)))
+		if (getCarHealth(car) > 300 and not isCarTireBurst(car, 0) and not isCarTireBurst(car, 1) and not isCarTireBurst(car, 2) and not isCarTireBurst(car, 3) and not isCarTireBurst(car, 4)) or distance > 5 then
+		local key = indexof(1, CTaskArr[1])
+		if key ~= false then CTaskArr[2][key] = os.time() - 100 end
+		end
+		end
 		end
 		sortCarr() --### Очистка массива контекстной клавиши, назначение нового контекстного действия
-	end
-end
-
-function ct()
-	lua_thread.create(function()
+		end
+		end
+		
+		function ct()
+		lua_thread.create(function()
 		local key = CTaskArr["CurrentID"]
 		if key == 0 then chatmsg(u8:decode"Событие не найдено") return end
 		if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then
-			sortCarr()
-			wait(300)
-			if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then goto done end
+		sortCarr()
+		wait(300)
+		if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then goto done end
 		end
 		
 		if CTaskArr[1][key] == 1 then chatManager.addMessageToQueue("/repairkit") end
@@ -2335,202 +2331,202 @@ function ct()
 		table.remove(CTaskArr[3], key)
 		CTaskArr["CurrentID"] = 0
 		while isKeyDown(0x5D) do wait(0) end
-	end)
-end
-
-function onfoot()
-	while true do
+		end)
+		end
+		
+		function onfoot()
+		while true do
 		wait(0)
 		if isCharOnFoot(PLAYER_PED) then
-			if needtohold then setGameKeyState(1, (isCharInWater(PLAYER_PED) or isKeyDown(vkeys.VK_RBUTTON)) and -128 or -256) end
+		if needtohold then setGameKeyState(1, (isCharInWater(PLAYER_PED) or isKeyDown(vkeys.VK_RBUTTON)) and -128 or -256) end
 		end
-	end
-end
-
-function setclist()
-	lua_thread.create(function()
+		end
+		end
+		
+		function setclist()
+		lua_thread.create(function()
 		local res, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 		if not res then chatmsg(u8:decode"Не удалось узнать свой ID") return end
 		local myclist = clists.numbers[sampGetPlayerColor(myid)]
 		if myclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
 		if myclist == 0 then
-			if tonumber(srp_ini.values.clist) == 0 then chatmsg(u8:decode"На вас уже нету клиста!") return end
-			chatManager.addMessageToQueue("/clist " .. srp_ini.values.clist .. "")
-			wait(1300)
-			local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
-			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
-			if newmyclist ~= tonumber(srp_ini.values.clist) then chatmsg(u8:decode"Клист не был надет") return end
-			else
-			chatManager.addMessageToQueue("/clist 0")
-			wait(1300)
-			local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
-			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета", 0xFFFF0000) return end
-			if newmyclist ~= 0 then chatmsg(u8:decode"Клист не был снят", 0xFFFF0000) return end
+		if tonumber(srp_ini.values.clist) == 0 then chatmsg(u8:decode"На вас уже нету клиста!") return end
+		chatManager.addMessageToQueue("/clist " .. srp_ini.values.clist .. "")
+		wait(1300)
+		local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
+		if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
+		if newmyclist ~= tonumber(srp_ini.values.clist) then chatmsg(u8:decode"Клист не был надет") return end
+		else
+		chatManager.addMessageToQueue("/clist 0")
+		wait(1300)
+		local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
+		if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета", 0xFFFF0000) return end
+		if newmyclist ~= 0 then chatmsg(u8:decode"Клист не был снят", 0xFFFF0000) return end
 		end
-	end)
-end
-
-function binder(i)
-	if i ~= nil then
+		end)
+		end
+		
+		function binder(i)
+		if i ~= nil then
 		if tonumber(i) ~= nil then
-			if binder_ini.list[i] ~= nil then
-				if decodeJson(binder_ini.list[i]) ~= nil then
-					local b = decodeJson(binder_ini.list[i])
-					if b.msg ~= nil then
-						local empty, kol = 0, 0
-						for k, v in ipairs(b.msg) do
-							kol = kol + 1
-							if v ~= "" then
-								chatManager.addMessageToQueue(insertvars(v, i))
-								else
-								empty = empty + 1
-							end
-						end
-						if empty ~= 0 then chatmsg(u8:decode"В бинде №" .. i .. (empty ~= 0 and u8:decode" обнаружено пустых строк: " .. empty or u8:decode" обнаружена пустая строка")) end
-						if kol   == 0 then chatmsg(u8:decode"В бинде №" .. i .. u8:decode" отсутствуют строки") end
-						return 
-					end
-				end
-			end
+		if binder_ini.list[i] ~= nil then
+		if decodeJson(binder_ini.list[i]) ~= nil then
+		local b = decodeJson(binder_ini.list[i])
+		if b.msg ~= nil then
+		local empty, kol = 0, 0
+		for k, v in ipairs(b.msg) do
+		kol = kol + 1
+		if v ~= "" then
+		chatManager.addMessageToQueue(insertvars(v, i))
+		else
+		empty = empty + 1
 		end
-	end
-end
-
-function insertvars(str, bind)
-	local str = tostring(str)
-	if str:match("@params@") then 
+		end
+		if empty ~= 0 then chatmsg(u8:decode"В бинде №" .. i .. (empty ~= 0 and u8:decode" обнаружено пустых строк: " .. empty or u8:decode" обнаружена пустая строка")) end
+		if kol   == 0 then chatmsg(u8:decode"В бинде №" .. i .. u8:decode" отсутствуют строки") end
+		return 
+		end
+		end
+		end
+		end
+		end
+		end
+		
+		function insertvars(str, bind)
+		local str = tostring(str)
+		if str:match("@params@") then 
 		if bind ~= nil then
-			if tonumber(bind) ~= nil then
-				if binder_ini.list[bind] ~= nil then
-					if argument[bind] ~= nil then
-						str = str:gsub("@params@", u8(tostring(argument[bind])))
-						else
-						chatmsg(u8:decode"Аргумент команды бинда №" .. bind .. u8:decode' не задан!')
-					end
-				end
-			end
+		if tonumber(bind) ~= nil then
+		if binder_ini.list[bind] ~= nil then
+		if argument[bind] ~= nil then
+		str = str:gsub("@params@", u8(tostring(argument[bind])))
+		else
+		chatmsg(u8:decode"Аргумент команды бинда №" .. bind .. u8:decode' не задан!')
 		end
-	end
-	if str:match("@param%d+@") then
+		end
+		end
+		end
+		end
+		if str:match("@param%d+@") then
 		if bind ~= nil then
-			if tonumber(bind) ~= nil then
-				if binder_ini.list[bind] ~= nil then
-					if argument[bind] ~= nil then
-						local params = {}
-						for s in string.gmatch(argument[bind], "[^ ]+") do
-							table.insert(params, s)
-						end
-						for i = 1, #params do
-							local arg = tonumber(str:match("@param(%d+)@"))
-							if arg == i then
-								if tostring(params[i]) ~= nil then
-									str = str:gsub("@param" .. i .. "@", u8(tostring(params[i])))
-								end
-							end
-						end
-					end
-				end
-			end
+		if tonumber(bind) ~= nil then
+		if binder_ini.list[bind] ~= nil then
+		if argument[bind] ~= nil then
+		local params = {}
+		for s in string.gmatch(argument[bind], "[^ ]+") do
+		table.insert(params, s)
 		end
-	end
-	if str:match("@myid@") then str = str:gsub("@myid@", tostring(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))) end
-	if str:match("@mynick@") then str = str:gsub("@mynick@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))) end
-	if str:match("@myrpnick@") then str = str:gsub("@myrpnick@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):gsub("_", " ")) end
-	if str:match("@myname@") then str = str:gsub("@myname@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):match("(.*)%_.*")) end
-	if str:match("@mysurname@") then str = str:gsub("@mysurname@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):match(".*%_(.*)")) end
-	if str:match("@date@") then str = str:gsub("@date@", os.date("%d.%m.%Y")) end
-	if str:match("@hour@") then str = str:gsub("@hour@", os.date("%H")) end
-	if str:match("@min@") then str = str:gsub("@min@", os.date("%M")) end
-	if str:match("@sec@") then str = str:gsub("@sec@", os.date("%S")) end
-	if str:match("@myclist@") then str = str:gsub("@myclist@", tostring(clists.numbers[sampGetPlayerColor(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))])) end
-	if str:match("@mainclist@") then str = str:gsub("@mainclist@", tostring(srp_ini.values.clist)) end
-	return str
-end
-
-function enterhouse()
-	if getActiveInterior() == 0 then 
+		for i = 1, #params do
+		local arg = tonumber(str:match("@param(%d+)@"))
+		if arg == i then
+		if tostring(params[i]) ~= nil then
+		str = str:gsub("@param" .. i .. "@", u8(tostring(params[i])))
+		end
+		end
+		end
+		end
+		end
+		end
+		end
+		end
+		if str:match("@myid@") then str = str:gsub("@myid@", tostring(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))) end
+		if str:match("@mynick@") then str = str:gsub("@mynick@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))) end
+		if str:match("@myrpnick@") then str = str:gsub("@myrpnick@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):gsub("_", " ")) end
+		if str:match("@myname@") then str = str:gsub("@myname@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):match("(.*)%_.*")) end
+		if str:match("@mysurname@") then str = str:gsub("@mysurname@", sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))):match(".*%_(.*)")) end
+		if str:match("@date@") then str = str:gsub("@date@", os.date("%d.%m.%Y")) end
+		if str:match("@hour@") then str = str:gsub("@hour@", os.date("%H")) end
+		if str:match("@min@") then str = str:gsub("@min@", os.date("%M")) end
+		if str:match("@sec@") then str = str:gsub("@sec@", os.date("%S")) end
+		if str:match("@myclist@") then str = str:gsub("@myclist@", tostring(clists.numbers[sampGetPlayerColor(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))])) end
+		if str:match("@mainclist@") then str = str:gsub("@mainclist@", tostring(srp_ini.values.clist)) end
+		return str
+		end
+		
+		function enterhouse()
+		if getActiveInterior() == 0 then 
 		for _, v in pairs(getAllObjects()) do
-			local _, tX, tY, tZ = getObjectCoordinates(v)
-			local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
-			local model = getObjectModel(v)
-			if (model == 1272 or model == 19523) and math.ceil(math.sqrt( ((myX-tX)^2) + ((myY-tY)^2) + ((myZ-tZ)^2))) <= 3 then
-				local carhandles = getcars() -- получаем все машины вокруг
-				if carhandles ~= nil then -- если машина обнаружена
-					for k, v in pairs(carhandles) do -- перебор всех машин в прорисовке
-						if doesVehicleExist(v) then
-							local idcar = getCarModel(v) -- получаем ид модельки
-							local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
-							local cX, cY, cZ = getCarCoordinates(v) -- получаем координаты машины
-							local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) -- расстояние между мной и машиной
-							local cars = {[482] = "Burrito", [498] = "Boxville", [609] = "Boxville"} -- ид фургонов ограбы домов
-							if sampGetDialogCaption():match(u8:decode"Дом занят") then sampCloseCurrentDialogWithButton(0) end
-							if cars[idcar] ~= nil and distance <= 15 and isRobbing then
-								for _, l in pairs(getAllObjects()) do
-									local _, bX, bY, bZ = getObjectCoordinates(l)
-									local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
-									local bmodel = getObjectModel(l)
-									local distance = math.ceil(math.sqrt( ((myX-bX)^2) + ((myY-bY)^2) + ((myZ-bZ)^2))) -- расстояние между мной и объектом
-									if bmodel == 19801 and distance < 1.5 then -- если объект Балаклава и расстояние меньше 1.5 м
-										chatmsg(u8:decode"Пытаюсь вскрыть дом")
-										chatManager.addMessageToQueue("/rhouse")
-										return
-									end
-								end
-								if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil then if tonumber(srp_ini['Инвентарь']['Балаклава']) > 0 then chatManager.addMessageToQueue("/robmask") return else chatmsg(u8:decode'У вас нет балаклавы, если желаете вскрыть дом - /rhouse') return end end
-							end
-						end
-					end
-					chatManager.addMessageToQueue("/enter")
-					return
-				end
-			end
+		local _, tX, tY, tZ = getObjectCoordinates(v)
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
+		local model = getObjectModel(v)
+		if (model == 1272 or model == 19523) and math.ceil(math.sqrt( ((myX-tX)^2) + ((myY-tY)^2) + ((myZ-tZ)^2))) <= 3 then
+		local carhandles = getcars() -- получаем все машины вокруг
+		if carhandles ~= nil then -- если машина обнаружена
+		for k, v in pairs(carhandles) do -- перебор всех машин в прорисовке
+		if doesVehicleExist(v) then
+		local idcar = getCarModel(v) -- получаем ид модельки
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
+		local cX, cY, cZ = getCarCoordinates(v) -- получаем координаты машины
+		local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) -- расстояние между мной и машиной
+		local cars = {[482] = "Burrito", [498] = "Boxville", [609] = "Boxville"} -- ид фургонов ограбы домов
+		if sampGetDialogCaption():match(u8:decode"Дом занят") then sampCloseCurrentDialogWithButton(0) end
+		if cars[idcar] ~= nil and distance <= 15 and isRobbing then
+		for _, l in pairs(getAllObjects()) do
+		local _, bX, bY, bZ = getObjectCoordinates(l)
+		local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
+		local bmodel = getObjectModel(l)
+		local distance = math.ceil(math.sqrt( ((myX-bX)^2) + ((myY-bY)^2) + ((myZ-bZ)^2))) -- расстояние между мной и объектом
+		if bmodel == 19801 and distance < 1.5 then -- если объект Балаклава и расстояние меньше 1.5 м
+		chatmsg(u8:decode"Пытаюсь вскрыть дом")
+		chatManager.addMessageToQueue("/rhouse")
+		return
+		end
+		end
+		if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil then if tonumber(srp_ini['Инвентарь']['Балаклава']) > 0 then chatManager.addMessageToQueue("/robmask") return else chatmsg(u8:decode'У вас нет балаклавы, если желаете вскрыть дом - /rhouse') return end end
+		end
+		end
+		end
+		chatManager.addMessageToQueue("/enter")
+		return
+		end
+		end
 		end
 		chatmsg(u8:decode"Возле вас нету пикапа дома, подойдите ближе к дому")
 		else
 		chatManager.addMessageToQueue("/exit")
-	end
-end
-
-function sortCarr()
-	local arr = {}
-	for k, v in ipairs(CTaskArr[2]) do
+		end
+		end
+		
+		function sortCarr()
+		local arr = {}
+		for k, v in ipairs(CTaskArr[2]) do
 		wait(0)
 		if (os.time() - v >= 20) then
-			if CTaskArr["CurrentID"] == k then CTaskArr["CurrentID"] = 0 end
-			if CTaskArr[1][k] == 1 then CTaskArr[10][1] = false end
-			table.insert(arr, k)
+		if CTaskArr["CurrentID"] == k then CTaskArr["CurrentID"] = 0 end
+		if CTaskArr[1][k] == 1 then CTaskArr[10][1] = false end
+		table.insert(arr, k)
 		end
-	end
-	
-	for k, v in ipairs(arr) do -- удаление устаревших ID
+		end
+		
+		for k, v in ipairs(arr) do -- удаление устаревших ID
 		wait(0)
 		table.remove(CTaskArr[1], v)
 		table.remove(CTaskArr[2], v)
 		table.remove(CTaskArr[3], v)
 		if CTaskArr["CurrentID"] >= v then CTaskArr["CurrentID"] = CTaskArr["CurrentID"] - 1 end
-	end
-	
-	-- выбор нового CurrentID
-	if CTaskArr["CurrentID"] == 0 then
+		end
+		
+		-- выбор нового CurrentID
+		if CTaskArr["CurrentID"] == 0 then
 		local lastrarr = {}
 		for k, v in ipairs(CTaskArr[1]) do
-			wait(0)
-			if v == 1 then CTaskArr["CurrentID"] = k break end
-			if v == 2 and lastrarr[2] == nil then lastrarr[2] = k end
-			if v == 3 and lastrarr[3] == nil then lastrarr[3] = k end
-			if v == 4 and lastrarr[4] == nil then lastrarr[4] = k end
-			if v == 5 and lastrarr[5] == nil then lastrarr[5] = k end
-			if v == 6 and lastrarr[6] == nil then lastrarr[6] = k end
+		wait(0)
+		if v == 1 then CTaskArr["CurrentID"] = k break end
+		if v == 2 and lastrarr[2] == nil then lastrarr[2] = k end
+		if v == 3 and lastrarr[3] == nil then lastrarr[3] = k end
+		if v == 4 and lastrarr[4] == nil then lastrarr[4] = k end
+		if v == 5 and lastrarr[5] == nil then lastrarr[5] = k end
+		if v == 6 and lastrarr[6] == nil then lastrarr[6] = k end
 		end
 		
 		if CTaskArr["CurrentID"] == 0 then for k, v in pairs(lastrarr) do wait(0) CTaskArr["CurrentID"] = v break end end
-	end
-	
-	if CTaskArr["CurrentID"] < 0 or CTaskArr[1][CTaskArr["CurrentID"]] == nil then CTaskArr["CurrentID"] = 0 end
-end
-
-function cmd_setoverlay()
-	if not SetMode then
+		end
+		
+		if CTaskArr["CurrentID"] < 0 or CTaskArr[1][CTaskArr["CurrentID"]] == nil then CTaskArr["CurrentID"] = 0 end
+		end
+		
+		function cmd_setoverlay()
+		if not SetMode then
 		chatManager.addMessageToQueue("/mm")
 		chatmsg(u8:decode"Начата настройка местоположения элементов overlay")
 		chatmsg(u8:decode"Перетащите элементы в нужное место и пропишите /setov - произойдет сохранение координат")
@@ -2564,38 +2560,38 @@ function cmd_setoverlay()
 		srp_ini.overlay['Ограбление домовX'],            srp_ini.overlay['Ограбление домовY']            = soverlay['Ограбление домов'].x,   soverlay['Ограбление домов'].y
 		
 		chatmsg(u8:decode"Местоположения всех элементов успешно задано")
-		srp_ini.bools['Дата и время']       = togglebools['Дата и время'].v       and true or false
-		srp_ini.bools['Ник']           	    = togglebools['Ник'].v			      and true or false
-		srp_ini.bools['Пинг']               = togglebools['Пинг'].v			      and true or false
-		srp_ini.bools['Нарко']              = togglebools['Нарко'].v              and true or false
-		srp_ini.bools['Таймер до МП']       = togglebools['Таймер до МП'].v       and true or false
-		srp_ini.bools['Прорисовка']         = togglebools['Прорисовка'].v         and true or false
-		srp_ini.bools['Статус']             = togglebools['Статус'].v             and true or false
-		srp_ini.bools['Сквад']              = togglebools['Сквад'].v              and true or false
-		srp_ini.bools['Ежедневные задания'] = togglebools['Ежедневные задания'].v and true or false
-		srp_ini.bools['Инвентарь']          = togglebools['Инвентарь'].v          and true or false
-		srp_ini.bools['Ограбление домов']   = togglebools['Ограбление домов'].v   and true or false
+		srp_ini.bools['Дата и время']              = togglebools['Дата и время'].v       and true or false
+		srp_ini.bools['Ник']           	           = togglebools['Ник'].v			      and true or false
+		srp_ini.bools['Пинг']                      = togglebools['Пинг'].v			      and true or false
+		srp_ini.bools['Нарко']                     = togglebools['Нарко'].v              and true or false
+		srp_ini.bools['Таймер до МП']              = togglebools['Таймер до МП'].v       and true or false
+		srp_ini.bools['Прорисовка']                = togglebools['Прорисовка'].v         and true or false
+		srp_ini.bools['Статус']                    = togglebools['Статус'].v             and true or false
+		srp_ini.bools['Сквад']                     = togglebools['Сквад'].v              and true or false
+		srp_ini.bools['Ежедневные задания']        = togglebools['Ежедневные задания'].v and true or false
+		srp_ini.bools['Инвентарь']          	   = togglebools['Инвентарь'].v          and true or false
+		srp_ini.bools['Рендер ограбления домов']   = togglebools['Рендер ограбления домов'].v   and true or false
 		inicfg.save(srp_ini, settings)
 		SetMode, SetModeFirstShow, imgui.ShowCursor, imgui.LockPlayer = false, false, false, false
-	end
-end
-
-function cmd_flood(arg)
-	isFlood = not isFlood
-	if not isFlood then chatmsg(u8:decode"Флуд сообщением завершён") chatManager.initQueue() return end
-	if arg ~= nil and arg ~= "" then
+		end
+		end
+		
+		function cmd_flood(arg)
+		isFlood = not isFlood
+		if not isFlood then chatmsg(u8:decode"Флуд сообщением завершён") chatManager.initQueue() return end
+		if arg ~= nil and arg ~= "" then
 		chatmsg(u8:decode"Начинаю флудить сообщением: " .. arg)
 		lua_thread.create(function()
-			while isFlood do
-				wait(0)
-				chatManager.addMessageToQueue(u8(arg))
-			end
+		while isFlood do
+		wait(0)
+		chatManager.addMessageToQueue(u8(arg))
+		end
 		end)
-	end
-end
-
-function medcall(hospital)
-	lua_thread.create(function()
+		end
+		end
+		
+		function medcall(hospital)
+		lua_thread.create(function()
 		chatManager.addMessageToQueue("/dir")
 		while not sampIsDialogActive() do wait(0) end
 		sampSendDialogResponse(sampGetCurrentDialogId(), 1, 2)
@@ -2606,394 +2602,394 @@ function medcall(hospital)
 		local med = sampGetDialogText()
 		sampCloseCurrentDialogWithButton(0) wait(100) sampCloseCurrentDialogWithButton(0) wait(100) sampCloseCurrentDialogWithButton(0)
 		for v in med:gmatch('[^\n]+') do
-			local n, fname, sname, id, numb, afk = v:match("%[(%d+)%] (%a+)_(%a+)%[(%d+)%]	(%d+)(.*)")
-			if n ~= nil then
-				chatManager.addMessageToQueue("/t " .. id .. " Нужен медик в " .. hospital .. "")
-			end
+		local n, fname, sname, id, numb, afk = v:match("%[(%d+)%] (%a+)_(%a+)%[(%d+)%]	(%d+)(.*)")
+		if n ~= nil then
+		chatManager.addMessageToQueue("/t " .. id .. " Нужен медик в " .. hospital .. "")
 		end
-	end)
-end
-
-function ev.onSendChat(message)
-	chatManager.lastMessage = message
-	chatManager.updateAntifloodClock()
-	if script.loaded then
+		end
+		end)
+		end
+		
+		function ev.onSendChat(message)
+		chatManager.lastMessage = message
+		chatManager.updateAntifloodClock()
+		if script.loaded then
 		if srp_ini.bools['Переменные'] then
-			message = insertvars(message)
-			return {message}
+		message = insertvars(message)
+		return {message}
 		end
-	end
-end
-
-function ev.onSendCommand(message)
-	chatManager.lastMessage = message
-	chatManager.updateAntifloodClock()
-	if script.loaded then
+		end
+		end
+		
+		function ev.onSendCommand(message)
+		chatManager.lastMessage = message
+		chatManager.updateAntifloodClock()
+		if script.loaded then
 		if srp_ini.bools['Переменные'] then
-			message = insertvars(message)
-			return {message}
+		message = insertvars(message)
+		return {message}
 		end
-	end
-end
--------------------------------------------[ChatManager -> взято из donatik.lua]------------------------------------------
-chatManager = {}
-chatManager.messagesQueue = {}
-chatManager.messagesQueueSize = 1000
-chatManager.antifloodClock = os.clock()
-chatManager.lastMessage = ""
-chatManager.antifloodDelay = 0.8
-
-function chatManager.initQueue() -- очистить всю очередь сообщений
-	for messageIndex = 1, chatManager.messagesQueueSize do
-		chatManager.messagesQueue[messageIndex] = {
-			message = "",
-		}
-	end
-end
-
-function chatManager.addMessageToQueue(string, _nonRepeat) -- добавить сообщение в очередь
-	local isRepeat = false
-	local nonRepeat = _nonRepeat or false
-	
-	if nonRepeat then
+		end
+		end
+		-------------------------------------------[ChatManager -> взято из donatik.lua]------------------------------------------
+		chatManager = {}
+		chatManager.messagesQueue = {}
+		chatManager.messagesQueueSize = 1000
+		chatManager.antifloodClock = os.clock()
+		chatManager.lastMessage = ""
+		chatManager.antifloodDelay = 0.8
+		
+		function chatManager.initQueue() -- очистить всю очередь сообщений
 		for messageIndex = 1, chatManager.messagesQueueSize do
-			if string == chatManager.messagesQueue[messageIndex].message then
-				isRepeat = true
-			end
+		chatManager.messagesQueue[messageIndex] = {
+		message = "",
+		}
 		end
-	end
-	
-	if not isRepeat then
+		end
+		
+		function chatManager.addMessageToQueue(string, _nonRepeat) -- добавить сообщение в очередь
+		local isRepeat = false
+		local nonRepeat = _nonRepeat or false
+		
+		if nonRepeat then
+		for messageIndex = 1, chatManager.messagesQueueSize do
+		if string == chatManager.messagesQueue[messageIndex].message then
+		isRepeat = true
+		end
+		end
+		end
+		
+		if not isRepeat then
 		for messageIndex = 1, chatManager.messagesQueueSize - 1 do
-			chatManager.messagesQueue[messageIndex].message = chatManager.messagesQueue[messageIndex + 1].message
+		chatManager.messagesQueue[messageIndex].message = chatManager.messagesQueue[messageIndex + 1].message
 		end
 		chatManager.messagesQueue[chatManager.messagesQueueSize].message = string
-	end
-end
-
-function chatManager.checkMessagesQueueThread() -- проверить поток очереди сообщений
-	while true do
+		end
+		end
+		
+		function chatManager.checkMessagesQueueThread() -- проверить поток очереди сообщений
+		while true do
 		wait(0)
 		for messageIndex = 1, chatManager.messagesQueueSize do
-			local message = chatManager.messagesQueue[messageIndex]
-			if message.message ~= "" then
-				if string.sub(chatManager.lastMessage, 1, 1) ~= "/" and string.sub(message.message, 1, 1) ~= "/" then
-					chatManager.antifloodDelay = chatManager.antifloodDelay + 0.5
-				end
-				if os.clock() - chatManager.antifloodClock > chatManager.antifloodDelay then
-					
-					local sendMessage = true
-					
-					local command = string.match(message.message, "^(/[^ ]*).*")
-					
-					if sendMessage then
-						chatManager.lastMessage = u8:decode(message.message)
-						sampSendChat(u8:decode(message.message))
-					end
-					
-					message.message = ""
-				end
-				chatManager.antifloodDelay = 0.8
-			end
+		local message = chatManager.messagesQueue[messageIndex]
+		if message.message ~= "" then
+		if string.sub(chatManager.lastMessage, 1, 1) ~= "/" and string.sub(message.message, 1, 1) ~= "/" then
+		chatManager.antifloodDelay = chatManager.antifloodDelay + 0.5
 		end
-	end
-end
-
-function chatManager.updateAntifloodClock() -- обновить задержку из-за определённых сообщений
-	chatManager.antifloodClock = os.clock()
-	if string.sub(chatManager.lastMessage, 1, 5) == "/sms " or string.sub(chatManager.lastMessage, 1, 3) == "/t " then
+		if os.clock() - chatManager.antifloodClock > chatManager.antifloodDelay then
+		
+		local sendMessage = true
+		
+		local command = string.match(message.message, "^(/[^ ]*).*")
+		
+		if sendMessage then
+		chatManager.lastMessage = u8:decode(message.message)
+		sampSendChat(u8:decode(message.message))
+		end
+		
+		message.message = ""
+		end
+		chatManager.antifloodDelay = 0.8
+		end
+		end
+		end
+		end
+		
+		function chatManager.updateAntifloodClock() -- обновить задержку из-за определённых сообщений
+		chatManager.antifloodClock = os.clock()
+		if string.sub(chatManager.lastMessage, 1, 5) == "/sms " or string.sub(chatManager.lastMessage, 1, 3) == "/t " then
 		chatManager.antifloodClock = chatManager.antifloodClock + 0.5
-	end
-end
---------------------------------------------------------------------------------------------------------------------------
-function chatmsg(t)
-	sampAddChatMessage(prefix .. t, main_color)
-end
-
-function getcars()
-	local chandles = {}
-	local tableIndex = 1
-	local vehicles = getAllVehicles()
-	local fcarhandle = isCharInAnyCar(PLAYER_PED) and storeCarCharIsInNoSave(PLAYER_PED) or 12
-	for k, v in pairs(vehicles) do
+		end
+		end
+		--------------------------------------------------------------------------------------------------------------------------
+		function chatmsg(t)
+		sampAddChatMessage(prefix .. t, main_color)
+		end
+		
+		function getcars()
+		local chandles = {}
+		local tableIndex = 1
+		local vehicles = getAllVehicles()
+		local fcarhandle = isCharInAnyCar(PLAYER_PED) and storeCarCharIsInNoSave(PLAYER_PED) or 12
+		for k, v in pairs(vehicles) do
 		if doesVehicleExist(v) and v ~= fcarhandle then table.insert(chandles, tableIndex, v) tableIndex = tableIndex + 1 end
-	end
-	
-	if table.maxn (chandles) == 0 then return nil else return chandles end
-end
-
-function getStrByState(keyState)
-	if keyState == 0 then
+		end
+		
+		if table.maxn (chandles) == 0 then return nil else return chandles end
+		end
+		
+		function getStrByState(keyState)
+		if keyState == 0 then
 		return "{ff8533}OFF{ffffff}"
-	end
-	return "{85cf17}ON{ffffff}"
-end
-
-function indexof(var, arr)
-	for k, v in ipairs(arr) do if v == var then return k end end return false
-end
-
-function string.split(str, delim, plain) -- bh FYP
-	local tokens, pos, plain = {}, 1, not (plain == false) --[[ delimiter is plain text by default ]]
-	repeat
+		end
+		return "{85cf17}ON{ffffff}"
+		end
+		
+		function indexof(var, arr)
+		for k, v in ipairs(arr) do if v == var then return k end end return false
+		end
+		
+		function string.split(str, delim, plain) -- bh FYP
+		local tokens, pos, plain = {}, 1, not (plain == false) --[[ delimiter is plain text by default ]]
+		repeat
 		local npos, epos = string.find(str, delim, pos, plain)
 		table.insert(tokens, string.sub(str, pos, npos and npos - 1))
 		pos = epos and epos + 1
-	until not pos
-	return tokens
-end
-
-function makeHotKey(numkey)
-	local rett = {}
-	for _, v in ipairs(string.split(srp_ini.hotkey[numkey], ", ")) do
+		until not pos
+		return tokens
+		end
+		
+		function makeHotKey(numkey)
+		local rett = {}
+		for _, v in ipairs(string.split(srp_ini.hotkey[numkey], ", ")) do
 		if tonumber(v) ~= 0 then table.insert(rett, tonumber(v)) end
-	end
-	return rett
-end
-
-function makebinderHotKey(k)
-	local rett = {}
-	if binder_ini.list[k] ~= nil then
+		end
+		return rett
+		end
+		
+		function makebinderHotKey(k)
+		local rett = {}
+		if binder_ini.list[k] ~= nil then
 		if decodeJson(binder_ini.list[k]) ~= nil then
-			local b = decodeJson(binder_ini.list[k])
-			if b ~= nil then
-				if b.hotkey ~= nil then
-					for _, v in ipairs(string.split(b.hotkey, ", ")) do
-						if tonumber(v) ~= 0 then table.insert(rett, tonumber(v)) end
-					end
-					return rett
-				end
-			end
+		local b = decodeJson(binder_ini.list[k])
+		if b ~= nil then
+		if b.hotkey ~= nil then
+		for _, v in ipairs(string.split(b.hotkey, ", ")) do
+		if tonumber(v) ~= 0 then table.insert(rett, tonumber(v)) end
 		end
-	end
-end
-
-function imgui.Hotkey(name, numkey, width)
-	imgui.BeginChild(name, imgui.ImVec2(width, 32), true)
-	imgui.PushItemWidth(width)
-	
-	local hstr = ""
-	for _, v in ipairs(string.split(srp_ini.hotkey[numkey], ", ")) do
+		return rett
+		end
+		end
+		end
+		end
+		end
+		
+		function imgui.Hotkey(name, numkey, width)
+		imgui.BeginChild(name, imgui.ImVec2(width, 32), true)
+		imgui.PushItemWidth(width)
+		
+		local hstr = ""
+		for _, v in ipairs(string.split(srp_ini.hotkey[numkey], ", ")) do
 		if v ~= "0" then
-			hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. ""
+		hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. ""
 		end
-	end
-	hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
-	
-	imgui.Text(hstr)
-	imgui.PopItemWidth()
-	imgui.EndChild()
-	if imgui.IsItemClicked() then
+		end
+		hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
+		
+		imgui.Text(hstr)
+		imgui.PopItemWidth()
+		imgui.EndChild()
+		if imgui.IsItemClicked() then
 		lua_thread.create(
-			function()
-				local curkeys = ""
-				local tbool = false
-				while true do
-					wait(0)
-					if not tbool then
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
-								if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
-									if not curkeys:find(sv) then
-										curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									end
-								end
-							end
-						end
-						
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									tbool = true
-								end
-							end
-						end
-						else
-						tbool2 = false
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								tbool2 = true
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-								end
-							end
-						end
-						
-						if not tbool2 then break end
-					end
-				end
-				
-				local keys = ""
-				if tonumber(curkeys) == vkeys.VK_BACK then
-					srp_ini.hotkey[numkey] = "0"
-					else
-					local tNames = string.split(curkeys, " ")
-					for _, v in ipairs(tNames) do
-						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
-					end
-				end
-				
-				srp_ini.hotkey[numkey] = keys
-				inicfg.save(srp_ini, settings)
-			end
+		function()
+		local curkeys = ""
+		local tbool = false
+		while true do
+		wait(0)
+		if not tbool then
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
+		if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		end
+		end
+		end
+		end
+		
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		tbool = true
+		end
+		end
+		end
+		else
+		tbool2 = false
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+		tbool2 = true
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		end
+		end
+		end
+		
+		if not tbool2 then break end
+		end
+		end
+		
+		local keys = ""
+		if tonumber(curkeys) == vkeys.VK_BACK then
+		srp_ini.hotkey[numkey] = "0"
+		else
+		local tNames = string.split(curkeys, " ")
+		for _, v in ipairs(tNames) do
+		local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
+		keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+		end
+		end
+		
+		srp_ini.hotkey[numkey] = keys
+		inicfg.save(srp_ini, settings)
+		end
 		)
-	end
-end
-
-function imgui.binderHotkey(name, numkey, width)
-	local hstr = ""
-	for _, v in ipairs(string.split(decodeJson(binder_ini.list[numkey]).hotkey, ", ")) do
+		end
+		end
+		
+		function imgui.binderHotkey(name, numkey, width)
+		local hstr = ""
+		for _, v in ipairs(string.split(decodeJson(binder_ini.list[numkey]).hotkey, ", ")) do
 		if v ~= "0" then
-			hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. ""
+		hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. ""
 		end
-	end
-	hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
-	imgui.Button(hstr, imgui.ImVec2(90.0, width))
-	if imgui.IsItemClicked() then
+		end
+		hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
+		imgui.Button(hstr, imgui.ImVec2(90.0, width))
+		if imgui.IsItemClicked() then
 		lua_thread.create(
-			function()
-				local curkeys = ""
-				local tbool = false
-				while true do
-					wait(0)
-					if not tbool then
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
-								if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
-									if not curkeys:find(sv) then
-										curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									end
-								end
-							end
-						end
-						
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									tbool = true
-								end
-							end
-						end
-						else
-						tbool2 = false
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								tbool2 = true
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-								end
-							end
-						end
-						
-						if not tbool2 then break end
-					end
-				end
-				
-				local keys = ""
-				if tonumber(curkeys) == vkeys.VK_BACK then
-					decodeJson(binder_ini.list[numkey]).hotkey = "0"
-					else
-					local tNames = string.split(curkeys, " ")
-					for _, v in ipairs(tNames) do
-						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
-					end
-				end
-				local b = decodeJson(binder_ini.list[numkey])
-				b.hotkey = tostring(keys)
-				binder_ini.list[numkey] = encodeJson(b)
-				inicfg.save(binder_ini, binds)
-			end
+		function()
+		local curkeys = ""
+		local tbool = false
+		while true do
+		wait(0)
+		if not tbool then
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
+		if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		end
+		end
+		end
+		end
+		
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		tbool = true
+		end
+		end
+		end
+		else
+		tbool2 = false
+		for k, v in pairs(vkeys) do
+		sv = tostring(v)
+		if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+		tbool2 = true
+		if not curkeys:find(sv) then
+		curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+		end
+		end
+		end
+		
+		if not tbool2 then break end
+		end
+		end
+		
+		local keys = ""
+		if tonumber(curkeys) == vkeys.VK_BACK then
+		decodeJson(binder_ini.list[numkey]).hotkey = "0"
+		else
+		local tNames = string.split(curkeys, " ")
+		for _, v in ipairs(tNames) do
+		local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
+		keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+		end
+		end
+		local b = decodeJson(binder_ini.list[numkey])
+		b.hotkey = tostring(keys)
+		binder_ini.list[numkey] = encodeJson(b)
+		inicfg.save(binder_ini, binds)
+		end
 		)
-	end
-end
-
-function checkUpdates() -- проверка обновлений
-	local fpath = os.tmpname()
-	if doesFileExist(fpath) then os.remove(fpath) end
-	downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
+		end
+		end
+		
+		function checkUpdates() -- проверка обновлений
+		local fpath = os.tmpname()
+		if doesFileExist(fpath) then os.remove(fpath) end
+		downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
 		if status == 58 then
-			if doesFileExist(fpath) then
-				local file = io.open(fpath, 'r')
-				if file then
-					local info = decodeJson(file:read('*a'))
-					file:close()
-					os.remove(fpath)
-					script.v.num = info.version_num
-					script.v.date = info.version_date
-					script.url = info.version_url
-					script.quest = info.version_quest
-					script.upd.changes = info.version_upd
-					if script.quest then
-						for k, v in pairs(script.quest) do
-							srp_ini['Описание заданий'][k] = v
-						end
-						inicfg.save(srp_ini, settings)
-					end
-					if script.upd.changes then
-						for k in pairs(script.upd.changes) do
-							table.insert(script.upd.sort, k)
-						end
-						table.sort(script.upd.sort, function(a, b) return a > b end)
-					end
-					script.checked = true
-					if info['version_num'] > thisScript()['version_num'] then
-						script.available = true
-						if script.update then updateScript() return end
-						chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления")
-						return true
-						else
-						if script.update then chatmsg(u8:decode"Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. u8:decode" за " .. script.v.date) script.update = false return end
-					end
-					else
-					chatmsg(u8:decode"Не удалось получить информацию про обновления(")
-					thisScript():unload()
-				end
-				else
-				chatmsg(u8:decode"Не удалось получить информацию про обновления(")
-				thisScript():unload()
-			end
+		if doesFileExist(fpath) then
+		local file = io.open(fpath, 'r')
+		if file then
+		local info = decodeJson(file:read('*a'))
+		file:close()
+		os.remove(fpath)
+		script.v.num = info.version_num
+		script.v.date = info.version_date
+		script.url = info.version_url
+		script.quest = info.version_quest
+		script.upd.changes = info.version_upd
+		if script.quest then
+		for k, v in pairs(script.quest) do
+		srp_ini['Описание заданий'][k] = v
 		end
-	end)
-end
-
-function updateScript()
-	script.update = true
-	if script.available then
+		inicfg.save(srp_ini, settings)
+		end
+		if script.upd.changes then
+		for k in pairs(script.upd.changes) do
+		table.insert(script.upd.sort, k)
+		end
+		table.sort(script.upd.sort, function(a, b) return a > b end)
+		end
+		script.checked = true
+		if info['version_num'] > thisScript()['version_num'] then
+		script.available = true
+		if script.update then updateScript() return end
+		chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления")
+		return true
+		else
+		if script.update then chatmsg(u8:decode"Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. u8:decode" за " .. script.v.date) script.update = false return end
+		end
+		else
+		chatmsg(u8:decode"Не удалось получить информацию про обновления(")
+		thisScript():unload()
+		end
+		else
+		chatmsg(u8:decode"Не удалось получить информацию про обновления(")
+		thisScript():unload()
+		end
+		end
+		end)
+		end
+		
+		function updateScript()
+		script.update = true
+		if script.available then
 		downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
-			if status == 6 then
-				chatmsg(updatingprefix .. u8:decode"Скрипт был обновлён!")
-				if script.find("ML-AutoReboot") == nil then
-					thisScript():reload()
-				end
-			end
+		if status == 6 then
+		chatmsg(updatingprefix .. u8:decode"Скрипт был обновлён!")
+		if script.find("ML-AutoReboot") == nil then
+		thisScript():reload()
+		end
+		end
 		end)
 		else
 		checkUpdates()
-	end
-end
-
-function onScriptTerminate(s, bool)
-	if s == thisScript() and not bool then
-		if not script.reload then
-			if not script.update then
-				if not script.unload then
-					chatmsg(u8:decode"Скрипт крашнулся: откройте консоль sampfuncs (кнопка ~), скопируйте текст ошибки и отправьте разработчику")
-				end
-				else
-				chatmsg(updatingprefix .. u8:decode"Старый скрипт был выгружен, загружаю обновлённую версию...")
-			end
-			else
-			chatmsg(u8:decode"Перезагружаюсь...")
 		end
-	end
-end																																																																																																																																																			
+		end
+		
+		function onScriptTerminate(s, bool)
+		if s == thisScript() and not bool then
+		if not script.reload then
+		if not script.update then
+		if not script.unload then
+		chatmsg(u8:decode"Скрипт крашнулся: откройте консоль sampfuncs (кнопка ~), скопируйте текст ошибки и отправьте разработчику")
+		end
+		else
+		chatmsg(updatingprefix .. u8:decode"Старый скрипт был выгружен, загружаю обновлённую версию...")
+		end
+		else
+		chatmsg(u8:decode"Перезагружаюсь...")
+		end
+		end
+		end																																																																																																																																																							
