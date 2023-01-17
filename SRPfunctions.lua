@@ -1,6 +1,6 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
-script_version("16.01.2023")
+script_version("17.01.2023")
 script_version_number(13)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]--------------------------------------------------------------------------------------
