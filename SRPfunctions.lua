@@ -19,118 +19,118 @@ local AdressConfig, AdressFolder, settings, srp_ini, binds, binder_ini, server
 
 local config = {
 	bools = {
-		['Починка у механика']      = false,
-		['Заправка у механика']     = false,
-		['Заправка на АЗС'] 	    = false,
-		['Покупка канистры'] 	    = false,
-		['Заправка канистрой'] 	    = false,
-		['Цвет ника в профе'] 	    = false,
-		['Оповещение о выходе']     = false,
-		['Оповещение о психохиле']  = false,
-		['Автологин']               = false,
-		['Автоаренда']  		    = false,
-		['Ограбление домов']	    = false,
-		['Ломка']	                = false,
-		['Ломка без копов']	        = false,
-		['Дата и время']            = false,
-		['Ник']           		    = false,
-		['Пинг']           		    = false,
-		['Нарко']         		    = false,
-		['Таймер до МП']            = false,
-		['Прорисовка']              = false,
-		['Статус']           	    = false,
-		['Сквад']           	    = false,
-		['ХП транспорта']           = false,
-		['Информация под чатом']    = false,
-		['Ежедневные задания']      = false,
-		['Инвентарь']               = false,
+		['Починка у механика'] = false,
+		['Заправка у механика'] = false,
+		['Заправка на АЗС'] = false,
+		['Покупка канистры'] = false,
+		['Заправка канистрой'] = false,
+		['Цвет ника в профе'] = false,
+		['Оповещение о выходе'] = false,
+		['Оповещение о психохиле'] = false,
+		['Автологин'] = false,
+		['Автоаренда'] = false,
+		['Ограбление домов'] = false,
+		['Ломка'] = false,
+		['Ломка без копов'] = false,
+		['Дата и время'] = false,
+		['Ник'] = false,
+		['Пинг'] = false,
+		['Нарко'] = false,
+		['Таймер до МП'] = false,
+		['Прорисовка'] = false,
+		['Статус'] = false,
+		['Сквад'] = false,
+		['ХП транспорта'] = false,
+		['Информация под чатом'] = false,
+		['Ежедневные задания'] = false,
+		['Инвентарь'] = false,
 		['Рендер ограбления домов'] = false,
-		['Переменные'] 				= false,
-		['Спам'] 					= false
+		['Переменные'] = false,
+		['Спам'] = false
 	},
 	hotkey = {
-		['Контекстная клавиша']     = "0",
-		['Нарко']                   = "0",
-		['Сменить клист']           = "0",
-		['Войти в дом']				= "0",
-		['Lock']					= "0",
-		['Автобег']					= "0",
-		['Быстрое меню биндера']	= "0"
+		['Контекстная клавиша'] = "0",
+		['Нарко'] = "0",
+		['Сменить клист'] = "0",
+		['Войти в дом']	= "0",
+		['Lock'] = "0",
+		['Автобег']	= "0",
+		['Быстрое меню биндера'] = "0"
 	},
 	overlay = {
-		['Дата и времяX']       = 846,
-		['Дата и времяY']       = 215,
-		['НикX']                = 823,
-		['НикY']                = 249,
-		['ПингX']               = 892,
-		['ПингY']               = 312,
-		['НаркоX']              = 901,
-		['НаркоY']              = 284,
-		['Таймер до МПX']       = 803,
-		['Таймер до МПY']       = 647,
-		['ПрорисовкаX']         = 786,
-		['ПрорисовкаY']         = 340,
-		['СтатусX']             = 775,
-		['СтатусY']             = 366,
-		['СквадX']              = 515,
-		['СквадY']              = 338,
+		['Дата и времяX'] = 846,
+		['Дата и времяY'] = 215,
+		['НикX'] = 823,
+		['НикY'] = 249,
+		['ПингX'] = 892,
+		['ПингY'] = 312,
+		['НаркоX'] = 901,
+		['НаркоY'] = 284,
+		['Таймер до МПX'] = 803,
+		['Таймер до МПY'] = 647,
+		['ПрорисовкаX'] = 786,
+		['ПрорисовкаY'] = 340,
+		['СтатусX'] = 775,
+		['СтатусY'] = 366,
+		['СквадX'] = 515,
+		['СквадY'] = 338,
 		['Ежедневные заданияX'] = 803,
 		['Ежедневные заданияY'] = 407,
-		['ИнвентарьX']          = 789,
-		['ИнвентарьY']    	   	= 755,
-		['Ограбление домовX']   = 799,
-		['Ограбление домовY']   = 544,
+		['ИнвентарьX'] = 789,
+		['ИнвентарьY'] = 755,
+		['Ограбление домовX'] = 799,
+		['Ограбление домовY'] = 544,
 	},
 	values = {
-		['Заправка у механика']     = 1500,
-		['Заправка на АЗС']         = 5000,
-		['Нарко']                   = 0,
-		['clist']                   = 12,
-		['Пароль']                  = '',        -- ДЛЯ АВТОЛОГИНА, ЭТО НЕ СТИЛЛЕР БЛЕАТЬ!!!
-		['Автоаренда']              = 5000,
-		['Разница часовых поясов']  = 0,
-        ['Ограбление домов']	    = 0,
-		['Автоугон']	  		    = 0
+		['Заправка у механика'] = 1500,
+		['Заправка на АЗС'] = 5000,
+		['Нарко'] = 0,
+		['clist'] = 12,
+		['Пароль'] = '',        -- ДЛЯ АВТОЛОГИНА, ЭТО НЕ СТИЛЛЕР БЛЕАТЬ!!!
+		['Автоаренда'] = 5000,
+		['Разница часовых поясов'] = 0,
+        ['Ограбление домов'] = 0,
+		['Автоугон'] = 0
 	},
 	ivent = {
-		['Гонка ЛС']                = false,
-		['Дерби СФ']                = false,
-		['Игра Кальмара']           = false,
-		['Пейнтбол']                = false
+		['Гонка ЛС'] = false,
+		['Дерби СФ'] = false,
+		['Игра Кальмара'] = false,
+		['Пейнтбол'] = false
 	},
 	quest = {
-		['Обновление заданий']      = 0
+		['Обновление заданий'] = 0
 	},
-	['Описание заданий']            = {},
-	['Текущие задания']             = {},
+	['Описание заданий'] = {},
+	['Текущие задания'] = {},
 	inventory = {
-		['Наркотики']               = false,
-		['Материалы']               = false,
-		['Телефонная книга']        = false,
-		['MP3']              		= false,
-		['Ключи от камеры']         = false,
-		['Канистра с бензином']     = false,
-		['Водительские права']      = false,
-		['Лицензия на вертолеты']   = false,
-		['Лицензия на самолеты']    = false,
-		['Лицензия на лодки']       = false,
+		['Наркотики'] = false,
+		['Материалы'] = false,
+		['Телефонная книга'] = false,
+		['MP3'] = false,
+		['Ключи от камеры'] = false,
+		['Канистра с бензином'] = false,
+		['Водительские права'] = false,
+		['Лицензия на вертолеты'] = false,
+		['Лицензия на самолеты'] = false,
+		['Лицензия на лодки'] = false,
 		['Лицензия на рыболовство'] = false,
-		['Лицензия на оружие']      = false,
-		['Сырая рыба']              = false,
-		['Готовая рыба']            = false,
-		['Грибы']                   = false,
-		['Комплект «автомеханик»']  = false,
-		['Психохил']                = false,
-		['Готовые грибы']           = false,
-		['Сигареты']                = false,
-		['Адреналин']               = false,
-		['Защита от насильников']   = false,
-		['Балаклава']               = false,
-		['Лом']                     = false,
-		['Энергетик']               = false,
-		['Набор для взлома']        = false
+		['Лицензия на оружие'] = false,
+		['Сырая рыба'] = false,
+		['Готовая рыба'] = false,
+		['Грибы'] = false,
+		['Комплект «автомеханик»'] = false,
+		['Психохил'] = false,
+		['Готовые грибы'] = false,
+		['Сигареты'] = false,
+		['Адреналин'] = false,
+		['Защита от насильников'] = false,
+		['Балаклава'] = false,
+		['Лом'] = false,
+		['Энергетик'] = false,
+		['Набор для взлома'] = false
 	},
-	['Инвентарь']            		= {}
+	['Инвентарь'] = {}
 }
 local bindertable = {
 	list = {}
@@ -182,58 +182,57 @@ local updatingprefix = u8:decode"{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}"
 local antiflood = 0
 
 local menu = { -- imgui-меню
-	main        = imgui.ImBool(false), 
-	automatic   = imgui.ImBool(true), 
-	commands    = imgui.ImBool(false), 
-	binds       = imgui.ImBool(false), 
-	overlay     = imgui.ImBool(false), 
-	password    = imgui.ImBool(false), 
-	inventory   = imgui.ImBool(false), 
-	binder      = imgui.ImBool(false),
+	main = imgui.ImBool(false), 
+	automatic = imgui.ImBool(true), 
+	commands = imgui.ImBool(false), 
+	binds = imgui.ImBool(false), 
+	overlay = imgui.ImBool(false), 
+	password = imgui.ImBool(false), 
+	inventory = imgui.ImBool(false), 
+	binder = imgui.ImBool(false),
 	information = imgui.ImBool(false),
-	editor      = imgui.ImBool(false),
-	fastbinder  = imgui.ImBool(false),
-	variables   = imgui.ImBool(false)
+	editor = imgui.ImBool(false),
+	fastbinder = imgui.ImBool(false),
+	variables = imgui.ImBool(false)
 }
 local overlay = {
-	['Дата и время']           = imgui.ImBool(true),
-	['Ник']           		   = imgui.ImBool(true),
-	['Пинг']           		   = imgui.ImBool(true),
-	['Нарко']         		   = imgui.ImBool(true),
-	['Таймер до МП']           = imgui.ImBool(true),
-	['Прорисовка']             = imgui.ImBool(true),
-	['Статус']           	   = imgui.ImBool(true),
-	['Сквад']           	   = imgui.ImBool(true),
-	['Информация под чатом']   = imgui.ImBool(true),
-	['Ежедневные задания']     = imgui.ImBool(true),
-	['Инвентарь']     		   = imgui.ImBool(true),
-    ['Ограбление домов']	   = imgui.ImBool(true)
+	['Дата и время'] = imgui.ImBool(true),
+	['Ник'] = imgui.ImBool(true),
+	['Нарко'] = imgui.ImBool(true),
+	['Таймер до МП'] = imgui.ImBool(true),
+	['Прорисовка'] = imgui.ImBool(true),
+	['Статус'] = imgui.ImBool(true),
+	['Сквад'] = imgui.ImBool(true),
+	['Информация под чатом'] = imgui.ImBool(true),
+	['Ежедневные задания'] = imgui.ImBool(true),
+	['Инвентарь'] = imgui.ImBool(true),
+    ['Ограбление домов'] = imgui.ImBool(true)
 }
-imgui.ShowCursor       = false
+imgui.ShowCursor = false
 
 local style = imgui.GetStyle()
 local colors = style.Colors
 local clr = imgui.Col
 local SetModeCond = 4
-local SetMode          = false
+local SetMode = false
 local SetModeFirstShow = false
 local soverlay = {}
 local drugtimer = 60
-local isBoost          = false
-local checkedBoost     = false
-local isQuest          = false
-local checkedQuest     = false
-local noequest         = false
-local isInventory      = false
+local isBoost = false
+local checkedBoost = false
+local isQuest = false
+local checkedQuest = false
+local noequest = false
+local isInventory = false
 local checkedInventory = false
-local isFlood          = false
-local connected        = false
-local needtoreload     = false
-local isLogined        = false
-local isRobbing        = false
-local isLomka          = false
-local needtouse        = false
-local needtohold       = false
+local isFlood = false
+local connected = false
+local needtoreload = false
+local isLogined = false
+local isRobbing = false
+local isLomka = false
+local needtouse = false
+local needtohold = false
 local rent
 local killerid
 local taxipassenger
@@ -284,7 +283,7 @@ local CTaskArr = {
 			[1607.375 + 1815.125 + 10.75] = "Las Venturas Hospital",
 			[1228.625 + 311.875 + 19.75] = "Crippen Memorial Hospital",
 			[1241.375 + 325.875 + 19.75] = "Crippen Memorial Hospital",
-			[2034.125 + -1401.625 + 17.25] = "Country General Hospital",
+			[2034.125 + -1401.625 + 17.25] = "County General Hospital",
 			[1172 + -1323.375 + 15.375] = "All Saints General Hospital",
 			[-2655.125 + 640.125 + 14.375] = "San Fierro Medical Center",
 			[261.875 + 4 + 1500.875] = 0, -- exit
@@ -296,135 +295,203 @@ local ImVec4 = imgui.ImVec4
 local imfonts = {mainFont = nil, font = nil, ovFont = nil, ovFontSquad = nil, ovFontCars = nil, ovFontSquadRender = nil}
 
 local strings = {
-	acceptrepair       = u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
-	acceptrefill       = u8:decode"^ Механик .* хочет заправить ваш автомобиль за (%d+) вирт%{FFFFFF%} %(%( Нажмите Y%/N для принятия%/отмены %)%)",
-	gasstation         = u8:decode"Цена за 200л%: %$(%d+)",
-	jfchat             = u8:decode"^ (.*)%[(%d+)]%<(.*)%>%: (.*)",
-	boost              = u8:decode"^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
-	noboost            = u8:decode"^ Бонусы отключены",
-	narko              = u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
-	painttime          = u8:decode"^ Внимание%! Начало пейнтбола через (%d) минуты?%. Место проведения%: военный завод K%.A%.C%.C%.",
-	squidtime          = u8:decode"^ Внимание%! Начало %'Игра в Кальмара%' через (%d) минуты?%! Место проведения%: Арена LS %(%( %/gps %[Важное%] %>%> %[Игра в Кальмара%] %)%)",
-	derbytime          = u8:decode"^ Внимание%! Начало гонок дерби через (%d) минуты?%. Стадион Сан Фиерро%. Регистрация на первом этаже",
-	racetime           = u8:decode"^ Внимание%! Начало гонок через (%d) минуты?%. Трасса%: Аэропорт Лос Сантос%. Регистрация у въезда",
-	paintfalse1        = u8:decode"^ Внимание%! Пейнтбол начался",
-	paintfalse2        = u8:decode"^ Внимание%! Пейнтбол был прерван из-за отсутствия участников",
-	squidfalse1        = u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за недостаточного количества участников%!",
-	squidfalse2        = u8:decode"^ Внимание%! %'Игра в Кальмара%' началась%!",
-	squidfalse3        = u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за проигрыша всех участников%! %(%( Список%: %/klmlist %)%)",
-	derbyfalse1        = u8:decode"^ Внимание%! Гонки дерби начались%. Стадион Сан Фиерро",
-	derbyfalse2        = u8:decode"^ Внимание%! Гонки дерби были прерваны из%-за отсутствия участников",
-	derbyfalse3        = u8:decode"^ Внимание%! Гонки дерби окончены%. %(%( Список победителей%: %/derbylist %)%)",
-	racefalse1         = u8:decode"^ Внимание%! Гонки были прерваны из%-за отсутствия участников",
-	racefalse2         = u8:decode"^ Внимание%! Гонки начались%. Трасса%: Аэропорт Лос Сантос",
-	racefalse3         = u8:decode"^ Внимание%! Гонки окончены%. %(%( Список победителей%: %/racelist %)%)",
-	repair1            = u8:decode"^ Двигатель отремонтирован%. У вас осталось (%d+)%/%d+ комплектов %«автомеханик%»",
-	repair2            = u8:decode"^ У вас нет комплекта %«автомеханик%» для ремонта",
-	repair3            = u8:decode"^ В транспортном средстве нельзя",
-	repair4            = u8:decode"^ Вы далеко от транспортного средства%. Подойдите к капоту",
-	connected          = u8:decode"^ Для восстановления доступа нажмите клавишу %'F6%' и введите %'%/restoreAccess%'",
-	changequest        = u8:decode"^ %[Quest%] %{FFFFFF%}Вы заменили задание %{6AB1FF%}(.*) %{FFFFFF%}на %{6AB1FF%}(.*)",
-	donequest          = u8:decode"^ %[Quest%] %{FFFFFF%}Выполнено задание %{6AB1FF%}\"(.*)\"",
-	newpassenger       = u8:decode"^ Пассажир (.*) сел в ваше Такси%. Довезите его и государство заплатит вам",
-	outpassenger1      = u8:decode"^ Пассажир вышел из такси. Деньги будут зачислены во время зарплаты$",
-	outpassenger2      = u8:decode"^ Пассажир вышел из такси. Использован купон на бесплатный проезд$",
-	sms                = u8:decode"^ SMS%: (.*)%. Отправитель%: (.*)%[(%d+)%]$",
-	normalchat         = u8:decode"^%- (.*)%[(%d+)%]%: (.*)",
-	taxi               = u8:decode"%<%< Бесплатное такси %>%>",
-	rent               = u8:decode"^ Вы арендовали транспортное средство$",
-	safe               = u8:decode"^ Вы [пв][оз][ля][ол][жи][и]?[л]?[и]?.?[в]?[и]?[з]? сейфа? .*",
-	minusbalaklava     = u8:decode"^ Вы надели балаклаву$",
-	minuslom     	   = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
-	kanistra           = u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
-	fillcar            = u8:decode"^ Вы дозаправили свою машину на 50",
-	outbagazhnik       = u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
-	inbagazhnik        = u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
-	shop24             = u8:decode"^ (.*) приобретена?%. Осталось%: (%d+)%/%d+",
-	grib               = u8:decode"^ Вы нашли гриб \".+\". Теперь у вас (%d+) грибов",
-	fish               = u8:decode"^ Сытость полностью восстановлена%. У вас осталось (%d+) %/ %d+ пачек рыбы$",
-	cookfish           = u8:decode"^ У вас (%d+) %/ %d+ пачек рыбы$",
-	trash              = u8:decode"^ (.*) выбросила? %'(.*)%'$",
-	mats               = u8:decode"^ (.*) cделал%(а%) себе оружие из материалов$",
-	reward             = u8:decode"^ %[Quest%] %{FFFFFF%}Ваша награда%: %{FF9DB6%}(.*)",
-	disconnect         = u8:decode"^ Вы отключились от сообщества$",
-	cookgrib           = u8:decode"^ Грибы готовы%. Грибы%: (%d+)%. Психохил%: (%d+)%/%d+%. Г%.Грибы%: (%d+)%/%d+$",
-	adr                = u8:decode"^ Вы приняли адреналин. Эффект продлится (%d+) минут$",
-	gribeat            = u8:decode"^ Сытость пополнена до %d+%. У вас осталось (%d+)%/%d+ готовых грибов$",
-	psiho              = u8:decode"^ Здоровье %d+%/%d+%. Сытость %d+%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
-	roul               = u8:decode"^ Вы получили %{FFFFFF%}(.*)%{EAC700%}%. Количество%: %{FFFFFF%}%d+%{EAC700%}%. В инвентаре%: (%d+) %/ %d+$",
-	stolen             = u8:decode"^ Вы украли (.*), отнесите награбленное в фургон$",
-	breaken            = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
-	open          	   = u8:decode"^ Дверь открыта без использования лома$",
-	put                = u8:decode"^ Вы положили награбленное в фургон. Загружено: (%d+)%/(%d+)$",
-	rob                = u8:decode"^ Emmet%: Купить лом и маску можешь в любом магазине 24%/7$",
-	donerob            = u8:decode"^ За ограбление дома вы получили %d+ вирт$",
-	donetheft          = u8:decode"^ Отличная тачка. Будет нужна работа, приходи%.$",
-	stay               = u8:decode"^ %(%( После ввода команды вы должны стоять на месте %)%)$",
-	wasAFK             = u8:decode"^ В AFK ввод команд заблокирован$",
-	lomka              = u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
-	plswait            = u8:decode"^ Пожалуйста подождите$",
-	spam               = u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
-	noequest		   = u8:decode"^ Доступно со 2 уровня",
+	acceptrepair 
+	= u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
+	acceptrefill 
+	= u8:decode"^ Механик .* хочет заправить ваш автомобиль за (%d+) вирт%{FFFFFF%} %(%( Нажмите Y%/N для принятия%/отмены %)%)",
+	gasstation 
+	= u8:decode"Цена за 200л%: %$(%d+)",
+	jfchat 
+	= u8:decode"^ (.*)%[(%d+)]%<(.*)%>%: (.*)",
+	boost 
+	= u8:decode"^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
+	noboost 
+	= u8:decode"^ Бонусы отключены",
+	narko 
+	= u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
+	painttime 
+	= u8:decode"^ Внимание%! Начало пейнтбола через (%d) минуты?%. Место проведения%: военный завод K%.A%.C%.C%.",
+	squidtime 
+	= u8:decode"^ Внимание%! Начало %'Игра в Кальмара%' через (%d) минуты?%! Место проведения%: Арена LS %(%( %/gps %[Важное%] %>%> %[Игра в Кальмара%] %)%)",
+	derbytime 
+	= u8:decode"^ Внимание%! Начало гонок дерби через (%d) минуты?%. Стадион Сан Фиерро%. Регистрация на первом этаже",
+	racetime 
+	= u8:decode"^ Внимание%! Начало гонок через (%d) минуты?%. Трасса%: Аэропорт Лос Сантос%. Регистрация у въезда",
+	paintfalse1 
+	= u8:decode"^ Внимание%! Пейнтбол начался",
+	paintfalse2 
+	= u8:decode"Внимание%! Пейнтбол был прерван из%-за отсутствия участников",
+	squidfalse1 
+	= u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за недостаточного количества участников%!",
+	squidfalse2 
+	= u8:decode"^ Внимание%! %'Игра в Кальмара%' началась%!",
+	squidfalse3 
+	= u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за проигрыша всех участников%! %(%( Список%: %/klmlist %)%)",
+	derbyfalse1 
+	= u8:decode"^ Внимание%! Гонки дерби начались%. Стадион Сан Фиерро",
+	derbyfalse2 
+	= u8:decode"^ Внимание%! Гонки дерби были прерваны из%-за отсутствия участников",
+	derbyfalse3 
+	= u8:decode"^ Внимание%! Гонки дерби окончены%. %(%( Список победителей%: %/derbylist %)%)",
+	racefalse1 
+	= u8:decode"^ Внимание%! Гонки были прерваны из%-за отсутствия участников",
+	racefalse2 
+	= u8:decode"^ Внимание%! Гонки начались%. Трасса%: Аэропорт Лос Сантос",
+	racefalse3 
+	= u8:decode"^ Внимание%! Гонки окончены%. %(%( Список победителей%: %/racelist %)%)",
+	repair1 
+	= u8:decode"^ Двигатель отремонтирован%. У вас осталось (%d+)%/%d+ комплектов %«автомеханик%»",
+	repair2 
+	= u8:decode"^ У вас нет комплекта %«автомеханик%» для ремонта",
+	repair3 
+	= u8:decode"^ В транспортном средстве нельзя",
+	repair4 
+	= u8:decode"^ Вы далеко от транспортного средства%. Подойдите к капоту",
+	connected 
+	= u8:decode"^ Для восстановления доступа нажмите клавишу %'F6%' и введите %'%/restoreAccess%'",
+	changequest 
+	= u8:decode"^ %[Quest%] %{FFFFFF%}Вы заменили задание %{6AB1FF%}(.*) %{FFFFFF%}на %{6AB1FF%}(.*)",
+	donequest 
+	= u8:decode"^ %[Quest%] %{FFFFFF%}Выполнено задание %{6AB1FF%}\"(.*)\"",
+	newpassenger 
+	= u8:decode"^ Пассажир (.*) сел в ваше Такси%. Довезите его и государство заплатит вам",
+	outpassenger1 
+	= u8:decode"^ Пассажир вышел из такси. Деньги будут зачислены во время зарплаты$",
+	outpassenger2 
+	= u8:decode"^ Пассажир вышел из такси. Использован купон на бесплатный проезд$",
+	sms 
+	= u8:decode"^ SMS%: (.*)%. Отправитель%: (.*)%[(%d+)%]$",
+	normalchat 
+	= u8:decode"^%- (.*)%[(%d+)%]%: (.*)",
+	taxi 
+	= u8:decode"%<%< Бесплатное такси %>%>",
+	rent 
+	= u8:decode"^ Вы арендовали транспортное средство$",
+	safe 
+	= u8:decode"^ Вы [пв][оз][ля][ол][жи][и]?[л]?[и]?.?[в]?[и]?[з]? сейфа? .*",
+	minusbalaklava 
+	= u8:decode"^ Вы надели балаклаву$",
+	minuslom 
+	= u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
+	kanistra 
+	= u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
+	fillcar 
+	= u8:decode"^ Вы дозаправили свою машину на 50",
+	outbagazhnik 
+	= u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
+	inbagazhnik 
+	= u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
+	shop24 
+	= u8:decode"^ (.*) приобретена?%. Осталось%: (%d+)%/%d+",
+	grib 
+	= u8:decode"^ Вы нашли гриб \".+\". Теперь у вас (%d+) грибов",
+	fish 
+	= u8:decode"^ Сытость полностью восстановлена%. У вас осталось (%d+) %/ %d+ пачек рыбы$",
+	cookfish 
+	= u8:decode"^ У вас (%d+) %/ %d+ пачек рыбы$",
+	trash 
+	= u8:decode"^ (.*) выбросила? %'(.*)%'$",
+	mats 
+	= u8:decode"^ (.*) cделал%(а%) себе оружие из материалов$",
+	reward 
+	= u8:decode"^ %[Quest%] %{FFFFFF%}Ваша награда%: %{FF9DB6%}(.*)",
+	disconnect 
+	= u8:decode"^ Вы отключились от сообщества$",
+	cookgrib
+	= u8:decode"^ Грибы готовы%. Грибы%: (%d+)%. Психохил%: (%d+)%/%d+%. Г%.Грибы%: (%d+)%/%d+$",
+	adr 
+	= u8:decode"^ Вы приняли адреналин. Эффект продлится (%d+) минут$",
+	gribeat 
+	= u8:decode"^ Сытость пополнена до %d+%. У вас осталось (%d+)%/%d+ готовых грибов$",
+	psiho 
+	= u8:decode"^ Здоровье %d+%/%d+%. Сытость %d+%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
+	roul 
+	= u8:decode"^ Вы получили %{FFFFFF%}(.*)%{EAC700%}%. Количество%: %{FFFFFF%}%d+%{EAC700%}%. В инвентаре%: (%d+) %/ %d+$",
+	stolen 
+	= u8:decode"^ Вы украли (.*), отнесите награбленное в фургон$",
+	breaken 
+	= u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
+	open 
+	= u8:decode"^ Дверь открыта без использования лома$",
+	put 
+	= u8:decode"^ Вы положили награбленное в фургон. Загружено: (%d+)%/(%d+)$",
+	rob 
+	= u8:decode"^ Emmet%: Купить лом и маску можешь в любом магазине 24%/7$",
+	donerob 
+	= u8:decode"^ За ограбление дома вы получили %d+ вирт$",
+	donetheft 
+	= u8:decode"^ Отличная тачка. Будет нужна работа, приходи%.$",
+	stay 
+	= u8:decode"^ %(%( После ввода команды вы должны стоять на месте %)%)$",
+	wasAFK 
+	= u8:decode"^ В AFK ввод команд заблокирован$",
+	lomka 
+	= u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
+	plswait 
+	= u8:decode"^ Пожалуйста подождите$",
+	spam 
+	= u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
+	noequest 
+	= u8:decode"^ Доступно со 2 уровня",
 	
 	color = {
-		mechanic       =  1790050303,
-		jfchat         =  815835135,
-		narko          = -1,
-		boost          = -1,
-		noboost        = -1,
-		paint          = -5570561,
-		squid          = -356056833,
-		race           = -1179057921,
-		derby          =  16711935,
-		connected      = -356056833,
-		quest          =  1790050303,
-		taxi           =  1790050303,
-		sms            = -65281,
-		normalchat     = {-926365496, -1431655766, -1936946036, 1852730990},
-		rent           = -1,
-		fish           = -1342193921,
-		grib           = -1,
-		safe           = -65281,
+		mechanic = 1790050303,
+		jfchat = 815835135,
+		narko = -1,
+		boost = -1,
+		noboost = -1,
+		paint = -5570561,
+		squid = -356056833,
+		race = -1179057921,
+		derby = 16711935,
+		connected = -356056833,
+		quest = 1790050303,
+		taxi = 1790050303,
+		sms = -65281,
+		normalchat = {-926365496, -1431655766, -1936946036, 1852730990},
+		rent = -1,
+		fish = -1342193921,
+		grib = -1,
+		safe = -65281,
 		minusbalaklava = -1347440641,
-		minuslom       =  1790050303,
-		kanistra       =  1687547391,
-		fillcar        =  1687547391,
-		outbagazhnik   = -1061109505,
-		inbagazhnik    =  1790050303,
-		shop24         =  1687547391,
-		trash          = -1029514497,
-		mats           = -1029514497,
-		reward         =  1790050303,
-		disconnect     = -1,
-		cookgrib       =  1358862079,
-		adr            =  1790050303,
-		gribeat        = -1342193921,
-		psiho          = -1,
-		roul           = -356056833,
-		repair1        =  1358862079,
-		repair2        = -1347440641,
-		stolen         =  1790050303,
-		breaken        =  1790050303,
-		open           = -1,
-		put            = -1061109505,
-		rob            = -1061109505,
-		donerob        = -1061109505,
-		donetheft	   =  1790050303,
-		stay           = -1347440641,
-		wasAFK         = -2769921,
-		lomka          = -1627389697,
-		plswait        = -1347440641,
-		spam           = -65281,
-		noequest       = -1347440641
+		minuslom = 1790050303,
+		kanistra = 1687547391,
+		fillcar = 1687547391,
+		outbagazhnik = -1061109505,
+		inbagazhnik =  1790050303,
+		shop24 =  1687547391,
+		trash = -1029514497,
+		mats = -1029514497,
+		reward = 1790050303,
+		disconnect = -1,
+		cookgrib = 1358862079,
+		adr = -1342193921,
+		psiho = -1,
+		roul = -356056833,
+		repair1 = 1358862079,
+		repair2 = -1347440641,
+		stolen = 1790050303,
+		breaken = 1790050303,
+		open = -1,
+		put = -1061109505,
+		rob = -1061109505,
+		donerob = -1061109505,
+		donetheft =  1790050303,
+		stay = -1347440641,
+		wasAFK = -2769921,
+		lomka = -1627389697,
+		plswait = -1347440641,
+		spam = -65281,
+		noequest = -1347440641
 	},
 	
 	dialog = {
-		narko       = {str  = u8:decode"%[%d+%] Таймер на Нарко(.*)",                                                                             id = 22,         style = 5, title = u8:decode'Бонусы'},
-		login       = {str  = u8:decode"Этот аккаунт зарегистрирован",                                                                            id = 1,          style = 3, title = u8:decode'Авторизация'},
-		quest       = {str  = u8:decode"%{FFFFFF%}(.*).+%{[F3][F3][4A][2A][43][23]%}(%[Н?е?.?[Вв]ыполнено%])", 									  id = 1013,       style = 5, title = u8:decode'%{FFFFFF%}Обновление заданий%: %{6AB1FF%}(.*)'},
-		description = {str1 = u8:decode"%{FFFFFF%}Название квеста%: ", str2 = u8:decode"Описание%: ", str3 = u8:decode"%{6AB1FF%}(.*)%{FFFFFF%}", id = 1014,       style = 0, title = u8:decode'{6AB1FF}Ежедневные квесты'},
-		inventory   = {																															  id = 22,   	   style = 4, title = u8:decode'Карманы'},
-		autorent    = {str = u8:decode"Стоимость аренды%: {FFFF00}(%d+) вирт",                                                                    id = {276, 277}, style = 0, title = u8:decode'Аренда транспорта'}
+		narko = {str  = u8:decode"%[%d+%] Таймер на Нарко(.*)", id = 22, style = 5, title = u8:decode'Бонусы'},
+		login = {str  = u8:decode"Этот аккаунт зарегистрирован", id = 1, style = 3, title = u8:decode'Авторизация'},
+		quest = {str  = u8:decode"%{FFFFFF%}(.*).+%{[F3][F3][4A][2A][43][23]%}(%[Н?е?.?[Вв]ыполнено%])", id = 1013, style = 5, title = u8:decode'%{FFFFFF%}Обновление заданий%: %{6AB1FF%}(.*)'},
+		description = {str1 = u8:decode"%{FFFFFF%}Название квеста%: ", str2 = u8:decode"Описание%: ", str3 = u8:decode"%{6AB1FF%}(.*)%{FFFFFF%}", id = 1014, style = 0, title = u8:decode'{6AB1FF}Ежедневные квесты'},
+		inventory = {id = 22, style = 4, title = u8:decode'Карманы'},
+		autorent = {str = u8:decode"Стоимость аренды%: {FFFF00}(%d+) вирт", id = {276, 277}, style = 0, title = u8:decode'Аренда транспорта'}
 	}
 }
 local motos = {[522] = "NRG-500", [463] = "Freeway", [461] = "PCJ-600", [581] = "BF-400", [521] = "FCR-900", [468] = "Sanchez", [462] = "Faggio"}
@@ -458,67 +525,67 @@ function main()
 	end
 	
 	togglebools = {
-		['Починка у механика']      = srp_ini.bools['Починка у механика']          and imgui.ImBool(true) or imgui.ImBool(false),
-		['Заправка на АЗС'] 	    = srp_ini.bools['Заправка на АЗС']	           and imgui.ImBool(true) or imgui.ImBool(false),
-		['Заправка у механика']     = srp_ini.bools['Заправка у механика']         and imgui.ImBool(true) or imgui.ImBool(false),
-		['Заправка канистрой']      = srp_ini.bools['Заправка канистрой']          and imgui.ImBool(true) or imgui.ImBool(false),
-		['Покупка канистры']        = srp_ini.bools['Покупка канистры']            and imgui.ImBool(true) or imgui.ImBool(false),
-		['Цвет ника в профе']       = srp_ini.bools['Цвет ника в профе']           and imgui.ImBool(true) or imgui.ImBool(false),
-		['Оповещение о выходе']     = srp_ini.bools['Оповещение о выходе']         and imgui.ImBool(true) or imgui.ImBool(false),
-		['Оповещение о психохиле']  = srp_ini.bools['Оповещение о психохиле']      and imgui.ImBool(true) or imgui.ImBool(false),
-		['Автологин']               = srp_ini.bools['Автологин']                   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Автоаренда']              = srp_ini.bools['Автоаренда']                  and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ограбление домов']        = srp_ini.bools['Ограбление домов']            and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ломка']        			= srp_ini.bools['Ломка']            		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ломка без копов']         = srp_ini.bools['Ломка без копов']             and imgui.ImBool(true) or imgui.ImBool(false),
-		['Дата и время']            = srp_ini.bools['Дата и время'] 	   		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ник']           		    = srp_ini.bools['Ник']                         and imgui.ImBool(true) or imgui.ImBool(false),
-		['Пинг']           		    = srp_ini.bools['Пинг']                        and imgui.ImBool(true) or imgui.ImBool(false),
-		['Нарко']         		    = srp_ini.bools['Нарко']                       and imgui.ImBool(true) or imgui.ImBool(false),
-		['Таймер до МП']            = srp_ini.bools['Таймер до МП']                and imgui.ImBool(true) or imgui.ImBool(false),
-		['Прорисовка']              = srp_ini.bools['Прорисовка']                  and imgui.ImBool(true) or imgui.ImBool(false),
-		['Статус']           	    = srp_ini.bools['Статус']                      and imgui.ImBool(true) or imgui.ImBool(false),
-		['Сквад']           	    = srp_ini.bools['Сквад']                       and imgui.ImBool(true) or imgui.ImBool(false),
-		['ХП транспорта']           = srp_ini.bools['ХП транспорта']               and imgui.ImBool(true) or imgui.ImBool(false),
-		['Информация под чатом']    = srp_ini.bools['Информация под чатом']        and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ежедневные задания']      = srp_ini.bools['Ежедневные задания']          and imgui.ImBool(true) or imgui.ImBool(false),
-		['Инвентарь']     		    = srp_ini.bools['Инвентарь']     		       and imgui.ImBool(true) or imgui.ImBool(false),
-		['Наркотики']               = srp_ini.inventory['Наркотики']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Материалы']               = srp_ini.inventory['Материалы']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Телефонная книга']        = srp_ini.inventory['Телефонная книга']  	   and imgui.ImBool(true) or imgui.ImBool(false),
-		['MP3']              		= srp_ini.inventory['MP3']     		  		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Ключи от камеры']         = srp_ini.inventory['Ключи от камеры']		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Канистра с бензином']     = srp_ini.inventory['Канистра с бензином']     and imgui.ImBool(true) or imgui.ImBool(false),
-		['Водительские права']      = srp_ini.inventory['Водительские права']      and imgui.ImBool(true) or imgui.ImBool(false),
-		['Лицензия на вертолеты']   = srp_ini.inventory['Лицензия на вертолеты']   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Лицензия на самолеты']    = srp_ini.inventory['Лицензия на самолеты']    and imgui.ImBool(true) or imgui.ImBool(false),
-		['Лицензия на лодки']       = srp_ini.inventory['Лицензия на лодки']       and imgui.ImBool(true) or imgui.ImBool(false),
+		['Починка у механика'] = srp_ini.bools['Починка у механика'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Заправка на АЗС'] = srp_ini.bools['Заправка на АЗС'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Заправка у механика'] = srp_ini.bools['Заправка у механика'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Заправка канистрой'] = srp_ini.bools['Заправка канистрой'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Покупка канистры'] = srp_ini.bools['Покупка канистры'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Цвет ника в профе'] = srp_ini.bools['Цвет ника в профе'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Оповещение о выходе'] = srp_ini.bools['Оповещение о выходе'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Оповещение о психохиле'] = srp_ini.bools['Оповещение о психохиле'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Автологин'] = srp_ini.bools['Автологин'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Автоаренда'] = srp_ini.bools['Автоаренда'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ограбление домов'] = srp_ini.bools['Ограбление домов'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ломка'] = srp_ini.bools['Ломка'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ломка без копов'] = srp_ini.bools['Ломка без копов'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Дата и время'] = srp_ini.bools['Дата и время'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ник'] = srp_ini.bools['Ник'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Пинг'] = srp_ini.bools['Пинг'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Нарко'] = srp_ini.bools['Нарко'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Таймер до МП'] = srp_ini.bools['Таймер до МП'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Прорисовка'] = srp_ini.bools['Прорисовка'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Статус'] = srp_ini.bools['Статус'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Сквад'] = srp_ini.bools['Сквад'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['ХП транспорта'] = srp_ini.bools['ХП транспорта'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Информация под чатом'] = srp_ini.bools['Информация под чатом'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ежедневные задания'] = srp_ini.bools['Ежедневные задания'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Инвентарь'] = srp_ini.bools['Инвентарь'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Наркотики'] = srp_ini.inventory['Наркотики'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Материалы'] = srp_ini.inventory['Материалы'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Телефонная книга'] = srp_ini.inventory['Телефонная книга'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['MP3'] = srp_ini.inventory['MP3'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Ключи от камеры'] = srp_ini.inventory['Ключи от камеры'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Канистра с бензином'] = srp_ini.inventory['Канистра с бензином'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Водительские права'] = srp_ini.inventory['Водительские права'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Лицензия на вертолеты'] = srp_ini.inventory['Лицензия на вертолеты'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Лицензия на самолеты'] = srp_ini.inventory['Лицензия на самолеты'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Лицензия на лодки'] = srp_ini.inventory['Лицензия на лодки'] and imgui.ImBool(true) or imgui.ImBool(false),
 		['Лицензия на рыболовство'] = srp_ini.inventory['Лицензия на рыболовство'] and imgui.ImBool(true) or imgui.ImBool(false),
-		['Лицензия на оружие']      = srp_ini.inventory['Лицензия на оружие']      and imgui.ImBool(true) or imgui.ImBool(false),
-		['Сырая рыба']              = srp_ini.inventory['Сырая рыба']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Готовая рыба']            = srp_ini.inventory['Готовая рыба']   		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Грибы']                   = srp_ini.inventory['Грибы']	               and imgui.ImBool(true) or imgui.ImBool(false),
-		['Комплект «автомеханик»']  = srp_ini.inventory['Комплект «автомеханик»']  and imgui.ImBool(true) or imgui.ImBool(false),
-		['Психохил']                = srp_ini.inventory['Психохил']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Готовые грибы']           = srp_ini.inventory['Готовые грибы']     	   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Сигареты']                = srp_ini.inventory['Сигареты']    		       and imgui.ImBool(true) or imgui.ImBool(false),
-		['Адреналин']               = srp_ini.inventory['Адреналин']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Защита от насильников']   = srp_ini.inventory['Защита от насильников']   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Балаклава']               = srp_ini.inventory['Балаклава']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Лом']                     = srp_ini.inventory['Лом']     		           and imgui.ImBool(true) or imgui.ImBool(false),
-		['Энергетик']               = srp_ini.inventory['Энергетик']     		   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Набор для взлома']        = srp_ini.inventory['Набор для взлома']        and imgui.ImBool(true) or imgui.ImBool(false),
-		['Рендер ограбления домов'] = srp_ini.bools['Рендер ограбления домов']     and imgui.ImBool(true) or imgui.ImBool(false),
-		['Переменные'] 				= srp_ini.bools['Переменные']     			   and imgui.ImBool(true) or imgui.ImBool(false),
-		['Спам'] 					= srp_ini.bools['Спам']     			 	   and imgui.ImBool(true) or imgui.ImBool(false)
+		['Лицензия на оружие'] = srp_ini.inventory['Лицензия на оружие'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Сырая рыба'] = srp_ini.inventory['Сырая рыба'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Готовая рыба'] = srp_ini.inventory['Готовая рыба'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Грибы'] = srp_ini.inventory['Грибы'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Комплект «автомеханик»'] = srp_ini.inventory['Комплект «автомеханик»'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Психохил'] = srp_ini.inventory['Психохил'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Готовые грибы'] = srp_ini.inventory['Готовые грибы'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Сигареты'] = srp_ini.inventory['Сигареты'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Адреналин'] = srp_ini.inventory['Адреналин'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Защита от насильников'] = srp_ini.inventory['Защита от насильников'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Балаклава']  = srp_ini.inventory['Балаклава'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Лом'] = srp_ini.inventory['Лом'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Энергетик'] = srp_ini.inventory['Энергетик'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Набор для взлома'] = srp_ini.inventory['Набор для взлома'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Рендер ограбления домов'] = srp_ini.bools['Рендер ограбления домов'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Переменные'] = srp_ini.bools['Переменные'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Спам'] = srp_ini.bools['Спам'] and imgui.ImBool(true) or imgui.ImBool(false)
 	}
 	
 	buffer = {
-		['Заправка у механика']    = imgui.ImBuffer(u8(srp_ini.values['Заправка у механика']), 256),
-		['Заправка на АЗС']        = imgui.ImBuffer(u8(srp_ini.values['Заправка на АЗС']), 256),
-		['clist']        		   = imgui.ImInt(srp_ini.values.clist),
-		['Пароль']                 = imgui.ImBuffer(u8(srp_ini.values['Пароль']), 256),
-		['Автоаренда']             = imgui.ImBuffer(u8(srp_ini.values['Автоаренда']), 256),
+		['Заправка у механика'] = imgui.ImBuffer(u8(srp_ini.values['Заправка у механика']), 256),
+		['Заправка на АЗС'] = imgui.ImBuffer(u8(srp_ini.values['Заправка на АЗС']), 256),
+		['clist'] = imgui.ImInt(srp_ini.values.clist),
+		['Пароль'] = imgui.ImBuffer(u8(srp_ini.values['Пароль']), 256),
+		['Автоаренда'] = imgui.ImBuffer(u8(srp_ini.values['Автоаренда']), 256),
 		['Разница часовых поясов'] = imgui.ImInt(srp_ini.values['Разница часовых поясов'] + 14)
 	}
 	
@@ -566,14 +633,14 @@ function main()
 		menu.main.v = not 
 		menu.main.v 
 	end)
-	sampRegisterChatCommand("setoverlay",  cmd_setoverlay)
-	sampRegisterChatCommand("setov",       cmd_setoverlay)
-	sampRegisterChatCommand("srpflood",    cmd_flood)
+	sampRegisterChatCommand("setoverlay", cmd_setoverlay)
+	sampRegisterChatCommand("setov", cmd_setoverlay)
+	sampRegisterChatCommand("srpflood", cmd_flood)
 	sampRegisterChatCommand("samprpflood", cmd_flood)
-	sampRegisterChatCommand("srpstop",     function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
-	sampRegisterChatCommand("samprpstop",  function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
-	sampRegisterChatCommand('srpup',       updateScript)
-	sampRegisterChatCommand('samprpup',    updateScript)
+	sampRegisterChatCommand("srpstop", function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
+	sampRegisterChatCommand("samprpstop", function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
+	sampRegisterChatCommand('srpup', updateScript)
+	sampRegisterChatCommand('samprpup', updateScript)
 	
 	script.loaded = true
 	repeat wait(0) until sampIsLocalPlayerSpawned()
@@ -604,12 +671,12 @@ function main()
 			end
 		end
 		if suspendkeys == 2 then
-			rkeys.registerHotKey(makeHotKey("Контекстная клавиша"),  true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end if srp_ini.bools['Статус'] then ct() end end)
-			rkeys.registerHotKey(makeHotKey("Нарко"), 				 true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end usedrugs() end)
-			rkeys.registerHotKey(makeHotKey("Сменить клист"), 		 true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end setclist() end)
-			rkeys.registerHotKey(makeHotKey("Войти в дом"), 		 true, function() if sampIsChatInputActive() or isSampfuncsConsoleActive() then return end enterhouse() end)
-			rkeys.registerHotKey(makeHotKey("Lock"), 				 true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end chatManager.addMessageToQueue("/lock") end)
-			rkeys.registerHotKey(makeHotKey("Автобег"),				 true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end needtohold = not needtohold end)
+			rkeys.registerHotKey(makeHotKey("Контекстная клавиша"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end if srp_ini.bools['Статус'] then ct() end end)
+			rkeys.registerHotKey(makeHotKey("Нарко"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end usedrugs() end)
+			rkeys.registerHotKey(makeHotKey("Сменить клист"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end setclist() end)
+			rkeys.registerHotKey(makeHotKey("Войти в дом"), true, function() if sampIsChatInputActive() or isSampfuncsConsoleActive() then return end enterhouse() end)
+			rkeys.registerHotKey(makeHotKey("Lock"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end chatManager.addMessageToQueue("/lock") end)
+			rkeys.registerHotKey(makeHotKey("Автобег"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end needtohold = not needtohold end)
 			for k, v in ipairs(binder_ini.list) do
 				if v ~= nil then
 					local b = decodeJson(v)
@@ -645,28 +712,28 @@ function main()
 			if isKeyDown(vkeys.VK_MBUTTON) then
 				wait(300)
 				if isKeyDown(vkeys.VK_MBUTTON) then
-					srp_ini.overlay['Дата и времяX']       = 846
-					srp_ini.overlay['Дата и времяY']       = 215
-					srp_ini.overlay['НикX']                = 823
-					srp_ini.overlay['НикY']                = 249
-					srp_ini.overlay['ПингX']               = 892
-					srp_ini.overlay['ПингY']               = 312
-					srp_ini.overlay['НаркоX']              = 901
-					srp_ini.overlay['НаркоY']              = 284
-					srp_ini.overlay['Таймер до МПX']       = 803
-					srp_ini.overlay['Таймер до МПY']       = 647
-					srp_ini.overlay['ПрорисовкаX']         = 786
-					srp_ini.overlay['ПрорисовкаY']         = 340
-					srp_ini.overlay['СтатусX']             = 775
-					srp_ini.overlay['СтатусY']             = 366
-					srp_ini.overlay['СквадX']              = 515
-					srp_ini.overlay['СквадY']              = 338
+					srp_ini.overlay['Дата и времяX'] = 846
+					srp_ini.overlay['Дата и времяY'] = 215
+					srp_ini.overlay['НикX'] = 823
+					srp_ini.overlay['НикY'] = 249
+					srp_ini.overlay['ПингX'] = 892
+					srp_ini.overlay['ПингY'] = 312
+					srp_ini.overlay['НаркоX'] = 901
+					srp_ini.overlay['НаркоY'] = 284
+					srp_ini.overlay['Таймер до МПX']  = 803
+					srp_ini.overlay['Таймер до МПY'] = 647
+					srp_ini.overlay['ПрорисовкаX'] = 786
+					srp_ini.overlay['ПрорисовкаY'] = 340
+					srp_ini.overlay['СтатусX'] = 775
+					srp_ini.overlay['СтатусY'] = 366
+					srp_ini.overlay['СквадX'] = 515
+					srp_ini.overlay['СквадY'] = 338
 					srp_ini.overlay['Ежедневные заданияX'] = 803
 					srp_ini.overlay['Ежедневные заданияY'] = 407
-					srp_ini.overlay['ИнвентарьX']          = 789
-					srp_ini.overlay['ИнвентарьY']    	   = 755
-					srp_ini.overlay['Ограбление домовX']   = 799
-					srp_ini.overlay['Ограбление домовY']   = 544
+					srp_ini.overlay['ИнвентарьX'] = 789
+					srp_ini.overlay['ИнвентарьY']  = 755
+					srp_ini.overlay['Ограбление домовX'] = 799
+					srp_ini.overlay['Ограбление домовY'] = 544
 					inicfg.save(srp_ini, settings)
 					SetMode, SetModeFirstShow = true, true
 					chatmsg(u8:decode"Координаты элементов были успешно сброшены")
@@ -697,60 +764,60 @@ function apply_custom_styles()
 	imgui.GetStyle().ChildWindowRounding = 6.0
 	imgui.GetStyle().FrameRounding = 6.0
 	
-	colors[clr.Text]                 = ImVec4(1.00, 1.00, 1.00, 1.00)
-	colors[clr.TextDisabled]         = ImVec4(0.73, 0.75, 0.74, 1.00)
-	colors[clr.WindowBg]             = ImVec4(0.42, 0.48, 0.16, 1.00)
-	colors[clr.ChildWindowBg]        = ImVec4(0.00, 0.00, 0.00, 0.00)
-	colors[clr.PopupBg]              = ImVec4(0.08, 0.08, 0.08, 0.94)
-	colors[clr.Border]               = ImVec4(0.43, 0.43, 0.50, 0.50)
-	colors[clr.BorderShadow]         = ImVec4(0.00, 0.00, 0.00, 0.00)
-	colors[clr.FrameBg]              = ImVec4(0.41, 0.49, 0.24, 0.54)
-	colors[clr.FrameBgHovered]       = ImVec4(0.26, 0.32, 0.13, 0.54)
-	colors[clr.FrameBgActive]        = ImVec4(0.33, 0.39, 0.20, 0.54)
-	colors[clr.TitleBg]              = ImVec4(0.42, 0.48, 0.16, 0.90)
-	colors[clr.TitleBgActive]        = ImVec4(0.42, 0.48, 0.16, 1.00)
-	colors[clr.TitleBgCollapsed]     = ImVec4(0.33, 0.44, 0.26, 0.67)
-	colors[clr.MenuBarBg]            = ImVec4(0.60, 0.67, 0.44, 0.54)
-	colors[clr.ScrollbarBg]          = ImVec4(0.02, 0.02, 0.02, 0.53)
-	colors[clr.ScrollbarGrab]        = ImVec4(0.42, 0.48, 0.16, 0.54)
+	colors[clr.Text] = ImVec4(1.00, 1.00, 1.00, 1.00)
+	colors[clr.TextDisabled] = ImVec4(0.73, 0.75, 0.74, 1.00)
+	colors[clr.WindowBg] = ImVec4(0.42, 0.48, 0.16, 1.00)
+	colors[clr.ChildWindowBg] = ImVec4(0.00, 0.00, 0.00, 0.00)
+	colors[clr.PopupBg] = ImVec4(0.08, 0.08, 0.08, 0.94)
+	colors[clr.Border] = ImVec4(0.43, 0.43, 0.50, 0.50)
+	colors[clr.BorderShadow] = ImVec4(0.00, 0.00, 0.00, 0.00)
+	colors[clr.FrameBg] = ImVec4(0.41, 0.49, 0.24, 0.54)
+	colors[clr.FrameBgHovered] = ImVec4(0.26, 0.32, 0.13, 0.54)
+	colors[clr.FrameBgActive] = ImVec4(0.33, 0.39, 0.20, 0.54)
+	colors[clr.TitleBg] = ImVec4(0.42, 0.48, 0.16, 0.90)
+	colors[clr.TitleBgActive] = ImVec4(0.42, 0.48, 0.16, 1.00)
+	colors[clr.TitleBgCollapsed] = ImVec4(0.33, 0.44, 0.26, 0.67)
+	colors[clr.MenuBarBg] = ImVec4(0.60, 0.67, 0.44, 0.54)
+	colors[clr.ScrollbarBg] = ImVec4(0.02, 0.02, 0.02, 0.53)
+	colors[clr.ScrollbarGrab] = ImVec4(0.42, 0.48, 0.16, 0.54)
 	colors[clr.ScrollbarGrabHovered] = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.ScrollbarGrabActive]  = ImVec4(0.51, 0.51, 0.51, 1.00)
-	colors[clr.ComboBg]              = colors[clr.PopupBg]
-	colors[clr.CheckMark]            = ImVec4(1.00, 1.00, 1.00, 1.00)
-	colors[clr.SliderGrab]           = ImVec4(0.35, 0.43, 0.16, 0.84)
-	colors[clr.SliderGrabActive]     = ImVec4(0.53, 0.53, 0.53, 1.00)
-	colors[clr.Button]               = ImVec4(0.42, 0.48, 0.16, 0.54)
-	colors[clr.ButtonHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.ButtonActive]         = ImVec4(0.62, 0.75, 0.32, 1.00)
-	colors[clr.Header]               = ImVec4(0.33, 0.42, 0.15, 0.54)
-	colors[clr.HeaderHovered]        = ImVec4(0.85, 0.98, 0.26, 0.54)
-	colors[clr.HeaderActive]         = ImVec4(0.84, 0.66, 0.66, 0.00)
-	colors[clr.Separator]            = ImVec4(0.43, 0.43, 0.50, 0.50)
-	colors[clr.SeparatorHovered]     = ImVec4(0.43, 0.54, 0.18, 0.54)
-	colors[clr.SeparatorActive]      = ImVec4(0.52, 0.62, 0.28, 0.54)
-	colors[clr.ResizeGrip]           = ImVec4(0.66, 0.80, 0.35, 0.54)
-	colors[clr.ResizeGripHovered]    = ImVec4(0.44, 0.48, 0.34, 0.54)
-	colors[clr.ResizeGripActive]     = ImVec4(0.37, 0.37, 0.35, 0.54)
-	colors[clr.CloseButton]          = ImVec4(0.41, 0.41, 0.41, 1.00)
-	colors[clr.CloseButtonHovered]   = ImVec4(0.52, 0.63, 0.26, 0.54)
-	colors[clr.CloseButtonActive]    = ImVec4(0.81, 1.00, 0.37, 0.54)
-	colors[clr.PlotLines]            = ImVec4(0.61, 0.61, 0.61, 1.00)
-	colors[clr.PlotLinesHovered]     = ImVec4(0.79, 1.00, 0.32, 0.54)
-	colors[clr.PlotHistogram]        = ImVec4(0.90, 0.70, 0.00, 1.00)
+	colors[clr.ScrollbarGrabActive] = ImVec4(0.51, 0.51, 0.51, 1.00)
+	colors[clr.ComboBg] = colors[clr.PopupBg]
+	colors[clr.CheckMark] = ImVec4(1.00, 1.00, 1.00, 1.00)
+	colors[clr.SliderGrab] = ImVec4(0.35, 0.43, 0.16, 0.84)
+	colors[clr.SliderGrabActive] = ImVec4(0.53, 0.53, 0.53, 1.00)
+	colors[clr.Button] = ImVec4(0.42, 0.48, 0.16, 0.54)
+	colors[clr.ButtonHovered] = ImVec4(0.85, 0.98, 0.26, 0.54)
+	colors[clr.ButtonActive] = ImVec4(0.62, 0.75, 0.32, 1.00)
+	colors[clr.Header] = ImVec4(0.33, 0.42, 0.15, 0.54)
+	colors[clr.HeaderHovered] = ImVec4(0.85, 0.98, 0.26, 0.54)
+	colors[clr.HeaderActive] = ImVec4(0.84, 0.66, 0.66, 0.00)
+	colors[clr.Separator] = ImVec4(0.43, 0.43, 0.50, 0.50)
+	colors[clr.SeparatorHovered] = ImVec4(0.43, 0.54, 0.18, 0.54)
+	colors[clr.SeparatorActive] = ImVec4(0.52, 0.62, 0.28, 0.54)
+	colors[clr.ResizeGrip] = ImVec4(0.66, 0.80, 0.35, 0.54)
+	colors[clr.ResizeGripHovered] = ImVec4(0.44, 0.48, 0.34, 0.54)
+	colors[clr.ResizeGripActive] = ImVec4(0.37, 0.37, 0.35, 0.54)
+	colors[clr.CloseButton] = ImVec4(0.41, 0.41, 0.41, 1.00)
+	colors[clr.CloseButtonHovered] = ImVec4(0.52, 0.63, 0.26, 0.54)
+	colors[clr.CloseButtonActive] = ImVec4(0.81, 1.00, 0.37, 0.54)
+	colors[clr.PlotLines] = ImVec4(0.61, 0.61, 0.61, 1.00)
+	colors[clr.PlotLinesHovered] = ImVec4(0.79, 1.00, 0.32, 0.54)
+	colors[clr.PlotHistogram] = ImVec4(0.90, 0.70, 0.00, 1.00)
 	colors[clr.PlotHistogramHovered] = ImVec4(1.00, 0.60, 0.00, 1.00)
-	colors[clr.TextSelectedBg]       = ImVec4(0.26, 0.59, 0.98, 0.35)
+	colors[clr.TextSelectedBg] = ImVec4(0.26, 0.59, 0.98, 0.35)
 	colors[clr.ModalWindowDarkening] = ImVec4(0.80, 0.80, 0.80, 0.35)
 	
 	
 	imgui.GetIO().Fonts:Clear()
-	imfonts.mainFont          = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont1        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 18.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont2        = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 16.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.mainFont = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.smainFont1 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 18.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.smainFont2 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 16.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
 	
-	imfonts.ovFont            = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 28.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont1           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont2           = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFontSquad       = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic()) --trebuchet
+	imfonts.ovFont = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 28.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.ovFont1 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.ovFont2 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imfonts.ovFontSquad = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
 	
 	imfonts.ovFontCars = renderCreateFont("times", 14, 12)
 	imfonts.ovFontSquadRender = renderCreateFont("times", 11, 12)
@@ -858,19 +925,19 @@ function imgui.OnDrawFrame()
 		
 		if menu.automatic.v and not menu.binds.v and not menu.overlay.v and not menu.binder.v and not menu.information.v and not menu.editor.v then
 			imgui.BeginChild('automatics', imgui.ImVec2(1185, 480), true)
-			if imgui.ToggleButton("automatic1",  togglebools['Починка у механика'])     then srp_ini.bools['Починка у механика']     = togglebools['Починка у механика'].v     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о починке")                                        if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением починить вас от механика")                                                 imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic2",  togglebools['Заправка у механика'])    then srp_ini.bools['Заправка у механика']    = togglebools['Заправка у механика'].v    inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о заправке (не дороже ")                           if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением заправить вас от механика")                                                imgui.EndTooltip() end imgui.SameLine()     imgui.PushItemWidth(90) if imgui.InputText('##d1', buffer['Заправка у механика']) then srp_ini.values['Заправка у механика'] = tostring(u8:decode(buffer['Заправка у механика'].v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic3",  togglebools['Заправка на АЗС']) 	    then srp_ini.bools['Заправка на АЗС'] 	     = togglebools['Заправка на АЗС'].v        inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт на АЗС (не дороже ")                                         if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима, вы будете автоматически заправлены")                                              imgui.EndTooltip() end imgui.SameLine()     imgui.PushItemWidth(90) if imgui.InputText('##d2', buffer['Заправка на АЗС'])     then srp_ini.values['Заправка на АЗС']     = tostring(u8:decode(buffer['Заправка на АЗС'].v))     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic4",  togglebools['Покупка канистры'])       then srp_ini.bools['Покупка канистры']       = togglebools['Покупка канистры'].v       inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Покупать канистру на АЗС, (исходя из цены заправки)")                             if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима (цена заправки на АЗС), вы автоматически купите канистру если её нет в инвентаре") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic5",  togglebools['Заправка канистрой'])     then srp_ini.bools['Заправка канистрой']     = togglebools['Заправка канистрой'].v     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт канистрой в случае если закончилось топливо")                if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только в вашем транспорте закончится топливо, скрипт моментально использует канистру (если она есть в инвентаре)")                                          imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic6",  togglebools['Цвет ника в профе'])      then srp_ini.bools['Цвет ника в профе']      = togglebools['Цвет ника в профе'].v      inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате профсоюза в цвет клиста")                                  if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в чате профсоюза будут иметь одну особенность: ник и ID игрока будет в цвете его клиста")                                      imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic7",  togglebools['Оповещение о выходе'])    then srp_ini.bools['Оповещение о выходе']    = togglebools['Оповещение о выходе'].v    inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать о вышедших из игры игроках в зоне прорисовки")                          if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке, по той или иной причине покинет игру, то в чате появится сообщение о том кто вышел (в цвете клиста) и с какой причиной")         imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic8",  togglebools['Оповещение о психохиле']) then srp_ini.bools['Оповещение о психохиле'] = togglebools['Оповещение о психохиле'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать об употреблении психохила игроками в зоне прорисовки")                  if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке употребит психохил, то в чате появится сообщение о том кто употребил (в цвете клиста)")                                           imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic9",  togglebools['Автологин'])              then srp_ini.bools['Автологин']              = togglebools['Автологин'].v              inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Вводить пароль в диалог авторизации")                                             if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы подключитесь к серверу и вам высветится диалог авторизации, скрипт моментально введёт ваш пароль в строку и примет диалог")                       imgui.EndTooltip() end imgui.SameLine(350)  imgui.PushFont(imfonts.smainFont2) if imgui.Button("Ввести пароль для автологина", imgui.ImVec2(215.0, 23.0)) then menu.password.v = true end imgui.PopFont()
-			if imgui.ToggleButton("automatic10", togglebools['Автоаренда']) 	   		then srp_ini.bools['Автоаренда'] 	         = togglebools['Автоаренда'].v             inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Арендовать транспорт (не дороже ")                                                if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вам высветится диалог с предложением арендовать транспорт и цена аренды будет приемлима, то вы его моментально арендуете и запустите двигатель")     imgui.EndTooltip() end imgui.SameLine()     imgui.PushItemWidth(90) if imgui.InputText('##d3', buffer['Автоаренда']) 		  then srp_ini.values['Автоаренда']          = tostring(u8:decode(buffer['Автоаренда'].v))     	   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic11", togglebools['Ограбление домов']) 	   	then srp_ini.bools['Ограбление домов'] 	     = togglebools['Ограбление домов'].v       inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Помощник для ограбления домов (автоматически выносит из дома и заходит обратно)") if imgui.IsItemHovered() then local hstr = "" for _, v in ipairs(string.split(srp_ini.hotkey['Войти в дом'], ", ")) do if v ~= "0" then hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" end end hstr = (hstr == "" or hstr == "nil") and "" or hstr imgui.BeginTooltip() imgui.TextUnformatted("Что бы взломать дом нажмите " .. (hstr ~= "" and hstr .. " (клавиша входа в дом)" or "клавишу входа в дом (можно задать в разделе 'Клавиши')") .. ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic12", togglebools['Ломка'])                  then srp_ini.bools['Ломка']                  = togglebools['Ломка'].v                  inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine(475)  		 if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools['Ломка без копов']) then srp_ini.bools['Ломка без копов'] = togglebools['Ломка без копов'].v inicfg.save(srp_ini, settings) end
-			if imgui.ToggleButton("automatic13",  togglebools['Спам']) 					then srp_ini.bools['Спам'] 					 = togglebools['Спам'].v 				   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)")        if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд")                     imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic1", togglebools['Починка у механика']) then srp_ini.bools['Починка у механика'] = togglebools['Починка у механика'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о починке") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением починить вас от механика") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic2", togglebools['Заправка у механика']) then srp_ini.bools['Заправка у механика'] = togglebools['Заправка у механика'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о заправке (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением заправить вас от механика") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d1', buffer['Заправка у механика']) then srp_ini.values['Заправка у механика'] = tostring(u8:decode(buffer['Заправка у механика'].v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("automatic3", togglebools['Заправка на АЗС']) then srp_ini.bools['Заправка на АЗС'] = togglebools['Заправка на АЗС'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт на АЗС (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима, вы будете автоматически заправлены") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d2', buffer['Заправка на АЗС']) then srp_ini.values['Заправка на АЗС'] = tostring(u8:decode(buffer['Заправка на АЗС'].v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("automatic4", togglebools['Покупка канистры']) then srp_ini.bools['Покупка канистры'] = togglebools['Покупка канистры'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Покупать канистру на АЗС, (исходя из цены заправки)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима (цена заправки на АЗС), вы автоматически купите канистру если её нет в инвентаре") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic5", togglebools['Заправка канистрой']) then srp_ini.bools['Заправка канистрой'] = togglebools['Заправка канистрой'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт канистрой в случае если закончилось топливо") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только в вашем транспорте закончится топливо, скрипт моментально использует канистру (если она есть в инвентаре)") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic6", togglebools['Цвет ника в профе']) then srp_ini.bools['Цвет ника в профе'] = togglebools['Цвет ника в профе'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате профсоюза в цвет клиста") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в чате профсоюза будут иметь одну особенность: ник и ID игрока будет в цвете его клиста") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic7", togglebools['Оповещение о выходе']) then srp_ini.bools['Оповещение о выходе'] = togglebools['Оповещение о выходе'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать о вышедших из игры игроках в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке, по той или иной причине покинет игру, то в чате появится сообщение о том кто вышел (в цвете клиста) и с какой причиной") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic8", togglebools['Оповещение о психохиле']) then srp_ini.bools['Оповещение о психохиле'] = togglebools['Оповещение о психохиле'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать об употреблении психохила игроками в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке употребит психохил, то в чате появится сообщение о том кто употребил (в цвете клиста)") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic9", togglebools['Автологин']) then srp_ini.bools['Автологин'] = togglebools['Автологин'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Вводить пароль в диалог авторизации") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы подключитесь к серверу и вам высветится диалог авторизации, скрипт моментально введёт ваш пароль в строку и примет диалог") imgui.EndTooltip() end imgui.SameLine(350)  imgui.PushFont(imfonts.smainFont2) if imgui.Button("Ввести пароль для автологина", imgui.ImVec2(215.0, 23.0)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = false menu.password.v = true end imgui.PopFont()
+			if imgui.ToggleButton("automatic10", togglebools['Автоаренда']) then srp_ini.bools['Автоаренда'] = togglebools['Автоаренда'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Арендовать транспорт (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вам высветится диалог с предложением арендовать транспорт и цена аренды будет приемлима, то вы его моментально арендуете и запустите двигатель") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d3', buffer['Автоаренда']) then srp_ini.values['Автоаренда'] = tostring(u8:decode(buffer['Автоаренда'].v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("automatic11", togglebools['Ограбление домов']) then srp_ini.bools['Ограбление домов'] = togglebools['Ограбление домов'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Помощник для ограбления домов (автоматически выносит из дома и заходит обратно)") if imgui.IsItemHovered() then local hstr = "" for _, v in ipairs(string.split(srp_ini.hotkey['Войти в дом'], ", ")) do if v ~= "0" then hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" end end hstr = (hstr == "" or hstr == "nil") and "" or hstr imgui.BeginTooltip() imgui.TextUnformatted("Что бы взломать дом нажмите " .. (hstr ~= "" and hstr .. " (клавиша входа в дом)" or "клавишу входа в дом (можно задать в разделе 'Клавиши')") .. ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic12", togglebools['Ломка']) then srp_ini.bools['Ломка'] = togglebools['Ломка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine(475) if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools['Ломка без копов']) then srp_ini.bools['Ломка без копов'] = togglebools['Ломка без копов'].v inicfg.save(srp_ini, settings) end
+			if imgui.ToggleButton("automatic13", togglebools['Спам']) then srp_ini.bools['Спам'] = togglebools['Спам'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд") imgui.EndTooltip() end
 			imgui.EndChild()
 		end
 		
@@ -889,12 +956,12 @@ function imgui.OnDrawFrame()
 		if not menu.automatic.v and menu.binds.v and not menu.overlay.v and not menu.binder.v then
 			imgui.BeginChild('hotkeys', imgui.ImVec2(1185, 480), true)
 			imgui.PushFont(imfonts.smainFont2)
-			imgui.Hotkey("hotkey",  "Контекстная клавиша", 100)  imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню Overlay") imgui.EndTooltip() end
-			imgui.Hotkey("hotkey1", "Нарко", 100) 			     imgui.SameLine() imgui.Text("Употребить нарко\n(нужно находится на месте)")
-			imgui.Hotkey("hotkey2", "Сменить клист", 100) 	     imgui.SameLine() imgui.Text("Сменить клист\n(если надет не нулевой клист, то будет введён /clist 0)") imgui.SameLine(800 - imgui.CalcTextSize('(если надет не нулевой клист, то будет введён /clist 0)').x) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.clist, clists.names) then srp_ini.values.clist = tostring(u8:decode(buffer.clist.v)) inicfg.save(srp_ini, settings) end
-			imgui.Hotkey("hotkey3", "Войти в дом", 100) 		 imgui.SameLine() imgui.Text("Войти в ближайший дом\n(Аналогично если вы находитесь внутри дома возле входа, то скрипт выйдет из него)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Настоятельно рекомендую использовать эту клавишу для ограбления домов!") imgui.EndTooltip() end 
-			imgui.Hotkey("hotkey4", "Lock", 100) 			  	 imgui.SameLine() imgui.Text("Открыть дверь транспорта\n(/lock)")
-			imgui.Hotkey("hotkey5", "Автобег", 100) 			 imgui.SameLine() imgui.Text("Зажать клавишу бега\n(Работает как переключатель)")
+			imgui.Hotkey("hotkey", "Контекстная клавиша", 100) imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню Overlay") imgui.EndTooltip() end
+			imgui.Hotkey("hotkey1", "Нарко", 100) imgui.SameLine() imgui.Text("Употребить нарко\n(нужно находится на месте)")
+			imgui.Hotkey("hotkey2", "Сменить клист", 100) imgui.SameLine() imgui.Text("Сменить клист\n(если надет не нулевой клист, то будет введён /clist 0)") imgui.SameLine(800 - imgui.CalcTextSize('(если надет не нулевой клист, то будет введён /clist 0)').x) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.clist, clists.names) then srp_ini.values.clist = tostring(u8:decode(buffer.clist.v)) inicfg.save(srp_ini, settings) end
+			imgui.Hotkey("hotkey3", "Войти в дом", 100) imgui.SameLine() imgui.Text("Войти в ближайший дом\n(Аналогично если вы находитесь внутри дома возле входа, то скрипт выйдет из него)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Настоятельно рекомендую использовать эту клавишу для ограбления домов!") imgui.EndTooltip() end 
+			imgui.Hotkey("hotkey4", "Lock", 100) imgui.SameLine() imgui.Text("Открыть дверь транспорта\n(/lock)")
+			imgui.Hotkey("hotkey5", "Автобег", 100) imgui.SameLine() imgui.Text("Зажать клавишу бега\n(Работает как переключатель)")
 			imgui.Hotkey("hotkey6", "Быстрое меню биндера", 100) imgui.SameLine() imgui.Text("При зажатии откроется быстрое меню биндера\n(Что бы настроить биндер см.меню 'Кастомный биндер')")
 			imgui.PopFont()
 			imgui.EndChild()
@@ -904,18 +971,18 @@ function imgui.OnDrawFrame()
 			imgui.Text("Что бы изменить положение элемента, пропишите команду /setov")
 			imgui.Text("Далее просто нужно курсором перенести все элементы")
 			imgui.BeginChild('overlay', imgui.ImVec2(1185, 432), true)
-			if imgui.ToggleButton("overlay1",  togglebools['Дата и время'])            then srp_ini.bools['Дата и время']            = togglebools['Дата и время'].v            inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
-			if imgui.ToggleButton("overlay2",  togglebools['Ник'])                     then srp_ini.bools['Ник']                     = togglebools['Ник'].v                     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
-			if imgui.ToggleButton("overlay3",  togglebools['Пинг'])                    then srp_ini.bools['Пинг']                    = togglebools['Пинг'].v                    inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
-			if imgui.ToggleButton("overlay4",  togglebools['Нарко']) 		           then srp_ini.bools['Нарко']                   = togglebools['Нарко'].v                   inicfg.save(srp_ini, settings) if srp_ini.bools['Нарко']             then isBoost      = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
-			if imgui.ToggleButton("overlay5",  togglebools['Таймер до МП'])            then srp_ini.bools['Таймер до МП']            = togglebools['Таймер до МП'].v            inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
-			if imgui.ToggleButton("overlay6",  togglebools['Прорисовка'])              then srp_ini.bools['Прорисовка']              = togglebools['Прорисовка'].v              inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
-			if imgui.ToggleButton("overlay7",  togglebools['Статус'])                  then srp_ini.bools['Статус']                  = togglebools['Статус'].v                  inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
-			if imgui.ToggleButton("overlay8",  togglebools['Сквад'])                   then srp_ini.bools['Сквад']                   = togglebools['Сквад'].v                   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
-			if imgui.ToggleButton("overlay9",  togglebools['ХП транспорта'])           then srp_ini.bools['ХП транспорта']           = togglebools['ХП транспорта'].v           inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
-			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом'])    then srp_ini.bools['Информация под чатом']    = togglebools['Информация под чатом'].v    inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
-			if imgui.ToggleButton("overlay11", togglebools['Ежедневные задания'])      then srp_ini.bools['Ежедневные задания']      = togglebools['Ежедневные задания'].v      inicfg.save(srp_ini, settings) if srp_ini.bools['Ежедневные задания'] then isQuest     = true chatManager.addMessageToQueue("/equest") 	  end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг @Imikhailovich название и описание задания") imgui.EndTooltip() end imgui.SameLine(750) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer['Разница часовых поясов'], timezones) then srp_ini.values['Разница часовых поясов'] = tostring(u8:decode(buffer['Разница часовых поясов'].v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools['Ежедневные задания'] then chatManager.addMessageToQueue("/equest") end end
-			if imgui.ToggleButton("overlay12", togglebools['Инвентарь'])               then srp_ini.bools['Инвентарь']               = togglebools['Инвентарь'].v               inicfg.save(srp_ini, settings) if srp_ini.bools['Инвентарь']          then isInventory = true chatManager.addMessageToQueue("/inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine(355) imgui.PushFont(imfonts.smainFont2) if imgui.Button("Настроить предметы инвентаря", imgui.ImVec2(215.0, 23.0)) then menu.inventory.v = true end imgui.PopFont()
+			if imgui.ToggleButton("overlay1", togglebools['Дата и время']) hen srp_ini.bools['Дата и время'] = togglebools['Дата и время'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
+			if imgui.ToggleButton("overlay2", togglebools['Ник']) then srp_ini.bools['Ник'] = togglebools['Ник'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
+			if imgui.ToggleButton("overlay3", togglebools['Пинг']) then srp_ini.bools['Пинг'] = togglebools['Пинг'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
+			if imgui.ToggleButton("overlay4", togglebools['Нарко']) then srp_ini.bools['Нарко'] = togglebools['Нарко'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Нарко'] then isBoost = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
+			if imgui.ToggleButton("overlay5", togglebools['Таймер до МП']) then srp_ini.bools['Таймер до МП'] = togglebools['Таймер до МП'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
+			if imgui.ToggleButton("overlay6", togglebools['Прорисовка']) then srp_ini.bools['Прорисовка'] = togglebools['Прорисовка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
+			if imgui.ToggleButton("overlay7", togglebools['Статус']) then srp_ini.bools['Статус'] = togglebools['Статус'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
+			if imgui.ToggleButton("overlay8", togglebools['Сквад']) then srp_ini.bools['Сквад'] = togglebools['Сквад'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
+			if imgui.ToggleButton("overlay9", togglebools['ХП транспорта']) then srp_ini.bools['ХП транспорта'] = togglebools['ХП транспорта'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
+			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом']) then srp_ini.bools['Информация под чатом'] = togglebools['Информация под чатом'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
+			if imgui.ToggleButton("overlay11", togglebools['Ежедневные задания']) then srp_ini.bools['Ежедневные задания'] = togglebools['Ежедневные задания'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Ежедневные задания'] then isQuest = true chatManager.addMessageToQueue("/equest") end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг @Imikhailovich название и описание задания") imgui.EndTooltip() end imgui.SameLine(750) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer['Разница часовых поясов'], timezones) then srp_ini.values['Разница часовых поясов'] = tostring(u8:decode(buffer['Разница часовых поясов'].v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools['Ежедневные задания'] then chatManager.addMessageToQueue("/equest") end end
+			if imgui.ToggleButton("overlay12", togglebools['Инвентарь']) then srp_ini.bools['Инвентарь'] = togglebools['Инвентарь'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Инвентарь'] then isInventory = true chatManager.addMessageToQueue("/inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine(355) imgui.PushFont(imfonts.smainFont2) if imgui.Button("Настроить предметы инвентаря", imgui.ImVec2(215.0, 23.0)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = true menu.password.v = false end imgui.PopFont()
 			if imgui.ToggleButton("overlay13", togglebools['Рендер ограбления домов']) then srp_ini.bools['Рендер ограбления домов'] = togglebools['Рендер ограбления домов'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение КД до следующего ограбления домов/автоугона")
 			imgui.EndChild()			
 		end
@@ -926,31 +993,31 @@ function imgui.OnDrawFrame()
 			imgui.Begin("Выбор предметов для отображения", menu.inventory, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Text("Выберите предметы, количество которых будет выводится на экран\nЕсли предмет светится жёлтым/красным - значит его мало/отсутствует")
 			imgui.BeginChild('inventory', imgui.ImVec2(565, 730), true)
-			if imgui.ToggleButton("inventory1", togglebools['Наркотики'])                then srp_ini.inventory['Наркотики']               = togglebools['Наркотики'].v               inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Наркотики\"")
-			if imgui.ToggleButton("inventory2", togglebools['Материалы'])                then srp_ini.inventory['Материалы']               = togglebools['Материалы'].v               inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Материалы\"")
-			if imgui.ToggleButton("inventory3", togglebools['Телефонная книга'])         then srp_ini.inventory['Телефонная книга']        = togglebools['Телефонная книга'].v        inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Телефонная книга\"")
-			if imgui.ToggleButton("inventory4", togglebools['MP3'])                      then srp_ini.inventory['MP3']                     = togglebools['MP3'].v                     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"MP3\"")
-			if imgui.ToggleButton("inventory5", togglebools['Ключи от камеры'])          then srp_ini.inventory['Ключи от камеры']         = togglebools['Ключи от камеры'].v         inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Ключи от камеры\"")
-			if imgui.ToggleButton("inventory6", togglebools['Канистра с бензином'])      then srp_ini.inventory['Канистра с бензином']     = togglebools['Канистра с бензином'].v     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Канистра с бензином\"")
-			if imgui.ToggleButton("inventory7", togglebools['Водительские права'])       then srp_ini.inventory['Водительские права']      = togglebools['Водительские права'].v      inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Водительские права\"")
-			if imgui.ToggleButton("inventory8", togglebools['Лицензия на вертолеты'])    then srp_ini.inventory['Лицензия на вертолеты']   = togglebools['Лицензия на вертолеты'].v   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на вертолеты\"")
-			if imgui.ToggleButton("inventory9", togglebools['Лицензия на самолеты'])     then srp_ini.inventory['Лицензия на самолеты']    = togglebools['Лицензия на самолеты'].v    inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на самолеты\"")
-			if imgui.ToggleButton("inventory10", togglebools['Лицензия на лодки'])       then srp_ini.inventory['Лицензия на лодки']       = togglebools['Лицензия на лодки'].v       inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на лодки\"")
+			if imgui.ToggleButton("inventory1", togglebools['Наркотики']) then srp_ini.inventory['Наркотики'] = togglebools['Наркотики'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Наркотики\"")
+			if imgui.ToggleButton("inventory2", togglebools['Материалы']) then srp_ini.inventory['Материалы'] = togglebools['Материалы'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Материалы\"")
+			if imgui.ToggleButton("inventory3", togglebools['Телефонная книга']) then srp_ini.inventory['Телефонная книга'] = togglebools['Телефонная книга'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Телефонная книга\"")
+			if imgui.ToggleButton("inventory4", togglebools['MP3']) then srp_ini.inventory['MP3'] = togglebools['MP3'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"MP3\"")
+			if imgui.ToggleButton("inventory5", togglebools['Ключи от камеры']) then srp_ini.inventory['Ключи от камеры'] = togglebools['Ключи от камеры'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Ключи от камеры\"")
+			if imgui.ToggleButton("inventory6", togglebools['Канистра с бензином']) then srp_ini.inventory['Канистра с бензином'] = togglebools['Канистра с бензином'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Канистра с бензином\"")
+			if imgui.ToggleButton("inventory7", togglebools['Водительские права']) then srp_ini.inventory['Водительские права'] = togglebools['Водительские права'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Водительские права\"")
+			if imgui.ToggleButton("inventory8", togglebools['Лицензия на вертолеты']) then srp_ini.inventory['Лицензия на вертолеты'] = togglebools['Лицензия на вертолеты'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на вертолеты\"")
+			if imgui.ToggleButton("inventory9", togglebools['Лицензия на самолеты']) then srp_ini.inventory['Лицензия на самолеты'] = togglebools['Лицензия на самолеты'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на самолеты\"")
+			if imgui.ToggleButton("inventory10", togglebools['Лицензия на лодки']) then srp_ini.inventory['Лицензия на лодки'] = togglebools['Лицензия на лодки'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на лодки\"")
 			if imgui.ToggleButton("inventory11", togglebools['Лицензия на рыболовство']) then srp_ini.inventory['Лицензия на рыболовство'] = togglebools['Лицензия на рыболовство'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на рыболовство\"")
-			if imgui.ToggleButton("inventory12", togglebools['Лицензия на оружие'])      then srp_ini.inventory['Лицензия на оружие']      = togglebools['Лицензия на оружие'].v      inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на оружие\"")
-			if imgui.ToggleButton("inventory13", togglebools['Сырая рыба'])              then srp_ini.inventory['Сырая рыба']              = togglebools['Сырая рыба'].v              inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сырая рыба\"")
-			if imgui.ToggleButton("inventory14", togglebools['Готовая рыба'])            then srp_ini.inventory['Готовая рыба']            = togglebools['Готовая рыба'].v            inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовая рыба\"")
-			if imgui.ToggleButton("inventory15", togglebools['Грибы'])                   then srp_ini.inventory['Грибы']                   = togglebools['Грибы'].v                   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Грибы\"")
-			if imgui.ToggleButton("inventory16", togglebools['Комплект «автомеханик»'])  then srp_ini.inventory['Комплект «автомеханик»']  = togglebools['Комплект «автомеханик»'].v  inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Комплект «автомеханик»\"")
-			if imgui.ToggleButton("inventory17", togglebools['Психохил'])                then srp_ini.inventory['Психохил']                = togglebools['Психохил'].v                inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Психохил\"")
-			if imgui.ToggleButton("inventory18", togglebools['Готовые грибы'])           then srp_ini.inventory['Готовые грибы']           = togglebools['Готовые грибы'].v           inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовые грибы\"")
-			if imgui.ToggleButton("inventory19", togglebools['Сигареты'])                then srp_ini.inventory['Сигареты']                = togglebools['Сигареты'].v                inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сигареты\"")
-			if imgui.ToggleButton("inventory20", togglebools['Адреналин'])               then srp_ini.inventory['Адреналин']               = togglebools['Адреналин'].v               inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Адреналин\"")
-			if imgui.ToggleButton("inventory21", togglebools['Защита от насильников'])   then srp_ini.inventory['Защита от насильников']   = togglebools['Защита от насильников'].v   inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Защита от насильников\"")
-			if imgui.ToggleButton("inventory22", togglebools['Балаклава'])               then srp_ini.inventory['Балаклава']               = togglebools['Балаклава'].v               inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Балаклава\"")
-			if imgui.ToggleButton("inventory23", togglebools['Лом'])                     then srp_ini.inventory['Лом']                     = togglebools['Лом'].v                     inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лом\"")
-			if imgui.ToggleButton("inventory24", togglebools['Энергетик'])               then srp_ini.inventory['Энергетик']               = togglebools['Энергетик'].v               inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Энергетик\"")
-			if imgui.ToggleButton("inventory25", togglebools['Набор для взлома'])        then srp_ini.inventory['Набор для взлома']        = togglebools['Набор для взлома'].v        inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Набор для взлома\"")
+			if imgui.ToggleButton("inventory12", togglebools['Лицензия на оружие']) then srp_ini.inventory['Лицензия на оружие'] = togglebools['Лицензия на оружие'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на оружие\"")
+			if imgui.ToggleButton("inventory13", togglebools['Сырая рыба']) then srp_ini.inventory['Сырая рыба'] = togglebools['Сырая рыба'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сырая рыба\"")
+			if imgui.ToggleButton("inventory14", togglebools['Готовая рыба']) then srp_ini.inventory['Готовая рыба'] = togglebools['Готовая рыба'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовая рыба\"")
+			if imgui.ToggleButton("inventory15", togglebools['Грибы']) then srp_ini.inventory['Грибы'] = togglebools['Грибы'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Грибы\"")
+			if imgui.ToggleButton("inventory16", togglebools['Комплект «автомеханик»']) then srp_ini.inventory['Комплект «автомеханик»'] = togglebools['Комплект «автомеханик»'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Комплект «автомеханик»\"")
+			if imgui.ToggleButton("inventory17", togglebools['Психохил']) then srp_ini.inventory['Психохил'] = togglebools['Психохил'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Психохил\"")
+			if imgui.ToggleButton("inventory18", togglebools['Готовые грибы']) then srp_ini.inventory['Готовые грибы'] = togglebools['Готовые грибы'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовые грибы\"")
+			if imgui.ToggleButton("inventory19", togglebools['Сигареты']) then srp_ini.inventory['Сигареты'] = togglebools['Сигареты'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сигареты\"")
+			if imgui.ToggleButton("inventory20", togglebools['Адреналин']) then srp_ini.inventory['Адреналин'] = togglebools['Адреналин'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Адреналин\"")
+			if imgui.ToggleButton("inventory21", togglebools['Защита от насильников']) then srp_ini.inventory['Защита от насильников'] = togglebools['Защита от насильников'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Защита от насильников\"")
+			if imgui.ToggleButton("inventory22", togglebools['Балаклава']) then srp_ini.inventory['Балаклава'] = togglebools['Балаклава'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Балаклава\"")
+			if imgui.ToggleButton("inventory23", togglebools['Лом']) then srp_ini.inventory['Лом'] = togglebools['Лом'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лом\"")
+			if imgui.ToggleButton("inventory24", togglebools['Энергетик']) then srp_ini.inventory['Энергетик'] = togglebools['Энергетик'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Энергетик\"")
+			if imgui.ToggleButton("inventory25", togglebools['Набор для взлома']) then srp_ini.inventory['Набор для взлома'] = togglebools['Набор для взлома'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Набор для взлома\"")
 			imgui.EndChild()
 			imgui.End()
 		end
@@ -1000,7 +1067,10 @@ function imgui.OnDrawFrame()
 			end
 			imgui.SameLine()
 			if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 23.0)) then
-				menu.variables.v = true
+				menu.variables.v = false 
+				menu.commands.v = true 
+				menu.inventory.v = false 
+				menu.password.v = false
 			end
 			imgui.BeginChild('binds', imgui.ImVec2(1185, 429), true)
 			for k, v in ipairs(binder_ini.list) do
@@ -1130,6 +1200,8 @@ function imgui.OnDrawFrame()
 					imgui.SameLine()
 					if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 22.0)) then
 						menu.variables.v = true
+						menu.commands.v = false
+						
 					end
 					imgui.SameLine(860)
 					if imgui.Button("Вернутся назад", imgui.ImVec2(300.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
@@ -1196,9 +1268,9 @@ function imgui.OnDrawFrame()
 		
 		imgui.PushFont(imfonts.smainFont2)
 		imgui.SetCursorPos(imgui.ImVec2(30, wh/2 + 235))
-		if imgui.Button("Все команды скрипта", imgui.ImVec2(170.0, 23.0)) then menu.commands.v = true end
+		if imgui.Button("Все команды скрипта", imgui.ImVec2(170.0, 23.0)) then menu.variables.v = false menu.commands.v = true menu.inventory.v = false menu.password.v = false end
 		imgui.SetCursorPos(imgui.ImVec2(30, wh/2 + 270))
-		if imgui.Button("Информация о скрипте", imgui.ImVec2(170.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = true menu.binder.v = false  menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		if imgui.Button("Информация о скрипте", imgui.ImVec2(170.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = true menu.binder.v = false menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
 		imgui.SetCursorPos(imgui.ImVec2(ww/2 + 400, wh/2 + 235))
 		if imgui.Button("Выгрузить скрипт", imgui.ImVec2(170.0, 23.0)) then showCursor(false) script.unload = true thisScript():unload() end if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, скрипт будет отключён до следующего запуска игры") imgui.EndTooltip() end
 		imgui.SetCursorPos(imgui.ImVec2(ww/2 + 400, wh/2 + 270))
@@ -1327,7 +1399,7 @@ function imgui.OnDrawFrame()
 		imgui.Begin('#empty_field4', overlay['Таймер до МП'], 1 + 32 + 2 + SetModeCond + 64)
 		imgui.PushFont(imfonts.ovFont1)
 		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся таймеры МП") end
-		for k, v in ipairs(srp_ini.ivent) do
+		for k, v in pairs(srp_ini.ivent) do
 			if v ~= false and tonumber(v) ~= nil then
 				local sec = tonumber(v) - os.time()
 				local mins = math.floor(sec / 60)
@@ -1502,31 +1574,31 @@ function imgui.OnDrawFrame()
 		if checkedInventory then
 			for k, v in pairs(srp_ini.inventory) do
 				if v and tonumber(srp_ini['Инвентарь'][k]) ~= nil then
-					if u8:decode(k) == u8:decode"Наркотики"               then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 25   and "{00FF00}" or "{FCF803}"  else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Материалы"               then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50   and "{00FF00}" or "{FCF803}"  else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Телефонная книга"        then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"MP3"              		  then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Ключи от камеры"         then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2    and "{00FF00}" or "{FCF803}"  else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Канистра с бензином"     then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Водительские права"      then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на вертолеты"   then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на самолеты"    then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 												 	           else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на лодки"       then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}"      													   else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на рыболовство" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на оружие"      then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Сырая рыба"              then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50000 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Готовая рыба"            then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15    and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Грибы"                   then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50    and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Комплект «автомеханик»"  then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Психохил"                then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15    and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Готовые грибы"           then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15    and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Сигареты"                then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Адреналин"               then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Защита от насильников"   then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Балаклава"               then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 3     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лом"                     then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 4     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Энергетик"               then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" 														       else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Набор для взлома"        then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2     and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Наркотики" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 25 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Материалы" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Телефонная книга" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"MP3" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Ключи от камеры" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Канистра с бензином" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Водительские права" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лицензия на вертолеты" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лицензия на самолеты" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лицензия на лодки" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лицензия на рыболовство" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лицензия на оружие" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Сырая рыба" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50000 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Готовая рыба" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Грибы" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Комплект «автомеханик»" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Психохил" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Готовые грибы" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Сигареты" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Адреналин" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Защита от насильников" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Балаклава" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 3 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Лом" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 4 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Энергетик" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+					if u8:decode(k) == u8:decode"Набор для взлома" then if tonumber(srp_ini['Инвентарь'][k]) ~= nil and tonumber(srp_ini['Инвентарь'][k]) >= 1 then col = tonumber(srp_ini['Инвентарь'][k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
 					imgui.TextColoredRGB(col .. u8:decode(k) .. (tonumber(srp_ini['Инвентарь'][k]) > 1 and ": " .. srp_ini['Инвентарь'][k] or (tonumber(srp_ini['Инвентарь'][k]) == 1 and "" or u8:decode": Нету!")))
 				end
 			end
@@ -1629,40 +1701,71 @@ function ev.onServerMessage(col, text)
 				end
 			end
 		end
-		local paint = tonumber(text:match(strings.painttime))
-		local squid = tonumber(text:match(strings.squidtime))
-		local derby = tonumber(text:match(strings.derbytime))
-		local race = tonumber(text:match(strings.racetime))
-		if text:match(strings.paintfalse1) then paint = false end
-		if text:match(strings.paintfalse2) then paint = false end
-		if text:match(strings.squidfalse1) then squid = false end
-		if text:match(strings.squidfalse2) then squid = false end
-		if text:match(strings.squidfalse3) then squid = false end
-		if text:match(strings.derbyfalse1) then derby = false end
-		if text:match(strings.derbyfalse2) then derby = false end
-		if text:match(strings.derbyfalse3) then derby = false end
-		if text:match(strings.racefalse1)  then race  = false end
-		if text:match(strings.racefalse2)  then race  = false end
-		if text:match(strings.racefalse3)  then race  = false end
-		
-		if paint ~= nil and (col == strings.color.paint or paint == false) then
-			if tonumber(paint) ~= nil then paint = os.time() + paint * 60 end
-			srp_ini.ivent['Пейнтбол'] = paint
-		end
-		if squid ~= nil and (col == strings.color.squid or paint == false) then
-			if tonumber(squid) ~= nil then squid = os.time() + squid * 60 end
-			srp_ini.ivent['Игра Кальмара'] = squid
-		end
-		if race ~= nil and (col == strings.color.race or paint == false) then
-			if tonumber(race) ~= nil then
-				if race == 5 then race = 7 end
-				race = os.time() + race * 60
+		if col == strings.color.paint then
+			if text:match(strings.painttime) then
+				local paint = text:match(strings.painttime)
+				if tonumber(paint) ~= nil then 
+					paint = os.time() + paint * 60
+					srp_ini.ivent['Пейнтбол'] = paint
+				end
 			end
-			srp_ini.ivent['Гонка ЛС'] = race
+			if text:match(strings.paintfalse1) then
+				srp_ini.ivent['Пейнтбол'] = false
+			end
+			if text:match(strings.paintfalse2) then
+				srp_ini.ivent['Пейнтбол'] = false
+			end
 		end
-		if derby ~= nil and (col == strings.color.derby or derby == false) then
-			if tonumber(derby) ~= nil then derby = os.time() + derby * 60 end
-			srp_ini.ivent['Дерби СФ'] = derby
+		if col == strings.color.squid then
+			if text:match(strings.squidtime) then
+				local squid = text:match(strings.squidtime)
+				if tonumber(squid) ~= nil then squid = os.time() + squid * 60 end
+				srp_ini.ivent['Игра Кальмара'] = squid
+			end
+			if text:match(strings.squidfalse1) then
+				srp_ini.ivent['Игра Кальмара'] = false
+			end
+			if text:match(strings.squidfalse2) then
+				srp_ini.ivent['Игра Кальмара'] = false
+			end
+			if text:match(strings.squidfalse3) then
+				srp_ini.ivent['Игра Кальмара'] = false
+			end
+		end
+		if col == strings.color.race then
+			if text:match(strings.racetime) then
+				local race = text:match(strings.racetime)
+				if tonumber(race) ~= nil then
+					if race == 5 then race = 7 end
+					race = os.time() + race * 60
+					srp_ini.ivent['Гонка ЛС'] = race
+				end
+			end
+			if text:match(strings.racefalse1) then
+				srp_ini.ivent['Гонка ЛС'] = false
+			end
+			if text:match(strings.racefalse2) then
+				srp_ini.ivent['Гонка ЛС'] = false
+			end
+			if text:match(strings.racefalse3) then
+				srp_ini.ivent['Гонка ЛС'] = false
+			end
+		end
+		if col == strings.color.derby then
+			if text:match(strings.derbytime) then
+				local derby = text:match(strings.derbytime)
+				if tonumber(derby) ~= nil then derby = os.time() + derby * 60 end
+				srp_ini.ivent['Дерби СФ'] = derby
+			end
+			if text:match(strings.derbyfalse1) then
+				srp_ini.ivent['Дерби СФ'] = false
+			end
+			if text:match(strings.derbyfalse2) then
+				srp_ini.ivent['Дерби СФ'] = false
+			end
+			if text:match(strings.derbyfalse3) then
+				srp_ini.ivent['Дерби СФ'] = false
+			end
 		end
 		if (text:match(strings.repair1) or text:match(strings.repair2) ~= nil or text:match(strings.repair3) ~= nil or text:match(strings.repair4) ~= nil) and CTaskArr[10][1] then CTaskArr[10][1] = false end
 		if col == strings.color.quest and srp_ini.bools['Ежедневные задания'] then
@@ -2213,9 +2316,9 @@ end
 
 function checkdialogs()
 	chatmsg(u8:decode"Начинаю собирать информацию из диалогов...")
-	if srp_ini.bools['Нарко'] 			   then isBoost 	= true checkedBoost     = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost     = true end -- проверка множителя КД нарко
-	if srp_ini.bools['Ежедневные задания'] then isQuest 	= true checkedQuest     = false chatManager.addMessageToQueue("/equest")    else checkedQuest     = true end -- проверка ежедневных квестов
-	isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") 								 -- проверка предметов инвентаря
+	if srp_ini.bools['Нарко'] then isBoost = true checkedBoost = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost = true end -- проверка множителя КД нарко
+	if srp_ini.bools['Ежедневные задания'] then isQuest = true checkedQuest = false chatManager.addMessageToQueue("/equest") else checkedQuest = true end -- проверка ежедневных квестов
+	isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") -- проверка предметов инвентаря
 end
 
 function getcars()
@@ -2521,7 +2624,7 @@ function enterhouse()
 				end
 			end
 		end
-		chatmsg(u8:decode"Возле вас нету пикапа дома, подойдите ближе к дому")
+		chatmsg(u8:decode"Возле вас нету пикапа дома, подойдите ближе")
 		else
 		chatManager.addMessageToQueue("/exit")
 	end
@@ -2571,46 +2674,46 @@ function cmd_setoverlay()
 		chatmsg(u8:decode"Начата настройка местоположения элементов overlay")
 		chatmsg(u8:decode"Перетащите элементы в нужное место и пропишите /setov - произойдет сохранение координат")
 		chatmsg(u8:decode"Для сброса всех координат зажмите среднюю кнопку мыши")
-		srp_ini.bools['Дата и время']            = true
-		srp_ini.bools['Ник']           	         = true
-		srp_ini.bools['Пинг']                    = true
-		srp_ini.bools['Нарко']                   = true
-		srp_ini.bools['Таймер до МП']            = true
-		srp_ini.bools['Прорисовка']              = true
-		srp_ini.bools['Статус']                  = true
-		srp_ini.bools['Сквад']                   = true
-		srp_ini.bools['Ежедневные задания']      = true
-		srp_ini.bools['Инвентарь']               = true
+		srp_ini.bools['Дата и время'] = true
+		srp_ini.bools['Ник'] = true
+		srp_ini.bools['Пинг'] = true
+		srp_ini.bools['Нарко'] = true
+		srp_ini.bools['Таймер до МП'] = true
+		srp_ini.bools['Прорисовка'] = true
+		srp_ini.bools['Статус'] = true
+		srp_ini.bools['Сквад'] = true
+		srp_ini.bools['Ежедневные задания'] = true
+		srp_ini.bools['Инвентарь'] = true
 		srp_ini.bools['Рендер ограбления домов'] = true
-		SetMode, SetModeFirstShow                = true, true
-		imgui.ShowCursor, imgui.LockPlayer       = true, true
+		SetMode, SetModeFirstShow = true, true
+		imgui.ShowCursor, imgui.LockPlayer = true, true
 		
 		else
 		
-		srp_ini.overlay['Дата и времяX'],                srp_ini.overlay['Дата и времяY']                = soverlay['Дата и время'].x,       soverlay['Дата и время'].y
-		srp_ini.overlay['НикX'],                         srp_ini.overlay['НикY']                         = soverlay['Ник'].x,                soverlay['Ник'].y
-		srp_ini.overlay['ПингX'],                        srp_ini.overlay['ПингY']                        = soverlay['Пинг'].x,               soverlay['Пинг'].y
-		srp_ini.overlay['НаркоX'],                       srp_ini.overlay['НаркоY']                       = soverlay['Нарко'].x,              soverlay['Нарко'].y
-		srp_ini.overlay['Таймер до МПX'],                srp_ini.overlay['Таймер до МПY']                = soverlay['Таймер до МП'].x,       soverlay['Таймер до МП'].y
-		srp_ini.overlay['ПрорисовкаX'],                  srp_ini.overlay['ПрорисовкаY']                  = soverlay['Прорисовка'].x,         soverlay['Прорисовка'].y
-		srp_ini.overlay['СтатусX'],                      srp_ini.overlay['СтатусY']                      = soverlay['Статус'].x,             soverlay['Статус'].y
-		srp_ini.overlay['СквадX'],                       srp_ini.overlay['СквадY']                       = soverlay['Сквад'].x,              soverlay['Сквад'].y
-		srp_ini.overlay['Ежедневные заданияX'],          srp_ini.overlay['Ежедневные заданияY']          = soverlay['Ежедневные задания'].x, soverlay['Ежедневные задания'].y
-		srp_ini.overlay['ИнвентарьX'],                   srp_ini.overlay['ИнвентарьY']                   = soverlay['Инвентарь'].x,          soverlay['Инвентарь'].y
-		srp_ini.overlay['Ограбление домовX'],            srp_ini.overlay['Ограбление домовY']            = soverlay['Ограбление домов'].x,   soverlay['Ограбление домов'].y
+		srp_ini.overlay['Дата и времяX'], srp_ini.overlay['Дата и времяY'] = soverlay['Дата и время'].x, soverlay['Дата и время'].y
+		srp_ini.overlay['НикX'], srp_ini.overlay['НикY'] = soverlay['Ник'].x, soverlay['Ник'].y
+		srp_ini.overlay['ПингX'], srp_ini.overlay['ПингY'] = soverlay['Пинг'].x, soverlay['Пинг'].y
+		srp_ini.overlay['НаркоX'], srp_ini.overlay['НаркоY'] = soverlay['Нарко'].x, soverlay['Нарко'].y
+		srp_ini.overlay['Таймер до МПX'], srp_ini.overlay['Таймер до МПY'] = soverlay['Таймер до МП'].x, soverlay['Таймер до МП'].y
+		srp_ini.overlay['ПрорисовкаX'], srp_ini.overlay['ПрорисовкаY'] = soverlay['Прорисовка'].x, soverlay['Прорисовка'].y
+		srp_ini.overlay['СтатусX'], srp_ini.overlay['СтатусY'] = soverlay['Статус'].x, soverlay['Статус'].y
+		srp_ini.overlay['СквадX'], srp_ini.overlay['СквадY'] = soverlay['Сквад'].x, soverlay['Сквад'].y
+		srp_ini.overlay['Ежедневные заданияX'], srp_ini.overlay['Ежедневные заданияY'] = soverlay['Ежедневные задания'].x, soverlay['Ежедневные задания'].y
+		srp_ini.overlay['ИнвентарьX'], srp_ini.overlay['ИнвентарьY'] = soverlay['Инвентарь'].x, soverlay['Инвентарь'].y
+		srp_ini.overlay['Ограбление домовX'], srp_ini.overlay['Ограбление домовY'] = soverlay['Ограбление домов'].x, soverlay['Ограбление домов'].y
 		
 		chatmsg(u8:decode"Местоположения всех элементов успешно задано")
-		srp_ini.bools['Дата и время']              = togglebools['Дата и время'].v       and true or false
-		srp_ini.bools['Ник']           	           = togglebools['Ник'].v			      and true or false
-		srp_ini.bools['Пинг']                      = togglebools['Пинг'].v			      and true or false
-		srp_ini.bools['Нарко']                     = togglebools['Нарко'].v              and true or false
-		srp_ini.bools['Таймер до МП']              = togglebools['Таймер до МП'].v       and true or false
-		srp_ini.bools['Прорисовка']                = togglebools['Прорисовка'].v         and true or false
-		srp_ini.bools['Статус']                    = togglebools['Статус'].v             and true or false
-		srp_ini.bools['Сквад']                     = togglebools['Сквад'].v              and true or false
-		srp_ini.bools['Ежедневные задания']        = togglebools['Ежедневные задания'].v and true or false
-		srp_ini.bools['Инвентарь']          	   = togglebools['Инвентарь'].v          and true or false
-		srp_ini.bools['Рендер ограбления домов']   = togglebools['Рендер ограбления домов'].v   and true or false
+		srp_ini.bools['Дата и время'] = togglebools['Дата и время'].v and true or false
+		srp_ini.bools['Ник'] = togglebools['Ник'].v and true or false
+		srp_ini.bools['Пинг'] = togglebools['Пинг'].v and true or false
+		srp_ini.bools['Нарко'] = togglebools['Нарко'].v and true or false
+		srp_ini.bools['Таймер до МП'] = togglebools['Таймер до МП'].v and true or false
+		srp_ini.bools['Прорисовка'] = togglebools['Прорисовка'].v and true or false
+		srp_ini.bools['Статус'] = togglebools['Статус'].v and true or false
+		srp_ini.bools['Сквад'] = togglebools['Сквад'].v and true or false
+		srp_ini.bools['Ежедневные задания'] = togglebools['Ежедневные задания'].v and true or false
+		srp_ini.bools['Инвентарь'] = togglebools['Инвентарь'].v and true or false
+		srp_ini.bools['Рендер ограбления домов'] = togglebools['Рендер ограбления домов'].v and true or false
 		inicfg.save(srp_ini, settings)
 		SetMode, SetModeFirstShow, imgui.ShowCursor, imgui.LockPlayer = false, false, false, false
 	end
@@ -2631,14 +2734,17 @@ function cmd_flood(arg)
 end
 
 function medcall(hospital)
+	local fc = u8:decode"Организации"
+	local sc = u8:decode"Меню"
 	lua_thread.create(function()
+		wait(0)
 		chatManager.addMessageToQueue("/dir")
 		while not sampIsDialogActive() do wait(0) end
 		sampSendDialogResponse(sampGetCurrentDialogId(), 1, 2)
-		while sampGetDialogCaption() ~= u8:decode"Организации" do wait(0) end
+		while sampGetDialogCaption() ~= fc do wait(0) end
 		wait(100)
 		sampCloseCurrentDialogWithButton(1)
-		while sampGetDialogCaption() ~= u8:decode"Меню" do wait(0) end
+		while sampGetDialogCaption() ~= sc do wait(0) end
 		local med = sampGetDialogText()
 		sampCloseCurrentDialogWithButton(0) wait(100) sampCloseCurrentDialogWithButton(0) wait(100) sampCloseCurrentDialogWithButton(0)
 		for v in med:gmatch('[^\n]+') do
@@ -2984,6 +3090,14 @@ function checkUpdates() -- проверка обновлений
 						script.available = true
 						if script.update then updateScript() return end
 						chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления")
+						chatmsg(updatingprefix .. u8:decode"Изменения в новой версии:")
+						if script.upd.sort ~= {} then
+							for k in ipairs(script.upd.sort) do
+								if script.upd.changes[tostring(k)] ~= nil then
+									chatmsg(updatingprefix .. k .. ') ' .. u8:decode(script.upd.changes[tostring(k)]))
+								end
+							end
+						end
 						return true
 						else
 						if script.update then chatmsg(u8:decode"Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. u8:decode" за " .. script.v.date) script.update = false return end
@@ -3032,4 +3146,4 @@ function onScriptTerminate(s, bool)
 			chatmsg(u8:decode"Перезагружаюсь...")
 		end
 	end
-end																																																																																																																																																											
+end																																																																																																																																																																													
