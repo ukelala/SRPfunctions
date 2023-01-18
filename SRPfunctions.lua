@@ -3,7 +3,7 @@ script_author("Cody_Webb | Telegram: @Imikhailovich")
 script_version("17.01.2023")
 script_version_number(13)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}}
--------------------------------------------------------------------------[Библиотеки/Зависимости]--------------------------------------------------------------------------------------
+-------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
 local imgui = require 'imgui'
 imgui.ToggleButton = require('imgui_addons').ToggleButton
@@ -86,7 +86,7 @@ local config = {
 		['Заправка на АЗС'] = 5000,
 		['Нарко'] = 0,
 		['clist'] = 12,
-		['Пароль'] = '',        -- ДЛЯ АВТОЛОГИНА, ЭТО НЕ СТИЛЛЕР БЛЕАТЬ!!!
+		['Пароль'] = '', -- ДЛЯ АВТОЛОГИНА, ЭТО НЕ СТИЛЛЕР БЛЕАТЬ!!!
 		['Автоаренда'] = 5000,
 		['Разница часовых поясов'] = 0,
         ['Ограбление домов'] = 0,
@@ -135,7 +135,7 @@ local config = {
 local bindertable = {
 	list = {}
 }
--------------------------------------------------------------------------[Переменные и маcсивы]-----------------------------------------------------------------------------
+-------------------------------------------------------------------------[Переменные и маcсивы]-----------------------------------------------------------------
 local clists = {
 	numbers = {
 		[16777215] = 0,    [2852758528] = 1,  [2857893711] = 2,  [2857434774] = 3,  [2855182459] = 4, [2863589376] = 5,
@@ -971,7 +971,7 @@ function imgui.OnDrawFrame()
 			imgui.Text("Что бы изменить положение элемента, пропишите команду /setov")
 			imgui.Text("Далее просто нужно курсором перенести все элементы")
 			imgui.BeginChild('overlay', imgui.ImVec2(1185, 432), true)
-			if imgui.ToggleButton("overlay1", togglebools['Дата и время']) hen srp_ini.bools['Дата и время'] = togglebools['Дата и время'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
+			if imgui.ToggleButton("overlay1", togglebools['Дата и время']) then srp_ini.bools['Дата и время'] = togglebools['Дата и время'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
 			if imgui.ToggleButton("overlay2", togglebools['Ник']) then srp_ini.bools['Ник'] = togglebools['Ник'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
 			if imgui.ToggleButton("overlay3", togglebools['Пинг']) then srp_ini.bools['Пинг'] = togglebools['Пинг'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
 			if imgui.ToggleButton("overlay4", togglebools['Нарко']) then srp_ini.bools['Нарко'] = togglebools['Нарко'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Нарко'] then isBoost = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
