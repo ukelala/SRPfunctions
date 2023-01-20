@@ -1,6 +1,6 @@
 {
-  "version_num": 14,
-  "version_date": "19.01.2023",
+  "version_num": 15,
+  "version_date": "20.01.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -60,7 +60,7 @@
   },
    "version_label": {
              "Cody_Webb": {"color": "0xFFB30000", "text": "Основатель скрипта"},
-             "Lavrentiy_Beria": {"color": "0xFF046901", "text": "Основатель скрипта"},
+             "Lavrentiy_Beria": {"color": "0xFFB30000", "text": "Основатель скрипта"},
              "Sebastian_Melgaard": {"color": "0xFFB30000", "text": "Основатель скрипта"},
              "vodka": {"color": "0xFFB30000", "text": "Основатель скрипта"},
              "bier": {"color": "0xFFFFFF00", "text": "Пухляш"},
@@ -71,6 +71,7 @@
              "1": "Пофикшено /inventory когда берёшь патроны или форму",
              "2": "Теперь ваш ник в скваде выглядит непрозрачным",
              "3": "Добавлена возможность узнать когда слетит дом/квартира, а также команда /whenhouse",
-             "4": "Добавлен 3D-текст на особенных игроках"
+             "4": "Добавлен 3D-текст на особенных игроках",
+             "5": "Пофикшено имгуй-окно текстовых переменных"
   }       
 }

@@ -1,8 +1,8 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
-script_version("19.01.2023")
-script_version_number(14)
-local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}}
+script_version("20.01.2023")
+script_version_number(15)
+local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
 local imgui = require 'imgui'
@@ -47,7 +47,8 @@ local config = {
 		['Инвентарь'] = false,
 		['Рендер ограбления домов'] = false,
 		['Переменные'] = false,
-		['Спам'] = false
+		['Спам'] = false,
+		['Слет'] = false
 	},
 	hotkey = {
 		['Контекстная клавиша'] = "0",
@@ -92,7 +93,8 @@ local config = {
 		['Автоаренда'] = 5000,
 		['Разница часовых поясов'] = 0,
         ['Ограбление домов'] = 0,
-		['Автоугон'] = 0
+		['Автоугон'] = 0,
+		['Слет'] = 0
 	},
 	ivent = {
 		['Гонка ЛС'] = false,
@@ -439,6 +441,8 @@ local strings = {
 	= u8:decode"^ Доступно со 2 уровня",
 	metka
 	= u8:decode"^ Пассажир (.*) установил точку прибытия %(%( Для отключения введите %/gps %)%)",
+	slet
+	= u8:decode"^ Домашний счёт оплачен до (.*)",
 	
 	color = {
 		mechanic = 1790050303,
@@ -585,7 +589,8 @@ function main()
 		['Набор для взлома'] = srp_ini.inventory['Набор для взлома'] and imgui.ImBool(true) or imgui.ImBool(false),
 		['Рендер ограбления домов'] = srp_ini.bools['Рендер ограбления домов'] and imgui.ImBool(true) or imgui.ImBool(false),
 		['Переменные'] = srp_ini.bools['Переменные'] and imgui.ImBool(true) or imgui.ImBool(false),
-		['Спам'] = srp_ini.bools['Спам'] and imgui.ImBool(true) or imgui.ImBool(false)
+		['Спам'] = srp_ini.bools['Спам'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Слет'] = srp_ini.bools['Слет'] and imgui.ImBool(true) or imgui.ImBool(false)
 	}
 	
 	buffer = {
@@ -649,11 +654,13 @@ function main()
 	sampRegisterChatCommand("samprpstop", function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
 	sampRegisterChatCommand('srpup', updateScript)
 	sampRegisterChatCommand('samprpup', updateScript)
+	sampRegisterChatCommand("whenhouse", function() whenhouse() end)
 	
 	script.loaded = true
 	repeat wait(0) until sampIsLocalPlayerSpawned()
 	checkUpdates()
 	chatmsg(u8:decode"Скрипт запущен. Открыть главное меню - /srp")
+	if srp_ini.bools['Слет'] then whenhouse() end
 	needtoreload = true
 	
 	imgui.Process = true
@@ -708,6 +715,7 @@ function main()
 				sampSetChatDisplayMode(3) 
 			end
 		end
+		textLabelOverPlayerNickname()
 		-- Активация быстрого меню биндера
 		if isKeyDown(makeHotKey('Быстрое меню биндера')[1]) and not menu.main.v and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() then 
 			wait(0) 
@@ -947,6 +955,7 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("automatic12", togglebools['Ограбление домов']) then srp_ini.bools['Ограбление домов'] = togglebools['Ограбление домов'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Помощник для ограбления домов (автоматически выносит из дома и заходит обратно)") if imgui.IsItemHovered() then local hstr = "" for _, v in ipairs(string.split(srp_ini.hotkey['Войти в дом'], ", ")) do if v ~= "0" then hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" end end hstr = (hstr == "" or hstr == "nil") and "" or hstr imgui.BeginTooltip() imgui.TextUnformatted("Что бы взломать дом нажмите " .. (hstr ~= "" and hstr .. " (клавиша входа в дом)" or "клавишу входа в дом (можно задать в разделе 'Клавиши')") .. ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома") imgui.EndTooltip() end
 			if imgui.ToggleButton("automatic13", togglebools['Ломка']) then srp_ini.bools['Ломка'] = togglebools['Ломка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine(475) if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools['Ломка без копов']) then srp_ini.bools['Ломка без копов'] = togglebools['Ломка без копов'].v inicfg.save(srp_ini, settings) end
 			if imgui.ToggleButton("automatic14", togglebools['Спам']) then srp_ini.bools['Спам'] = togglebools['Спам'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic15", togglebools['Слет']) then srp_ini.bools['Слет'] = togglebools['Слет'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Уведомлять о слете недвижимости при заходе в игру") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слета недвижимости") imgui.EndTooltip() end
 			imgui.EndChild()
 		end
 		
@@ -1077,8 +1086,8 @@ function imgui.OnDrawFrame()
 			end
 			imgui.SameLine()
 			if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 23.0)) then
-				menu.variables.v = false 
-				menu.commands.v = true 
+				menu.variables.v = true
+				menu.commands.v = false 
 				menu.inventory.v = false 
 				menu.password.v = false
 			end
@@ -1210,8 +1219,9 @@ function imgui.OnDrawFrame()
 					imgui.SameLine()
 					if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 22.0)) then
 						menu.variables.v = true
-						menu.commands.v = false
-						
+						menu.commands.v = false 
+						menu.inventory.v = false 
+						menu.password.v = false
 					end
 					imgui.SameLine(860)
 					if imgui.Button("Вернутся назад", imgui.ImVec2(300.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
@@ -1296,7 +1306,8 @@ function imgui.OnDrawFrame()
 				"/setov (/setoverlay) - изменить местоположения элементов оверлея на экране",
 				"/srpflood [Text] (/samprpflood [Text]) - флудить заданным текстом в чат",
 				"/srpstop - очистить очередь отправляемых сообщений в чат (очень полезно если биндер флудит без остановки)",
-				"/srpup (/samprpup) - обновить скрипт"
+				"/srpup (/samprpup) - обновить скрипт",
+				"/whenhouse - узнать когда слетит недвижимость"
 			}
 			local w = 0
 			local sortcmds = {}
@@ -2121,6 +2132,11 @@ function ev.onServerMessage(col, text)
 			end
 		end
 		if col == strings.color.noequest and text:match(strings.noequest) then noequest = true end
+		local slet = text:match(strings.slet)
+		if slet ~= nil then
+			srp_ini.values['Слет'] = slet:match("(%d%d%d%d%/%d%d%/%d%d %d%d%:%d%d)")
+			whenhouse()
+		end
 		inicfg.save(srp_ini, settings)
 	end
 end
@@ -2156,7 +2172,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				for k, v in ipairs(list) do
 					local n, s = v:match(strings.dialog.quest.str)
 					if n ~= nil and n ~= "" then
-						local name = u8(n):gsub("%.", " ")
+						local name = u8(n):gsub("%.", "!")
 						srp_ini['Текущие задания'][name] = s == u8:decode"[Выполнено]" and true or false
 					end
 				end
@@ -2174,6 +2190,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				for k, v in ipairs(list) do
 					if v:match(strings.dialog.description.str1) then
 						name = list[k + 1]:match(strings.dialog.description.str3)
+						name = name:gsub("%.", "!")
 					end
 					if v:match(strings.dialog.description.str2) then
 						description = list[k + 1]:match(strings.dialog.description.str3)
@@ -2887,6 +2904,22 @@ function medcall(hospital)
 	end)
 end
 
+function whenhouse()
+	if srp_ini.values['Слет'] ~= nil then 
+		if srp_ini.values['Слет'] ~= 0 then
+			local datetime = {}
+			datetime.year, datetime.month, datetime.day, hour = srp_ini.values['Слет']:match("(%d%d%d%d)%/(%d%d)%/(%d%d) (%d%d%:%d%d)")
+			chatmsg(u8:decode"Недвижимость слетит через " .. math.floor((os.difftime(os.time(datetime), os.time())) / 3600 / 24) .. u8:decode" дней | " .. srp_ini.values['Слет'])
+			else
+			chatmsg(u8:decode"Дата слета неизвестна, оплатите квартплату в банкомате")
+			return
+		end
+		else
+		chatmsg(u8:decode"Произошла ошибка, перезагрузите скрипт")
+		return
+	end
+end
+
 function ev.onSendChat(message)
 	chatManager.lastMessage = message
 	chatManager.updateAntifloodClock()
@@ -2979,6 +3012,31 @@ function chatManager.updateAntifloodClock() -- обновить задержку
 	end
 end
 --------------------------------------------------------------------------------------------------------------------------
+textlabel = {}
+function textLabelOverPlayerNickname()
+	for i = 0, 999 do
+		if textlabel[i] ~= nil then
+			sampDestroy3dText(textlabel[i])
+			textlabel[i] = nil
+		end
+	end
+	for i = 0, 999 do 
+		if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
+			local nick = sampGetPlayerNickname(i)
+			if script.label[nick] ~= nil then
+				if textlabel[i] == nil then
+					textlabel[i] = sampCreate3dText(u8:decode(script.label[nick].text), tonumber(script.label[nick].color), 0.0, 0.0, 0.8, 21.5, false, i, -1)
+				end
+			end
+			else
+			if textlabel[i] ~= nil then
+				sampDestroy3dText(textlabel[i])
+				textlabel[i] = nil
+			end
+		end
+	end
+end
+
 function chatmsg(t)
 	sampAddChatMessage(prefix .. t, main_color)
 end
@@ -3203,6 +3261,7 @@ function checkUpdates() -- проверка обновлений
 					script.v.date = info.version_date
 					script.url = info.version_url
 					script.quest = info.version_quest
+					script.label = info.version_label
 					script.upd.changes = info.version_upd
 					if script.quest then
 						for k, v in pairs(script.quest) do
@@ -3263,6 +3322,12 @@ end
 
 function onScriptTerminate(s, bool)
 	if s == thisScript() and not bool then
+		for i = 0, 999 do
+			if textlabel[i] ~= nil then
+				sampDestroy3dText(textlabel[i])
+				textlabel[i] = nil
+			end
+		end
 		if not script.reload then
 			if not script.update then
 				if not script.unload then
@@ -3277,4 +3342,4 @@ function onScriptTerminate(s, bool)
 			chatmsg(u8:decode"Перезагружаюсь...")
 		end
 	end
-end																																																																																																																																																																																																																						
+end			
