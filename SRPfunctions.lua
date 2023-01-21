@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
-script_version("20.01.2023")
-script_version_number(15)
+script_version("21.01.2023")
+script_version_number(16)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -517,7 +517,7 @@ function main()
     if server == nil then chatmsg(u8:decode'Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
 	currentNick = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
 	
-	AdressConfig = string.format("%s\\config" , thisScript().directory)
+	AdressConfig = string.format("%s\\config", thisScript().directory)
     AdressFolder = string.format("%s\\config\\SRPfunctions by Webb\\%s\\%s", thisScript().directory, server, currentNick)
 	settings = string.format("SRPfunctions by Webb\\%s\\%s\\settings.ini", server, currentNick)
 	binds = string.format("SRPfunctions by Webb\\%s\\%s\\binder.ini", server, currentNick)
@@ -621,8 +621,7 @@ function main()
 			end
 		end
 		suspendkeys = 1 
-		menu.main.v = not 
-		menu.main.v 
+		menu.main.v = not menu.main.v 
 	end)
 	sampRegisterChatCommand("srp", function() 
 		for k, v in pairs(srp_ini.hotkey) do 
@@ -996,7 +995,7 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("overlay4", togglebools['Нарко']) then srp_ini.bools['Нарко'] = togglebools['Нарко'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Нарко'] then isBoost = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
 			if imgui.ToggleButton("overlay5", togglebools['Таймер до МП']) then srp_ini.bools['Таймер до МП'] = togglebools['Таймер до МП'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
 			if imgui.ToggleButton("overlay6", togglebools['Прорисовка']) then srp_ini.bools['Прорисовка'] = togglebools['Прорисовка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
-			if imgui.ToggleButton("overlay7", togglebools['Статус']) then srp_ini.bools['Статус'] = togglebools['Статус'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отборажение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
+			if imgui.ToggleButton("overlay7", togglebools['Статус']) then srp_ini.bools['Статус'] = togglebools['Статус'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("5) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
 			if imgui.ToggleButton("overlay8", togglebools['Сквад']) then srp_ini.bools['Сквад'] = togglebools['Сквад'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
 			if imgui.ToggleButton("overlay9", togglebools['ХП транспорта']) then srp_ini.bools['ХП транспорта'] = togglebools['ХП транспорта'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
 			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом']) then srp_ini.bools['Информация под чатом'] = togglebools['Информация под чатом'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
@@ -1474,7 +1473,7 @@ function imgui.OnDrawFrame()
 		local y = SetMode and soverlay['Сквад'].y or srp_ini.overlay['СквадY']
 		for k, v in ipairs(smem) do
 			y = y + 25
-			renderFontDrawText(imfonts.ovFontSquadRender, v.name .. " [" .. v.id .. "]" .. (sampIsPlayerPaused(v.id) and " {008000}[AFK]" or ""), x, y, sampGetCharHandleBySampPlayerId(v.id) and v.color or v.colorns)
+			renderFontDrawText(imfonts.ovFontSquadRender, v.name .. " [" .. v.id .. "]" .. (sampIsPlayerPaused(v.id) and " {008000}[AFK]" or ""), x, y, (sampGetCharHandleBySampPlayerId(v.id) or v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) and v.color or v.colorns)
 			renderDrawLine(x + 2, y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 144 or 90), y + 22, 5.0, 0xFF808080)
 			renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + 90, y + 22, 5.0, 0xFF808080)
 			if v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)) then
@@ -1820,7 +1819,7 @@ function ev.onServerMessage(col, text)
 					if u8:decode(k) == firstquest then srp_ini['Текущие задания'][k] = nil srp_ini['Текущие задания'][u8(secondquest)] = v return end
 				end
 			end
-			if equest and srp_ini['Текущие задания'][u8(equest)] ~= nil then srp_ini['Текущие задания'][u8(equest)] = true end
+			if equest and srp_ini['Текущие задания'][u8(equest:gsub("%.", "!"))] ~= nil then srp_ini['Текущие задания'][u8(equest)] = true end
 		end
 		if indexof(col, strings.color.normalchat) or col == strings.color.sms then
 			local fpassenger, fid, ftxt = text:match(strings.normalchat)
@@ -3014,13 +3013,13 @@ end
 --------------------------------------------------------------------------------------------------------------------------
 textlabel = {}
 function textLabelOverPlayerNickname()
-	for i = 0, 999 do
+	for i = 0, 1000 do
 		if textlabel[i] ~= nil then
 			sampDestroy3dText(textlabel[i])
 			textlabel[i] = nil
 		end
 	end
-	for i = 0, 999 do 
+	for i = 0, 1000 do 
 		if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
 			local nick = sampGetPlayerNickname(i)
 			if script.label[nick] ~= nil then
@@ -3322,7 +3321,7 @@ end
 
 function onScriptTerminate(s, bool)
 	if s == thisScript() and not bool then
-		for i = 0, 999 do
+		for i = 0, 1000 do
 			if textlabel[i] ~= nil then
 				sampDestroy3dText(textlabel[i])
 				textlabel[i] = nil
