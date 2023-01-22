@@ -1,6 +1,6 @@
 {
-  "version_num": 16,
-  "version_date": "21.01.2023",
+  "version_num": 17,
+  "version_date": "22.01.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -70,6 +70,6 @@
              "Madi_Lamilo": {"color": "0xFF046901", "text": "Первопроходец"}
   },
    "version_upd": {
-             "1": "Снова пофикшены еквесты"
+             "1": "Не опять а снова пофикшены еквесты, теперь уже точно)"
   }       
 }
