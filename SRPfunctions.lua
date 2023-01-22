@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imikhailovich")
-script_version("22.01.2023")
-script_version_number(17)
+script_version("21.01.2023")
+script_version_number(16)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -1819,13 +1819,7 @@ function ev.onServerMessage(col, text)
 					if u8:decode(k) == firstquest then srp_ini['Текущие задания'][k] = nil srp_ini['Текущие задания'][u8(secondquest)] = v return end
 				end
 			end
-			if equest then
-				equest = equest:gsub("%.", "!")
-				equest = u8(equest)
-				if srp_ini['Текущие задания'][equest] ~= nil then 
-					srp_ini['Текущие задания'][equest] = true 
-				end
-			end
+			if equest and srp_ini['Текущие задания'][u8(equest:gsub("%.", "!"))] ~= nil then srp_ini['Текущие задания'][u8(equest)] = true end
 		end
 		if indexof(col, strings.color.normalchat) or col == strings.color.sms then
 			local fpassenger, fid, ftxt = text:match(strings.normalchat)
@@ -3347,4 +3341,4 @@ function onScriptTerminate(s, bool)
 			chatmsg(u8:decode"Перезагружаюсь...")
 		end
 	end
-end																			
+end			
