@@ -1,6 +1,6 @@
 ## SRPfunctions
 Многофункциональный скрипт-хелпер с автообновлением для игроков проекта Samp-RP 
-- Автор: Cody_Webb | Telegram: @Imykhailovich (для предложений по разработке и фиксам)
+- Автор: Cody_Webb | Telegram: [@Imykhailovich (для предложений по разработке и фиксам)](https://t.me/Imykhailovich)
 
 ## Зависимости
 - [samp.events](https://www.blast.hk/threads/14624/)
