@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("22.01.2023")
-script_version_number(18)
+script_version("23.01.2023")
+script_version_number(19)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -48,7 +48,8 @@ local config = {
 		['Рендер ограбления домов'] = false,
 		['Переменные'] = false,
 		['Спам'] = false,
-		['Слет'] = false
+		['Слет'] = false,
+		['Закуп'] = false
 	},
 	hotkey = {
 		['Контекстная клавиша'] = "0",
@@ -94,7 +95,8 @@ local config = {
 		['Разница часовых поясов'] = 0,
         ['Ограбление домов'] = 0,
 		['Автоугон'] = 0,
-		['Слет'] = 0
+		['Слет'] = 0,
+		['Закуп'] = 2500
 	},
 	ivent = {
 		['Гонка ЛС'] = false,
@@ -236,6 +238,7 @@ local isLogined = false
 local isRobbing = false
 local isLomka = false
 local needtohold = false
+local needtobuy = true
 local rent
 local killerid
 local taxipassenger
@@ -254,6 +257,7 @@ local rCache = {
 local currentNick
 local currentBind
 local currentClient
+local gekauft = false
 local keybbb = {KeyboardLayoutName = ffi.new("char[?]", 32), LocalInfo = ffi.new("char[?]", 32)}
 ffi.cdef[[
 	int SendMessageA(int, int, int, int);
@@ -446,6 +450,10 @@ local strings = {
 	= u8:decode"^ Домашний счёт оплачен до (.*)",
 	accepttaxi
 	= u8:decode"^ Диспетчер%: (.*) принял вызов от (.*)%[%d+%]$",
+	full24
+	= u8:decode"^ У вас нет места$",
+	full24sec
+	= u8:decode"^ У вас нет дома%/квартиры$",
 	
 	color = {
 		mechanic = 1790050303,
@@ -497,7 +505,8 @@ local strings = {
 		plswait = -1347440641,
 		spam = -65281,
 		noequest = -1347440641,
-		accepttaxi = -1137955670
+		accepttaxi = -1137955670,
+		full24 = -1347440641
 	},
 	
 	dialog = {
@@ -594,7 +603,8 @@ function main()
 		['Рендер ограбления домов'] = srp_ini.bools['Рендер ограбления домов'] and imgui.ImBool(true) or imgui.ImBool(false),
 		['Переменные'] = srp_ini.bools['Переменные'] and imgui.ImBool(true) or imgui.ImBool(false),
 		['Спам'] = srp_ini.bools['Спам'] and imgui.ImBool(true) or imgui.ImBool(false),
-		['Слет'] = srp_ini.bools['Слет'] and imgui.ImBool(true) or imgui.ImBool(false)
+		['Слет'] = srp_ini.bools['Слет'] and imgui.ImBool(true) or imgui.ImBool(false),
+		['Закуп'] = srp_ini.bools['Закуп'] and imgui.ImBool(true) or imgui.ImBool(false)
 	}
 	
 	buffer = {
@@ -603,7 +613,8 @@ function main()
 		['clist'] = imgui.ImInt(srp_ini.values.clist),
 		['Пароль'] = imgui.ImBuffer(u8(srp_ini.values['Пароль']), 256),
 		['Автоаренда'] = imgui.ImBuffer(u8(srp_ini.values['Автоаренда']), 256),
-		['Разница часовых поясов'] = imgui.ImInt(srp_ini.values['Разница часовых поясов'] + 14)
+		['Разница часовых поясов'] = imgui.ImInt(srp_ini.values['Разница часовых поясов'] + 14),
+		['Закуп'] = imgui.ImBuffer(u8(srp_ini.values['Закуп']), 256)
 	}
 	
 	sampRegisterChatCommand("samprp", function() 
@@ -666,13 +677,13 @@ function main()
 	if srp_ini.bools['Слет'] then whenhouse() end
 	needtoreload = true
 	
-	imgui.Process = true
-	imgui.ShowCursor = false
-	
-	if srp_ini.bools['Статус'] then lua_thread.create(function() CTask() end) end
+	lua_thread.create(function() CTask() end)
 	lua_thread.create(function() onfoot() end)
 	
 	findsquad()
+	
+	imgui.Process = true
+	imgui.ShowCursor = false
 	
 	chatManager.initQueue()
 	lua_thread.create(chatManager.checkMessagesQueueThread)
@@ -761,6 +772,7 @@ function main()
 			end
 		end
 		if needtohold and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() and (wasKeyPressed(vkeys.VK_W) or wasKeyPressed(vkeys.VK_S)) then needtohold = false end
+		if getActiveInterior() == 0 then needtobuy = true gekauft = false end
 	end
 end
 -------------------------------------------------------------------------[IMGUI]-------------------------------------------------------------------------------------------
@@ -959,6 +971,7 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("automatic13", togglebools['Ломка']) then srp_ini.bools['Ломка'] = togglebools['Ломка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine(475) if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools['Ломка без копов']) then srp_ini.bools['Ломка без копов'] = togglebools['Ломка без копов'].v inicfg.save(srp_ini, settings) end
 			if imgui.ToggleButton("automatic14", togglebools['Спам']) then srp_ini.bools['Спам'] = togglebools['Спам'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд") imgui.EndTooltip() end
 			if imgui.ToggleButton("automatic15", togglebools['Слет']) then srp_ini.bools['Слет'] = togglebools['Слет'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Уведомлять о слете недвижимости при заходе в игру") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слета недвижимости") imgui.EndTooltip() end
+			if imgui.ToggleButton("automatic16", togglebools['Закуп']) then srp_ini.bools['Закуп'] = togglebools['Закуп'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Автоматически покупать ремкомплекты (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вдруг вам нужно купить их ещё раз (не сработало из-за лимита), то перезайдите в магазин") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d4', buffer['Закуп']) then srp_ini.values['Закуп'] = tostring(u8:decode(buffer['Закуп'].v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
 			imgui.EndChild()
 		end
 		
@@ -977,7 +990,7 @@ function imgui.OnDrawFrame()
 		if not menu.automatic.v and menu.binds.v and not menu.overlay.v and not menu.binder.v then
 			imgui.BeginChild('hotkeys', imgui.ImVec2(1185, 500), true)
 			imgui.PushFont(imfonts.smainFont2)
-			imgui.Hotkey("hotkey", "Контекстная клавиша", 100) imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - скажать что бы сел в такси") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню Overlay") imgui.EndTooltip() end
+			imgui.Hotkey("hotkey", "Контекстная клавиша", 100) imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню Overlay") imgui.EndTooltip() end
 			imgui.Hotkey("hotkey1", "Нарко", 100) imgui.SameLine() imgui.Text("Употребить нарко\n(нужно находится на месте)")
 			imgui.Hotkey("hotkey2", "Сменить клист", 100) imgui.SameLine() imgui.Text("Сменить клист\n(если надет не нулевой клист, то будет введён /clist 0)") imgui.SameLine(800 - imgui.CalcTextSize('(если надет не нулевой клист, то будет введён /clist 0)').x) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.clist, clists.names) then srp_ini.values.clist = tostring(u8:decode(buffer.clist.v)) inicfg.save(srp_ini, settings) end
 			imgui.Hotkey("hotkey3", "Войти в дом", 100) imgui.SameLine() imgui.Text("Войти в ближайший дом\n(Аналогично если вы находитесь внутри дома возле входа, то скрипт выйдет из него)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Настоятельно рекомендую использовать эту клавишу для ограбления домов!") imgui.EndTooltip() end 
@@ -999,7 +1012,7 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("overlay4", togglebools['Нарко']) then srp_ini.bools['Нарко'] = togglebools['Нарко'].v inicfg.save(srp_ini, settings) if srp_ini.bools['Нарко'] then isBoost = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
 			if imgui.ToggleButton("overlay5", togglebools['Таймер до МП']) then srp_ini.bools['Таймер до МП'] = togglebools['Таймер до МП'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
 			if imgui.ToggleButton("overlay6", togglebools['Прорисовка']) then srp_ini.bools['Прорисовка'] = togglebools['Прорисовка'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
-			if imgui.ToggleButton("overlay7", togglebools['Статус']) then srp_ini.bools['Статус'] = togglebools['Статус'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - скажать что бы сел в такси") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
+			if imgui.ToggleButton("overlay7", togglebools['Статус']) then srp_ini.bools['Статус'] = togglebools['Статус'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
 			if imgui.ToggleButton("overlay8", togglebools['Сквад']) then srp_ini.bools['Сквад'] = togglebools['Сквад'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
 			if imgui.ToggleButton("overlay9", togglebools['ХП транспорта']) then srp_ini.bools['ХП транспорта'] = togglebools['ХП транспорта'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
 			if imgui.ToggleButton("overlay10", togglebools['Информация под чатом']) then srp_ini.bools['Информация под чатом'] = togglebools['Информация под чатом'].v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
@@ -2159,6 +2172,13 @@ function ev.onServerMessage(col, text)
 				end
 			end
 		end
+		if col == strings.color.full24 then
+			-- if text:match(strings.full24sec) then
+			-- end
+			if text:match(strings.full24) then
+				if not gekauft then gekauft = true return end
+			end
+		end
 		inicfg.save(srp_ini, settings)
 	end
 end
@@ -2261,6 +2281,21 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 						chatmsg(u8:decode"Транспорт не будет арендован, так как цена выше лимита")
 					end
 				end
+			end
+		end
+		if srp_ini.bools['Автоаренда'] then
+			if needtobuy and dialogid == 16 and style == 4 and title == u8:decode"Магазин 24/7" and button1 == u8:decode"Купить" and button2 == u8:decode"Отмена" then
+				local rem = tonumber(text:match(u8:decode"Комплект %«автомеханик%»%s+%[%$(%d+)%]"))
+				if rem ~= nil and not gekauft then
+					if tonumber(srp_ini.values['Закуп']) ~= nil then
+						if rem <= tonumber(srp_ini.values['Закуп']) then
+							lua_thread.create(function() wait(200) sampSendDialogResponse(16, 1, 8, "") sampCloseCurrentDialogWithButton(0) end) return false
+							else
+							chatmsg(u8:decode"Покупки ремкомплектов не будет, цена выше лимита. Измените лимит (если хотите) и перезайдите в магазин")
+						end
+					end
+				end
+				needtobuy = false
 			end
 		end
 		inicfg.save(srp_ini, settings)
@@ -3408,4 +3443,5 @@ function onScriptTerminate(s, bool)
 			chatmsg(u8:decode"Перезагружаюсь...")
 		end
 	end
-end																			
+end						
+
