@@ -1,6 +1,6 @@
 ## SRPfunctions
 Многофункциональный скрипт-хелпер с автообновлением для игроков проекта Samp-RP 
-- Автор: Cody_Webb | Telegram: [@Imykhailovich (для предложений по разработке и фиксам)](https://t.me/Imykhailovich)
+- Автор: Cody_Webb | Telegram: @Imykhailovich (для предложений по разработке и фиксам)
 
 ## Зависимости
 - [samp.events](https://www.blast.hk/threads/14624/)
@@ -12,8 +12,7 @@
 - encoding
 
 ## Скачать скрипт и все необходимые библиотеки
--   [SRPfunctions.lua](https://drive.google.com/file/d/1-gtuVExgKkQeWfSW0HYzx-xocGLldeyg/view?usp=sharing)
--   [Папка lib(перекинуть в moonloader)](https://drive.google.com/file/d/1iTq3fTYjjfX5agpbuz0cGzjzEbH3nBzQ/view?usp=sharing)
+-   [SRPfunctions.lua + lib(перекинуть в папку moonloader)](https://github.com/WebbLua/SRPfunctions/archive/refs/heads/main.zip)
 -   [CLEO 4](https://cleo.li)
 -   [SAMPFUNCS v5.4.1](https://www.blast.hk/threads/17/)
 -   [Moonloader v026.5](https://www.blast.hk/threads/13305/)
@@ -42,6 +41,7 @@
 - Автоприём нАрКо при ломке (можно ограничить работу функции если вдруг на экране будут копы)
 - Автоответчик на спам-СМС 
 - Узнать когда слетит дом/квартира (+ /whenhouse)
+- Автопокупка ремкомплектов из 24/7 (с ограничением цены)
 ![ ](https://i.imgur.com/uFuPvDh.png)	   
 	   
 ## На клавиши/команды
