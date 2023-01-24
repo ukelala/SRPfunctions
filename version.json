@@ -1,6 +1,6 @@
 {
-  "version_num": 19,
-  "version_date": "23.01.2023",
+  "version_num": 20,
+  "version_date": "24.01.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -71,7 +71,6 @@
              "Madi_Lamilo": {"color": "0xFF046901", "text": "Первопроходец"}
   },
    "version_upd": {
-             "1": "Теперь функция контекст.клавиши работает независимо от значения в конфиге",
-             "2": "В раздел 'Автоматические' добавлен автозакуп ремкоплектов"
+             "1": "Пофикшена функция автозакупа ремок"
   }       
 }
