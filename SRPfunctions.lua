@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("23.01.2023")
-script_version_number(19)
+script_version("24.01.2023")
+script_version_number(20)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -89,7 +89,7 @@ local config = {
 		['Заправка у механика'] = 1500,
 		['Заправка на АЗС'] = 5000,
 		['Нарко'] = 0,
-		['clist'] = 12,
+		['clist'] = 0,
 		['Пароль'] = '', -- ДЛЯ АВТОЛОГИНА, ЭТО НЕ СТИЛЛЕР БЛЕАТЬ!!!
 		['Автоаренда'] = 5000,
 		['Разница часовых поясов'] = 0,
@@ -2283,7 +2283,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				end
 			end
 		end
-		if srp_ini.bools['Автоаренда'] then
+		if srp_ini.bools['Закуп'] then
 			if needtobuy and dialogid == 16 and style == 4 and title == u8:decode"Магазин 24/7" and button1 == u8:decode"Купить" and button2 == u8:decode"Отмена" then
 				local rem = tonumber(text:match(u8:decode"Комплект %«автомеханик%»%s+%[%$(%d+)%]"))
 				if rem ~= nil and not gekauft then
@@ -2374,6 +2374,7 @@ function ev.onSendPickedUpPickup(id)
 		end
 	end
 end
+
 function ev.onSetPlayerColor(id, color)
 	if rCache.enable and saveid[id] then
 		local r, g, b, a = explode_argb(color)
@@ -2705,8 +2706,8 @@ function setclist()
 			chatManager.addMessageToQueue("/clist 0")
 			wait(1300)
 			local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
-			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета", 0xFFFF0000) return end
-			if newmyclist ~= 0 then chatmsg(u8:decode"Клист не был снят", 0xFFFF0000) return end
+			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
+			if newmyclist ~= 0 then chatmsg(u8:decode"Клист не был снят") return end
 		end
 	end)
 end
@@ -3432,7 +3433,7 @@ function onScriptTerminate(s, bool)
 		if not script.reload then
 			if not script.update then
 				if not script.unload then
-					chatmsg(u8:decode"Скрипт крашнулся: откройте консоль sampfuncs (кнопка ~), скопируйте текст ошибки и отправьте разработчику tg: @Imykhailovich")
+					chatmsg(u8:decode"Скрипт крашнулся: отправьте moonloader.log разработчику tg: @Imykhailovich")
 					else
 					chatmsg(u8:decode"Скрипт был выгружен")
 				end
