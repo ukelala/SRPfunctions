@@ -1,6 +1,6 @@
 {
-  "version_num": 20,
-  "version_date": "24.01.2023",
+  "version_num": 21,
+  "version_date": "31.01.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -71,6 +71,7 @@
              "Madi_Lamilo": {"color": "0xFF046901", "text": "Первопроходец"}
   },
    "version_upd": {
-             "1": "Пофикшена функция автозакупа ремок"
+             "1": "Незначительное изменение работы системы автообновления",
+             "2": "Изменена функция отправки локальных сообщений"
   }       
 }
