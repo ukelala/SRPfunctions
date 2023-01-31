@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("24.01.2023")
-script_version_number(20)
+script_version("31.01.2023")
+script_version_number(21)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
