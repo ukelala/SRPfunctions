@@ -11,6 +11,7 @@ local vkeys = require 'vkeys'
 local rkeys = require 'rkeys'
 local inicfg = require 'inicfg'
 local ffi = require 'ffi'
+local dlstatus = require "moonloader".download_status
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
@@ -524,10 +525,10 @@ function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 	while not isSampAvailable() do wait(0) end
 	
-	repeat wait(0) until sampGetCurrentServerName() ~= "SA-MP"
+	while sampGetCurrentServerName() == "SA-MP" do wait(0) end
 	server = sampGetCurrentServerName():gsub('|', '')
 	server = (server:find('02') and 'Two' or (server:find('Revo') and 'Revolution' or (server:find('Legacy') and 'Legacy' or (server:find('Classic') and 'Classic' or nil))))
-    if server == nil then chatmsg(u8:decode'Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
+    if server == nil then script.sendMessage('Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
 	currentNick = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
 	
 	AdressConfig = string.format("%s\\config", thisScript().directory)
@@ -636,7 +637,7 @@ function main()
 			end
 		end
 		suspendkeys = 1 
-		menu.main.v = not menu.main.v 
+		menu.main.v = not menu.main.v
 	end)
 	sampRegisterChatCommand("srp", function() 
 		for k, v in pairs(srp_ini.hotkey) do 
@@ -657,33 +658,30 @@ function main()
 			end
 		end
 		suspendkeys = 1 
-		menu.main.v = not 
-		menu.main.v 
+		menu.main.v = not menu.main.v
 	end)
 	sampRegisterChatCommand("setoverlay", cmd_setoverlay)
 	sampRegisterChatCommand("setov", cmd_setoverlay)
 	sampRegisterChatCommand("srpflood", cmd_flood)
 	sampRegisterChatCommand("samprpflood", cmd_flood)
-	sampRegisterChatCommand("srpstop", function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
-	sampRegisterChatCommand("samprpstop", function() chatManager.initQueue() chatmsg(u8:decode"Очередь отправляемых сообщений очищена!") end)
+	sampRegisterChatCommand("srpstop", function() chatManager.initQueue() script.sendMessage("Очередь отправляемых сообщений очищена!") end)
+	sampRegisterChatCommand("samprpstop", function() chatManager.initQueue() script.sendMessage("Очередь отправляемых сообщений очищена!") end)
 	sampRegisterChatCommand('srpup', updateScript)
 	sampRegisterChatCommand('samprpup', updateScript)
 	sampRegisterChatCommand("whenhouse", function() whenhouse() end)
 	
 	script.loaded = true
-	repeat wait(0) until sampIsLocalPlayerSpawned()
+	while sampGetGamestate() ~= 3 do wait(0) end
+	while sampGetPlayerScore(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) <= 0 and not sampIsLocalPlayerSpawned() do wait(0) end
 	checkUpdates()
-	chatmsg(u8:decode"Скрипт запущен. Открыть главное меню - /srp")
+	script.sendMessage("Скрипт запущен. Открыть главное меню - /srp")
+	imgui.Process = true
 	if srp_ini.bools['Слет'] then whenhouse() end
 	needtoreload = true
-	
 	lua_thread.create(function() CTask() end)
 	lua_thread.create(function() onfoot() end)
 	
 	findsquad()
-	
-	imgui.Process = true
-	imgui.ShowCursor = false
 	
 	chatManager.initQueue()
 	lua_thread.create(chatManager.checkMessagesQueueThread)
@@ -767,7 +765,7 @@ function main()
 					srp_ini.overlay['Ограбление домовY'] = 544
 					inicfg.save(srp_ini, settings)
 					SetMode, SetModeFirstShow = true, true
-					chatmsg(u8:decode"Координаты элементов были успешно сброшены")
+					script.sendMessage("Координаты элементов были успешно сброшены")
 				end
 			end
 		end
@@ -1304,7 +1302,7 @@ function imgui.OnDrawFrame()
 		end
 		if not found then
 			if imgui.Button("Cody Webb сейчас не в сети", imgui.ImVec2(245.0, 30.0)) then
-				chatmsg(u8:decode"Cody Webb играет на Revolution (сейчас не онлайн)", main_color)
+				script.sendMessage("Cody Webb играет на Revolution (сейчас не онлайн)")
 			end
 		end
 		
@@ -1683,9 +1681,9 @@ function imgui.OnDrawFrame()
 		imgui.PopFont()
 		soverlay['Ограбление домов'] = imgui.GetWindowPos()
 		imgui.End()
+		
+		SetModeFirstShow = false
 	end
-	
-	SetModeFirstShow = false
 end
 -------------------------------------------------------------------------[ФУНКЦИИ]-----------------------------------------------------------------------------------------
 function ev.onServerMessage(col, text)
@@ -1706,7 +1704,7 @@ function ev.onServerMessage(col, text)
 								chatManager.addMessageToQueue("/ac refill") 
 								return
 								else
-								chatmsg(u8:decode"Транспорт не будет заправлен, так как цена выше лимита")
+								script.sendMessage("Транспорт не будет заправлен, так как цена выше лимита")
 							end
 						end
 					end
@@ -1739,14 +1737,14 @@ function ev.onServerMessage(col, text)
 		end
 		if col == strings.color.boost then 
 			if text:match(strings.boost) and isBoost then 
-				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then chatmsg(u8:decode"Информация успешно получена") end
+				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then script.sendMessage("Информация успешно получена") end
 				checkedBoost = true
 				return false 
 			end 
 		end
 		if col == strings.color.noboost then 
 			if text:match(strings.noboost) and isBoost then
-				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then chatmsg(u8:decode"Информация успешно получена") end
+				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then script.sendMessage("Информация успешно получена") end
 				isBoost = false 
 				checkedBoost = true 
 				return false 
@@ -1944,7 +1942,7 @@ function ev.onServerMessage(col, text)
 			end
 		end
 		if col == strings.color.rent and text:match(strings.rent) and rent ~= nil then
-			chatmsg(u8:decode'Вы арендовали транспортное средство за ' .. rent .. u8:decode' вирт')
+			script.sendMessage('Вы арендовали транспортное средство за ' .. rent .. ' вирт')
 			chatManager.addMessageToQueue('/en')
 			return false
 		end
@@ -2094,12 +2092,12 @@ function ev.onServerMessage(col, text)
 		end
 		if srp_ini.bools['Ограбление домов'] then
 			if col == strings.color.stolen and text:match(strings.stolen) then 				   
-				chatmsg(u8:decode"Украл предмет, пытаюсь выйти из дома") 
+				script.sendMessage("Украл предмет, пытаюсь выйти из дома") 
 				enterhouse() 
 				return false 
 			end
 			if col == strings.color.breaken and text:match(strings.breaken) then 
-				isRobbing = false chatmsg(u8:decode"Дверь вскрыта ломом, пытаюсь зайти в дом") 
+				isRobbing = false script.sendMessage("Дверь вскрыта ломом, пытаюсь зайти в дом") 
 				if tonumber(srp_ini['Инвентарь']['Лом']) ~= nil then 
 					srp_ini['Инвентарь']['Лом'] = tonumber(srp_ini['Инвентарь']['Лом']) - 1 
 				end 
@@ -2108,7 +2106,7 @@ function ev.onServerMessage(col, text)
 			end
 			if col == strings.color.open and text:match(strings.open) then 
 				isRobbing = false 
-				chatmsg(u8:decode"Дверь открыта без лома, пытаюсь зайти в дом") 
+				script.sendMessage("Дверь открыта без лома, пытаюсь зайти в дом") 
 				enterhouse() 
 				return false 
 			end
@@ -2116,7 +2114,7 @@ function ev.onServerMessage(col, text)
 				local loaded, maxloaded = text:match(strings.put) 
 				if tonumber(loaded) ~= nil and tonumber(maxloaded) ~= nil then 
 					if tonumber(loaded) < tonumber(maxloaded) then 
-						chatmsg(u8:decode"Положил награбленное в фургон: " .. loaded .. "/" .. maxloaded .. u8:decode", пытаюсь зайти в дом") 
+						script.sendMessage("Положил награбленное в фургон: " .. loaded .. "/" .. maxloaded .. ", пытаюсь зайти в дом") 
 						enterhouse() 
 						return false 
 					end 
@@ -2126,7 +2124,7 @@ function ev.onServerMessage(col, text)
 				isRobbing = true 
 				if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil then 
 					if tonumber(srp_ini['Инвентарь']['Балаклава']) == 0 then 
-						chatmsg(u8:decode"У вас нету балаклав, срочно едьте покупайте в ближайшем 24/7") 
+						script.sendMessage("У вас нету балаклав, срочно едьте покупайте в ближайшем 24/7") 
 					end 
 				end
 			end
@@ -2196,7 +2194,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				if isBoost then 
 					sampCloseCurrentDialogWithButton(0) 
 					isBoost = false
-					if not checkedBoost and checkedQuest and checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
+					if not checkedBoost and checkedQuest and checkedInventory then script.sendMessage("Информация успешно получена") end
 					checkedBoost = true
 					return false 
 				end
@@ -2221,7 +2219,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				if isQuest then 
 					sampCloseCurrentDialogWithButton(0) 
 					isQuest = false 
-					if checkedBoost and not checkedQuest and checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
+					if checkedBoost and not checkedQuest and checkedInventory then script.sendMessage("Информация успешно получена") end
 					checkedQuest = true
 					return false 
 				end
@@ -2253,7 +2251,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 			if isInventory then 
 				sampCloseCurrentDialogWithButton(0) 
 				isInventory = false 
-				if checkedBoost and checkedQuest and not checkedInventory then chatmsg(u8:decode"Информация успешно получена") end
+				if checkedBoost and checkedQuest and not checkedInventory then script.sendMessage("Информация успешно получена") end
 				checkedInventory = true
 				return false 
 			end
@@ -2261,7 +2259,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 		if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) and connected then
 			connected = false
 			if srp_ini.bools['Автологин'] then
-				if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then chatmsg(u8:decode"Автологина не будет, пароль не задан в меню!") return end
+				if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then script.sendMessage("Автологина не будет, пароль не задан в меню!") return end
 				sampSendDialogResponse(1, 1, 0, srp_ini.values['Пароль'])
 				isLogined = true
 				return false
@@ -2278,7 +2276,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 						sampSendDialogResponse(dialid, 1, 0, '')
 						return false
 						else
-						chatmsg(u8:decode"Транспорт не будет арендован, так как цена выше лимита")
+						script.sendMessage("Транспорт не будет арендован, так как цена выше лимита")
 					end
 				end
 			end
@@ -2291,7 +2289,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 						if rem <= tonumber(srp_ini.values['Закуп']) then
 							lua_thread.create(function() wait(200) sampSendDialogResponse(16, 1, 8, "") sampCloseCurrentDialogWithButton(0) end) return false
 							else
-							chatmsg(u8:decode"Покупки ремкомплектов не будет, цена выше лимита. Измените лимит (если хотите) и перезайдите в магазин")
+							script.sendMessage("Покупки ремкомплектов не будет, цена выше лимита. Измените лимит (если хотите) и перезайдите в магазин")
 						end
 					end
 				end
@@ -2320,7 +2318,7 @@ function ev.onCreate3DText(id, color, position, distance, testLOS , attachedPlay
 					if srp_ini.bools['Покупка канистры'] then chatManager.addMessageToQueue("/get fuel") end
 					if srp_ini.bools['Заправка на АЗС'] then if isCharInAnyCar(PLAYER_PED) and getDriverOfCar(storeCarCharIsInNoSave(PLAYER_PED)) == PLAYER_PED then wait(1300) chatManager.addMessageToQueue("/fill") end end
 					else
-					chatmsg(u8:decode"Покупки/заправки не будет, так как цена выше лимита")
+					script.sendMessage("Покупки/заправки не будет, так как цена выше лимита")
 				end
 			end
 		end)
@@ -2331,8 +2329,8 @@ function ev.onPlayerQuit(id, reason)
 	if script.loaded then
 		if srp_ini.bools['Оповещение о выходе'] and sampGetCharHandleBySampPlayerId(id) then
 			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
-			local reasons = {[0] = u8:decode'рестарт/краш', [1] = u8:decode'/q', [2] = u8:decode'кик'}
-			chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(id) .. u8:decode"[" .. tostring(id) .. u8:decode"] {FFFAFA}вышел с игры. Причина: {FF0000}" .. reasons[reason] .. ".")
+			local reasons = {[0] = 'рестарт/краш', [1] = '/q', [2] = 'кик'}
+			script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(id) .. "[" .. tostring(id) .. "] {FFFAFA}вышел с игры. Причина: {FF0000}" .. reasons[reason] .. ".")
 		end
 	end
 end
@@ -2341,7 +2339,7 @@ function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
 	if script.loaded then
 		if srp_ini.bools['Оповещение о психохиле'] and (message == u8:decode"Употребил психохил" or message == u8:decode"Употребила психохил") then
 			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
-			chatmsg(u8:decode"Игрок " .. clist .. sampGetPlayerNickname(playerId) .. u8:decode"[" .. playerId .. u8:decode"] {FFFAFA}- употребил психохил")
+			script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(playerId) .. "[" .. playerId .. "] {FFFAFA}- употребил психохил")
 		end
 	end
 end
@@ -2458,7 +2456,7 @@ function usedrugs(arg)
 							local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
 							local cX, cY, cZ = getCharCoordinates(v) 
 							if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
-								chatmsg(u8:decode"Наркотики не будут употреблены, возле вас стоит коп!") 
+								script.sendMessage("Наркотики не будут употреблены, возле вас стоит коп!") 
 								return 
 							end
 						end
@@ -2471,7 +2469,7 @@ function usedrugs(arg)
 end
 
 function checkdialogs()
-	chatmsg(u8:decode"Начинаю собирать информацию из диалогов...")
+	script.sendMessage("Начинаю собирать информацию из диалогов...")
 	if srp_ini.bools['Нарко'] then isBoost = true checkedBoost = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost = true end -- проверка множителя КД нарко
 	if srp_ini.bools['Ежедневные задания'] then isQuest = true checkedQuest = false chatManager.addMessageToQueue("/equest") else checkedQuest = true end -- проверка ежедневных квестов
 	isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") -- проверка предметов инвентаря
@@ -2656,7 +2654,7 @@ end
 function ct()
 	lua_thread.create(function()
 		local key = CTaskArr["CurrentID"]
-		if key == 0 then chatmsg(u8:decode"Событие не найдено") return end
+		if key == 0 then script.sendMessage("Событие не найдено") return end
 		if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then
 			sortCarr()
 			wait(300)
@@ -2664,7 +2662,7 @@ function ct()
 		end
 		
 		if CTaskArr[1][key] == 1 then chatManager.addMessageToQueue("/repairkit") end
-		if CTaskArr[1][key] == 2 then local nick = sampGetPlayerNickname(CTaskArr[3][key]):gsub("_", " ") if nick ~= nil then chatManager.addMessageToQueue("/rep " .. CTaskArr[3][key] .. " ДМщик, следите за ним") else chatmsg(u8:decode"ДМщик не в игре") end end
+		if CTaskArr[1][key] == 2 then local nick = sampGetPlayerNickname(CTaskArr[3][key]):gsub("_", " ") if nick ~= nil then chatManager.addMessageToQueue("/rep " .. CTaskArr[3][key] .. " ДМщик, следите за ним") else script.sendMessage("ДМщик не в игре") end end
 		if CTaskArr[1][key] == 3 then medcall(CTaskArr[3][key]) end
 		if CTaskArr[1][key] == 4 then chatManager.addMessageToQueue("Куда едем?") end
 		if CTaskArr[1][key] == 5 then chatManager.addMessageToQueue("Хорошо, выезжаем") end
@@ -2692,22 +2690,22 @@ end
 function setclist()
 	lua_thread.create(function()
 		local res, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-		if not res then chatmsg(u8:decode"Не удалось узнать свой ID") return end
+		if not res then script.sendMessage("Не удалось узнать свой ID") return end
 		local myclist = clists.numbers[sampGetPlayerColor(myid)]
-		if myclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
+		if myclist == nil then script.sendMessage("Не удалось узнать номер своего цвета") return end
 		if myclist == 0 then
-			if tonumber(srp_ini.values.clist) == 0 then chatmsg(u8:decode"На вас уже нету клиста!") return end
+			if tonumber(srp_ini.values.clist) == 0 then script.sendMessage("На вас уже нету клиста!") return end
 			chatManager.addMessageToQueue("/clist " .. srp_ini.values.clist .. "")
 			wait(1300)
 			local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
-			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
-			if newmyclist ~= tonumber(srp_ini.values.clist) then chatmsg(u8:decode"Клист не был надет") return end
+			if newmyclist == nil then script.sendMessage("Не удалось узнать номер своего цвета") return end
+			if newmyclist ~= tonumber(srp_ini.values.clist) then script.sendMessage("Клист не был надет") return end
 			else
 			chatManager.addMessageToQueue("/clist 0")
 			wait(1300)
 			local newmyclist = clists.numbers[sampGetPlayerColor(myid)]
-			if newmyclist == nil then chatmsg(u8:decode"Не удалось узнать номер своего цвета") return end
-			if newmyclist ~= 0 then chatmsg(u8:decode"Клист не был снят") return end
+			if newmyclist == nil then script.sendMessage("Не удалось узнать номер своего цвета") return end
+			if newmyclist ~= 0 then script.sendMessage("Клист не был снят") return end
 		end
 	end)
 end
@@ -2736,7 +2734,7 @@ function eject()
 									chatManager.addMessageToQueue("/eject " .. id)
 									else
 									local nick = sampGetPlayerNickname(id)
-									chatmsg(u8:decode"Не удалось выкинуть игрока " .. nick .. "[" .. id .. u8:decode"] - сейчас АФК!")
+									script.sendMessage("Не удалось выкинуть игрока " .. nick .. "[" .. id .. "] - сейчас АФК!")
 								end
 							end
 						end
@@ -2745,7 +2743,7 @@ function eject()
 			end
 		end)
 		else 
-		chatmsg(u8:decode"Вы не в транспорте!")
+		script.sendMessage("Вы не в транспорте!")
 		return false
 	end
 end
@@ -2765,8 +2763,8 @@ function binder(i)
 							empty = empty + 1
 						end
 					end
-					if empty ~= 0 then chatmsg(u8:decode"В бинде №" .. i .. (empty ~= 0 and u8:decode" обнаружено пустых строк: " .. empty or u8:decode" обнаружена пустая строка")) end
-					if kol   == 0 then chatmsg(u8:decode"В бинде №" .. i .. u8:decode" отсутствуют строки") end
+					if empty ~= 0 then script.sendMessage("В бинде №" .. i .. (empty ~= 0 and " обнаружено пустых строк: " .. empty or " обнаружена пустая строка")) end
+					if kol   == 0 then script.sendMessage("В бинде №" .. i .. " отсутствуют строки") end
 					return 
 				end
 			end
@@ -2783,7 +2781,7 @@ function insertvars(str, bind)
 					if argument[bind] ~= nil then
 						str = str:gsub("@params@", u8(tostring(argument[bind])))
 						else
-						chatmsg(u8:decode"Аргумент команды бинда №" .. bind .. u8:decode' не задан!')
+						script.sendMessage("Аргумент команды бинда №" .. bind .. ' не задан!')
 					end
 				end
 			end
@@ -2849,12 +2847,12 @@ function enterhouse()
 									local bmodel = getObjectModel(l)
 									local distance = math.ceil(math.sqrt( ((myX-bX)^2) + ((myY-bY)^2) + ((myZ-bZ)^2))) -- расстояние между мной и объектом
 									if bmodel == 19801 and distance < 1.5 then -- если объект Балаклава и расстояние меньше 1.5 м
-										chatmsg(u8:decode"Пытаюсь вскрыть дом")
+										script.sendMessage("Пытаюсь вскрыть дом")
 										chatManager.addMessageToQueue("/rhouse")
 										return
 									end
 								end
-								if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil then if tonumber(srp_ini['Инвентарь']['Балаклава']) > 0 then chatManager.addMessageToQueue("/robmask") return else chatmsg(u8:decode'У вас нет балаклавы, если желаете вскрыть дом - /rhouse') return end end
+								if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil then if tonumber(srp_ini['Инвентарь']['Балаклава']) > 0 then chatManager.addMessageToQueue("/robmask") return else script.sendMessage('У вас нет балаклавы, если желаете вскрыть дом - /rhouse') return end end
 							end
 						end
 					end
@@ -2863,7 +2861,7 @@ function enterhouse()
 				end
 			end
 		end
-		chatmsg(u8:decode"Возле вас нету пикапа дома, подойдите ближе")
+		script.sendMessage("Возле вас нету пикапа дома, подойдите ближе")
 		else
 		chatManager.addMessageToQueue("/exit")
 	end
@@ -2921,9 +2919,9 @@ end
 function cmd_setoverlay()
 	if not SetMode then
 		chatManager.addMessageToQueue("/mm")
-		chatmsg(u8:decode"Начата настройка местоположения элементов overlay")
-		chatmsg(u8:decode"Перетащите элементы в нужное место и пропишите /setov - произойдет сохранение координат")
-		chatmsg(u8:decode"Для сброса всех координат зажмите среднюю кнопку мыши")
+		script.sendMessage("Начата настройка местоположения элементов overlay")
+		script.sendMessage("Перетащите элементы в нужное место и пропишите /setov - произойдет сохранение координат")
+		script.sendMessage("Для сброса всех координат зажмите среднюю кнопку мыши")
 		srp_ini.bools['Дата и время'] = true
 		srp_ini.bools['Ник'] = true
 		srp_ini.bools['Пинг'] = true
@@ -2952,7 +2950,7 @@ function cmd_setoverlay()
 		srp_ini.overlay['ИнвентарьX'], srp_ini.overlay['ИнвентарьY'] = soverlay['Инвентарь'].x, soverlay['Инвентарь'].y
 		srp_ini.overlay['Ограбление домовX'], srp_ini.overlay['Ограбление домовY'] = soverlay['Ограбление домов'].x, soverlay['Ограбление домов'].y
 		
-		chatmsg(u8:decode"Местоположения всех элементов успешно задано")
+		script.sendMessage("Местоположения всех элементов успешно задано")
 		srp_ini.bools['Дата и время'] = togglebools['Дата и время'].v and true or false
 		srp_ini.bools['Ник'] = togglebools['Ник'].v and true or false
 		srp_ini.bools['Пинг'] = togglebools['Пинг'].v and true or false
@@ -2971,9 +2969,9 @@ end
 
 function cmd_flood(arg)
 	isFlood = not isFlood
-	if not isFlood then chatmsg(u8:decode"Флуд сообщением завершён") chatManager.initQueue() return end
+	if not isFlood then script.sendMessage("Флуд сообщением завершён") chatManager.initQueue() return end
 	if arg ~= nil and arg ~= "" then
-		chatmsg(u8:decode"Начинаю флудить сообщением: " .. arg)
+		script.sendMessage("Начинаю флудить сообщением: " .. arg)
 		lua_thread.create(function()
 			while isFlood do
 				wait(0)
@@ -3011,13 +3009,13 @@ function whenhouse()
 		if srp_ini.values['Слет'] ~= 0 then
 			local datetime = {}
 			datetime.year, datetime.month, datetime.day, hour = srp_ini.values['Слет']:match("(%d%d%d%d)%/(%d%d)%/(%d%d) (%d%d%:%d%d)")
-			chatmsg(u8:decode"Недвижимость слетит через " .. math.floor((os.difftime(os.time(datetime), os.time())) / 3600 / 24) .. u8:decode" дней | " .. srp_ini.values['Слет'])
+			script.sendMessage("Недвижимость слетит через " .. math.floor((os.difftime(os.time(datetime), os.time())) / 3600 / 24) .. " дней | " .. srp_ini.values['Слет'])
 			else
-			chatmsg(u8:decode"Дата слета неизвестна, оплатите квартплату в банкомате")
+			script.sendMessage("Дата слета неизвестна, оплатите квартплату в банкомате")
 			return
 		end
 		else
-		chatmsg(u8:decode"Произошла ошибка, перезагрузите скрипт")
+		script.sendMessage("Произошла ошибка, перезагрузите скрипт")
 		return
 	end
 end
@@ -3139,8 +3137,8 @@ function textLabelOverPlayerNickname()
 	end
 end
 
-function chatmsg(t)
-	sampAddChatMessage(prefix .. t, main_color)
+function script.sendMessage(t)
+	sampAddChatMessage(prefix .. u8:decode(t), main_color)
 end
 
 function getcars()
@@ -3349,10 +3347,9 @@ function imgui.binderHotkey(name, numkey, width)
 end
 
 function checkUpdates() -- проверка обновлений
-	local fpath = os.tmpname()
-	if doesFileExist(fpath) then os.remove(fpath) end
+	local fpath = getWorkingDirectory() .. '/SRPfunctions.dat'
 	downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
-		if status == 58 then
+		if status == dlstatus.STATUSEX_ENDDOWNLOAD then
 			if doesFileExist(fpath) then
 				local file = io.open(fpath, 'r')
 				if file then
@@ -3381,25 +3378,25 @@ function checkUpdates() -- проверка обновлений
 					if info['version_num'] > thisScript()['version_num'] then
 						script.available = true
 						if script.update then updateScript() return end
-						chatmsg(updatingprefix .. u8:decode"Обнаружена новая версия скрипта от " .. info['version_date'] .. u8:decode", пропишите /srpup для обновления")
-						chatmsg(updatingprefix .. u8:decode"Изменения в новой версии:")
+						script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", пропишите /srpup для обновления")
+						script.sendMessage(updatingprefix .. "Изменения в новой версии:")
 						if script.upd.sort ~= {} then
 							for k in ipairs(script.upd.sort) do
 								if script.upd.changes[tostring(k)] ~= nil then
-									chatmsg(updatingprefix .. k .. ') ' .. u8:decode(script.upd.changes[tostring(k)]))
+									script.sendMessage(updatingprefix .. k .. ') ' .. script.upd.changes[tostring(k)])
 								end
 							end
 						end
 						return true
 						else
-						if script.update then chatmsg(u8:decode"Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. u8:decode" за " .. script.v.date) script.update = false return end
+						if script.update then script.sendMessage("Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. " за " .. script.v.date) script.update = false return end
 					end
 					else
-					chatmsg(u8:decode"Не удалось получить информацию про обновления(")
+					script.sendMessage("Не удалось получить информацию про обновления(")
 					thisScript():unload()
 				end
 				else
-				chatmsg(u8:decode"Не удалось получить информацию про обновления(")
+				script.sendMessage("Не удалось получить информацию про обновления(")
 				thisScript():unload()
 			end
 		end
@@ -3411,7 +3408,7 @@ function updateScript()
 	if script.available then
 		downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
 			if status == 6 then
-				chatmsg(updatingprefix .. u8:decode"Скрипт был обновлён!")
+				script.sendMessage(updatingprefix .. "Скрипт был обновлён!")
 				if script.find("ML-AutoReboot") == nil then
 					thisScript():reload()
 				end
@@ -3424,6 +3421,7 @@ end
 
 function onScriptTerminate(s, bool)
 	if s == thisScript() and not bool then
+		imgui.Process = false
 		for i = 0, 1000 do
 			if textlabel[i] ~= nil then
 				sampDestroy3dText(textlabel[i])
@@ -3433,16 +3431,18 @@ function onScriptTerminate(s, bool)
 		if not script.reload then
 			if not script.update then
 				if not script.unload then
-					chatmsg(u8:decode"Скрипт крашнулся: отправьте moonloader.log разработчику tg: @Imykhailovich")
+					script.sendMessage("Скрипт крашнулся: отправьте moonloader.log разработчику tg: @Imykhailovich")
 					else
-					chatmsg(u8:decode"Скрипт был выгружен")
+					script.sendMessage("Скрипт был выгружен")
 				end
 				else
-				chatmsg(updatingprefix .. u8:decode"Старый скрипт был выгружен, загружаю обновлённую версию...")
+				script.sendMessage(updatingprefix .. "Старый скрипт был выгружен, загружаю обновлённую версию...")
 			end
 			else
-			chatmsg(u8:decode"Перезагружаюсь...")
+			script.sendMessage("Перезагружаюсь...")
 		end
 	end
-end						
+end		
+
+
 
