@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("31.01.2023")
-script_version_number(21)
+script_version("24.01.2023")
+script_version_number(20)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -185,7 +185,7 @@ local copskins = { -- модели скинов мусоров, на котор�
 
 local main_color = 0x41491d
 local prefix = "{41491d}[SRP] {FFFAFA}"
-local updatingprefix = u8:decode"{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}"
+local updatingprefix = "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}"
 local antiflood = 0
 
 local menu = { -- imgui-меню
