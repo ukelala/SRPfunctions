@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("31.01.2023")
-script_version_number(22)
+script_version("23.02.2023")
+script_version_number(23)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -669,6 +669,8 @@ function main()
 	sampRegisterChatCommand('srpup', updateScript)
 	sampRegisterChatCommand('samprpup', updateScript)
 	sampRegisterChatCommand("whenhouse", function() whenhouse() end)
+	sampRegisterChatCommand("st", cmd_st)
+	sampRegisterChatCommand("sw", cmd_sw)
 	
 	script.loaded = true
 	while sampGetGamestate() ~= 3 do wait(0) end
@@ -688,6 +690,7 @@ function main()
 	checkdialogs()
 	while true do
 		wait(0)
+		if time then setTimeOfDay(time, 0) end
 		for i = 0, 3000 do
 			if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match(u8:decode"SQUAD") then
 				if srp_ini.bools['Сквад'] then
@@ -1326,7 +1329,9 @@ function imgui.OnDrawFrame()
 				"/srpflood [Text] (/samprpflood [Text]) - флудить заданным текстом в чат",
 				"/srpstop - очистить очередь отправляемых сообщений в чат (очень полезно если биндер флудит без остановки)",
 				"/srpup (/samprpup) - обновить скрипт",
-				"/whenhouse - узнать когда слетит недвижимость"
+				"/whenhouse - узнать когда слетит недвижимость",
+				"/st [0-24] - установить игровое время",
+				"/sw [0-45] - установить игровую погоду"
 			}
 			local w = 0
 			local sortcmds = {}
@@ -3020,6 +3025,34 @@ function whenhouse()
 	end
 end
 
+function cmd_st(sparams)
+	local hour = tonumber(sparams)
+	if hour ~= nil and hour >= 0 and hour <= 23 then
+		time = hour
+		patch_samp_time_set(true)
+		else
+		patch_samp_time_set(false)
+		time = nil
+	end
+end
+
+function patch_samp_time_set(enable)
+	if enable and default == nil then
+		default = readMemory(sampGetBase() + 0x9C0A0, 4, true)
+		writeMemory(sampGetBase() + 0x9C0A0, 4, 0x000008C2, true)
+		elseif enable == false and default ~= nil then
+		writeMemory(sampGetBase() + 0x9C0A0, 4, default, true)
+		default = nil
+	end
+end
+
+function cmd_sw(sparams)
+	local weather = tonumber(sparams)
+	if weather ~= nil and weather >= 0 and weather <= 45 then
+		forceWeatherNow(weather)
+	end
+end
+
 function ev.onSendChat(message)
 	chatManager.lastMessage = message
 	chatManager.updateAntifloodClock()
@@ -3443,6 +3476,7 @@ function onScriptTerminate(s, bool)
 		end
 	end
 end		
+
 
 
 
