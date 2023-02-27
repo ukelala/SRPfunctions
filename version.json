@@ -1,6 +1,6 @@
 {
-  "version_num": 23,
-  "version_date": "23.02.2023",
+  "version_num": 24,
+  "version_date": "27.02.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -72,6 +72,6 @@
              "Madi_Lamilo": {"color": "0xFF046901", "text": "Первопроходец"}
   },
    "version_upd": {
-             "1": "Добавлены команды /st, /sw для изменения времени и погоды"
+             "1": "Пофикшено срабатывание автоломки при отключённой функции"
   }       
 }
