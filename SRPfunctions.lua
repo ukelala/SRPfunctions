@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("23.02.2023")
-script_version_number(23)
+script_version("27.02.2023")
+script_version_number(24)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -2141,19 +2141,21 @@ function ev.onServerMessage(col, text)
 		if col == strings.color.donetheft and text:match(strings.donetheft) then 
 			srp_ini.values['Автоугон'] = os.time() 						
 		end
-		if col == strings.color.stay and text:match(strings.stay) then 
-			if isLomka then 
+		if srp_ini.bools['Ломка'] then
+			if col == strings.color.stay and text:match(strings.stay) then 
+				if isLomka then 
+					usedrugs(1) 
+					else 
+					usedrugs() 
+				end 
+			end
+			if col == strings.color.wasAFK and text:match(strings.wasAFK) and isLomka then 
+				usedrugs(1)
+			end
+			if col == strings.color.lomka and text:match(strings.lomka) then
+				isLomka = true 
 				usedrugs(1) 
-				else 
-				usedrugs() 
-			end 
-		end
-		if col == strings.color.wasAFK and text:match(strings.wasAFK) and isLomka then 
-			usedrugs(1)
-		end
-		if col == strings.color.lomka and text:match(strings.lomka) then
-			isLomka = true 
-			usedrugs(1) 
+			end
 		end
 		if srp_ini.bools['Спам'] then
 			if col == strings.color.spam and text:match(strings.spam) then
@@ -3476,6 +3478,7 @@ function onScriptTerminate(s, bool)
 		end
 	end
 end		
+
 
 
 
