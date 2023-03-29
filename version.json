@@ -1,6 +1,6 @@
 {
-  "version_num": 24,
-  "version_date": "27.02.2023",
+  "version_num": 25,
+  "version_date": "29.03.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -73,6 +73,7 @@
              "Madi_Lamilo": {"color": "0xFF046901", "text": "Первопроходец"}
   },
    "version_upd": {
-             "1": "Пофикшено срабатывание автоломки при отключённой функции"
+             "1": "Добавлена переменная @kv@ - возвращает квадрат",
+             "2": "Исправлены некоторые ошибки, для вопросов обращаемся в тг @Imykhailovich"
   }       
 }
