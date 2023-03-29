@@ -305,156 +305,79 @@ local ImVec4 = imgui.ImVec4
 local imfonts = {mainFont = nil, font = nil, ovFont = nil, ovFontSquad = nil, ovFontCars = nil, ovFontSquadRender = nil}
 
 local strings = {
-	acceptrepair 
-	= u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
-	acceptrefill 
-	= u8:decode"^ Механик .* хочет заправить ваш автомобиль за (%d+) вирт%{FFFFFF%} %(%( Нажмите Y%/N для принятия%/отмены %)%)",
-	gasstation 
-	= u8:decode"Цена за 200л%: %$(%d+)",
-	jfchat 
-	= u8:decode"^ (.*)%[(%d+)]%<(.*)%>%: (.*)",
-	faction 
-	= u8:decode"^ (.*)  (.*)%[(%d+)%]%: (.*)",
-	boost 
-	= u8:decode"^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
-	noboost 
-	= u8:decode"^ Бонусы отключены",
-	narko 
-	= u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
-	painttime 
-	= u8:decode"^ Внимание%! Начало пейнтбола через (%d) минуты?%. Место проведения%: военный завод K%.A%.C%.C%.",
-	squidtime 
-	= u8:decode"^ Внимание%! Начало %'Игра в Кальмара%' через (%d) минуты?%! Место проведения%: Арена LS %(%( %/gps %[Важное%] %>%> %[Игра в Кальмара%] %)%)",
-	derbytime 
-	= u8:decode"^ Внимание%! Начало гонок дерби через (%d) минуты?%. Стадион Сан Фиерро%. Регистрация на первом этаже",
-	racetime 
-	= u8:decode"^ Внимание%! Начало гонок через (%d) минуты?%. Трасса%: Аэропорт Лос Сантос%. Регистрация у въезда",
-	paintfalse1 
-	= u8:decode"^ Внимание%! Пейнтбол начался",
-	paintfalse2 
-	= u8:decode"Внимание%! Пейнтбол был прерван из%-за отсутствия участников",
-	squidfalse1 
-	= u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за недостаточного количества участников%!",
-	squidfalse2 
-	= u8:decode"^ Внимание%! %'Игра в Кальмара%' началась%!",
-	squidfalse3 
-	= u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за проигрыша всех участников%! %(%( Список%: %/klmlist %)%)",
-	derbyfalse1 
-	= u8:decode"^ Внимание%! Гонки дерби начались%. Стадион Сан Фиерро",
-	derbyfalse2 
-	= u8:decode"^ Внимание%! Гонки дерби были прерваны из%-за отсутствия участников",
-	derbyfalse3 
-	= u8:decode"^ Внимание%! Гонки дерби окончены%. %(%( Список победителей%: %/derbylist %)%)",
-	racefalse1 
-	= u8:decode"^ Внимание%! Гонки были прерваны из%-за отсутствия участников",
-	racefalse2 
-	= u8:decode"^ Внимание%! Гонки начались%. Трасса%: Аэропорт Лос Сантос",
-	racefalse3 
-	= u8:decode"^ Внимание%! Гонки окончены%. %(%( Список победителей%: %/racelist %)%)",
-	repair1 
-	= u8:decode"^ Двигатель отремонтирован%. У вас осталось (%d+)%/%d+ комплектов %«автомеханик%»",
-	repair2 
-	= u8:decode"^ У вас нет комплекта %«автомеханик%» для ремонта",
-	repair3 
-	= u8:decode"^ В транспортном средстве нельзя",
-	repair4 
-	= u8:decode"^ Вы далеко от транспортного средства%. Подойдите к капоту",
-	connected 
-	= u8:decode"^ Для восстановления доступа нажмите клавишу %'F6%' и введите %'%/restoreAccess%'",
-	changequest 
-	= u8:decode"^ %[Quest%] %{FFFFFF%}Вы заменили задание %{6AB1FF%}(.*) %{FFFFFF%}на %{6AB1FF%}(.*)",
-	donequest 
-	= u8:decode"^ %[Quest%] %{FFFFFF%}Выполнено задание %{6AB1FF%}\"(.*)\"",
-	newpassenger 
-	= u8:decode"^ Пассажир (.*) сел в ваше Такси%. Довезите его и государство заплатит вам",
-	outpassenger1 
-	= u8:decode"^ Пассажир вышел из такси. Деньги будут зачислены во время зарплаты$",
-	outpassenger2 
-	= u8:decode"^ Пассажир вышел из такси. Использован купон на бесплатный проезд$",
-	sms 
-	= u8:decode"^ SMS%: (.*)%. Отправитель%: (.*)%[(%d+)%]$",
-	normalchat 
-	= u8:decode"^%- (.*)%[(%d+)%]%: (.*)",
-	taxi 
-	= u8:decode"%<%< Бесплатное такси %>%>",
-	rent 
-	= u8:decode"^ Вы арендовали транспортное средство$",
-	safe 
-	= u8:decode"^ Вы [пв][оз][ля][ол][жи][и]?[л]?[и]?.?[в]?[и]?[з]? сейфа? .*",
-	minusbalaklava 
-	= u8:decode"^ Вы надели балаклаву$",
-	minuslom 
-	= u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
-	kanistra 
-	= u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
-	fillcar 
-	= u8:decode"^ Вы дозаправили свою машину на 50",
-	outbagazhnik 
-	= u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
-	inbagazhnik 
-	= u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
-	shop24 
-	= u8:decode"^ (.*) приобретена?%. Осталось%: (%d+)%/%d+",
-	grib 
-	= u8:decode"^ Вы нашли гриб \".+\". Теперь у вас (%d+) грибов",
-	fish 
-	= u8:decode"^ Сытость полностью восстановлена%. У вас осталось (%d+) %/ %d+ пачек рыбы$",
-	cookfish 
-	= u8:decode"^ У вас (%d+) %/ %d+ пачек рыбы$",
-	trash 
-	= u8:decode"^ (.*) выбросила? %'(.*)%'$",
-	mats 
-	= u8:decode"^ (.*) cделал%(а%) себе оружие из материалов$",
-	reward 
-	= u8:decode"^ %[Quest%] %{FFFFFF%}Ваша награда%: %{FF9DB6%}(.*)",
-	disconnect 
-	= u8:decode"^ Вы отключились от сообщества$",
-	cookgrib
-	= u8:decode"^ Грибы готовы%. Грибы%: (%d+)%. Психохил%: (%d+)%/%d+%. Г%.Грибы%: (%d+)%/%d+$",
-	adr 
-	= u8:decode"^ Вы приняли адреналин. Эффект продлится (%d+) минут$",
-	gribeat 
-	= u8:decode"^ Сытость пополнена до %d+%. У вас осталось (%d+)%/%d+ готовых грибов$",
-	psiho 
-	= u8:decode"^ Здоровье %d+%/%d+%. Сытость %d+%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
-	roul 
-	= u8:decode"^ Вы получили %{FFFFFF%}(.*)%{EAC700%}%. Количество%: %{FFFFFF%}%d+%{EAC700%}%. В инвентаре%: (%d+) %/ %d+$",
-	stolen 
-	= u8:decode"^ Вы украли (.*), отнесите награбленное в фургон$",
-	breaken 
-	= u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
-	open 
-	= u8:decode"^ Дверь открыта без использования лома$",
-	put 
-	= u8:decode"^ Вы положили награбленное в фургон. Загружено: (%d+)%/(%d+)$",
-	rob 
-	= u8:decode"^ Emmet%: Купить лом и маску можешь в любом магазине 24%/7$",
-	donerob 
-	= u8:decode"^ За ограбление дома вы получили %d+ вирт$",
-	donetheft 
-	= u8:decode"^ Отличная тачка. Будет нужна работа, приходи%.$",
-	stay 
-	= u8:decode"^ %(%( После ввода команды вы должны стоять на месте %)%)$",
-	wasAFK 
-	= u8:decode"^ В AFK ввод команд заблокирован$",
-	lomka 
-	= u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
-	plswait 
-	= u8:decode"^ Пожалуйста подождите$",
-	spam 
-	= u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
-	noequest 
-	= u8:decode"^ Доступно со 2 уровня",
-	metka
-	= u8:decode"^ Пассажир (.*) установил точку прибытия %(%( Для отключения введите %/gps %)%)",
-	slet
-	= u8:decode"^ Домашний счёт оплачен до (.*)",
-	accepttaxi
-	= u8:decode"^ Диспетчер%: (.*) принял вызов от (.*)%[%d+%]$",
-	full24
-	= u8:decode"^ У вас нет места$",
-	full24sec
-	= u8:decode"^ У вас нет дома%/квартиры$",
+	acceptrepair = u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
+	acceptrefill = u8:decode"^ Механик .* хочет заправить ваш автомобиль за (%d+) вирт%{FFFFFF%} %(%( Нажмите Y%/N для принятия%/отмены %)%)",
+	gasstation = u8:decode"Цена за 200л%: %$(%d+)",
+	jfchat = u8:decode"^ (.*)%[(%d+)]%<(.*)%>%: (.*)",
+	faction = u8:decode"^ (.*)  (.*)%[(%d+)%]%: (.*)",
+	boost = u8:decode"^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
+	noboost = u8:decode"^ Бонусы отключены",
+	narko = u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
+	painttime = u8:decode"^ Внимание%! Начало пейнтбола через (%d) минуты?%. Место проведения%: военный завод K%.A%.C%.C%.",
+	squidtime = u8:decode"^ Внимание%! Начало %'Игра в Кальмара%' через (%d) минуты?%! Место проведения%: Арена LS %(%( %/gps %[Важное%] %>%> %[Игра в Кальмара%] %)%)",
+	derbytime = u8:decode"^ Внимание%! Начало гонок дерби через (%d) минуты?%. Стадион Сан Фиерро%. Регистрация на первом этаже",
+	racetime = u8:decode"^ Внимание%! Начало гонок через (%d) минуты?%. Трасса%: Аэропорт Лос Сантос%. Регистрация у въезда",
+	paintfalse1 = u8:decode"^ Внимание%! Пейнтбол начался",
+	paintfalse2 = u8:decode"Внимание%! Пейнтбол был прерван из%-за отсутствия участников",
+	squidfalse1 = u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за недостаточного количества участников%!",
+	squidfalse2 = u8:decode"^ Внимание%! %'Игра в Кальмара%' началась%!",
+	squidfalse3 = u8:decode"^ Внимание%! %'Игра в Кальмара%' прервана из%-за проигрыша всех участников%! %(%( Список%: %/klmlist %)%)",
+	derbyfalse1 = u8:decode"^ Внимание%! Гонки дерби начались%. Стадион Сан Фиерро",
+	derbyfalse2 = u8:decode"^ Внимание%! Гонки дерби были прерваны из%-за отсутствия участников",
+	derbyfalse3 = u8:decode"^ Внимание%! Гонки дерби окончены%. %(%( Список победителей%: %/derbylist %)%)",
+	racefalse1 = u8:decode"^ Внимание%! Гонки были прерваны из%-за отсутствия участников",
+	racefalse2 = u8:decode"^ Внимание%! Гонки начались%. Трасса%: Аэропорт Лос Сантос",
+	racefalse3 = u8:decode"^ Внимание%! Гонки окончены%. %(%( Список победителей%: %/racelist %)%)",
+	repair1 = u8:decode"^ Двигатель отремонтирован%. У вас осталось (%d+)%/%d+ комплектов %«автомеханик%»",
+	repair2 = u8:decode"^ У вас нет комплекта %«автомеханик%» для ремонта",
+	repair3 = u8:decode"^ В транспортном средстве нельзя",
+	repair4 = u8:decode"^ Вы далеко от транспортного средства%. Подойдите к капоту",
+	connected = u8:decode"^ Для восстановления доступа нажмите клавишу %'F6%' и введите %'%/restoreAccess%'",
+	changequest = u8:decode"^ %[Quest%] %{FFFFFF%}Вы заменили задание %{6AB1FF%}(.*) %{FFFFFF%}на %{6AB1FF%}(.*)",
+	donequest = u8:decode"^ %[Quest%] %{FFFFFF%}Выполнено задание %{6AB1FF%}\"(.*)\"",
+	newpassenger = u8:decode"^ Пассажир (.*) сел в ваше Такси%. Довезите его и государство заплатит вам",
+	outpassenger1 = u8:decode"^ Пассажир вышел из такси. Деньги будут зачислены во время зарплаты$",
+	outpassenger2 = u8:decode"^ Пассажир вышел из такси. Использован купон на бесплатный проезд$",
+	sms = u8:decode"^ SMS%: (.*)%. Отправитель%: (.*)%[(%d+)%]$",
+	normalchat = u8:decode"^%- (.*)%[(%d+)%]%: (.*)",
+	taxi = u8:decode"%<%< Бесплатное такси %>%>",
+	rent = u8:decode"^ Вы арендовали транспортное средство$",
+	minusbalaklava = u8:decode"^ Вы надели балаклаву$",
+	minuslom = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
+	kanistra = u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
+	fillcar = u8:decode"^ Вы дозаправили свою машину на 50",
+	outbagazhnik = u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
+	inbagazhnik = u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
+	shop24 = u8:decode"^ (.*) приобретена?%. Осталось%: (%d+)%/%d+",
+	grib = u8:decode"^ Вы нашли гриб \".+\". Теперь у вас (%d+) грибов",
+	fish = u8:decode"^ Сытость полностью восстановлена%. У вас осталось (%d+) %/ %d+ пачек рыбы$",
+	cookfish = u8:decode"^ У вас (%d+) %/ %d+ пачек рыбы$",
+	trash = u8:decode"^ (.*) выбросила? %'(.*)%'$",
+	reward = u8:decode"^ %[Quest%] %{FFFFFF%}Ваша награда%: %{FF9DB6%}(.*)",
+	disconnect = u8:decode"^ Вы отключились от сообщества$",
+	cookgrib= u8:decode"^ Грибы готовы%. Грибы%: (%d+)%. Психохил%: (%d+)%/%d+%. Г%.Грибы%: (%d+)%/%d+$",
+	adr = u8:decode"^ Вы приняли адреналин. Эффект продлится (%d+) минут$",
+	gribeat = u8:decode"^ Сытость пополнена до %d+%. У вас осталось (%d+)%/%d+ готовых грибов$",
+	psiho = u8:decode"^ Здоровье %d+%/%d+%. Сытость %d+%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
+	roul = u8:decode"^ Вы получили %{FFFFFF%}(.*)%{EAC700%}%. Количество%: %{FFFFFF%}%d+%{EAC700%}%. В инвентаре%: (%d+) %/ %d+$",
+	stolen = u8:decode"^ Вы украли (.*), отнесите награбленное в фургон$",
+	breaken = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
+	open = u8:decode"^ Дверь открыта без использования лома$",
+	put = u8:decode"^ Вы положили награбленное в фургон. Загружено: (%d+)%/(%d+)$",
+	rob = u8:decode"^ Emmet%: Купить лом и маску можешь в любом магазине 24%/7$",
+	donerob = u8:decode"^ За ограбление дома вы получили %d+ вирт$",
+	donetheft = u8:decode"^ Отличная тачка. Будет нужна работа, приходи%.$",
+	stay = u8:decode"^ %(%( После ввода команды вы должны стоять на месте %)%)$",
+	wasAFK = u8:decode"^ В AFK ввод команд заблокирован$",
+	lomka = u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
+	plswait = u8:decode"^ Пожалуйста подождите$",
+	spam = u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
+	noequest = u8:decode"^ Доступно со 2 уровня",
+	metka = u8:decode"^ Пассажир (.*) установил точку прибытия %(%( Для отключения введите %/gps %)%)",
+	slet = u8:decode"^ Домашний счёт оплачен до (.*)",
+	accepttaxi = u8:decode"^ Диспетчер%: (.*) принял вызов от (.*)%[%d+%]$",
+	full24 = u8:decode"^ У вас нет места$",
+	full24sec = u8:decode"^ У вас нет дома%/квартиры$",
 	
 	color = {
 		mechanic = 1790050303,
@@ -475,7 +398,6 @@ local strings = {
 		rent = -1,
 		fish = -1342193921,
 		grib = -1,
-		safe = -65281,
 		minusbalaklava = -1347440641,
 		minuslom = 1790050303,
 		kanistra = 1687547391,
@@ -484,7 +406,6 @@ local strings = {
 		inbagazhnik =  1790050303,
 		shop24 =  1687547391,
 		trash = -1029514497,
-		mats = -1029514497,
 		reward = 1790050303,
 		disconnect = -1,
 		cookgrib = 1358862079,
@@ -1187,7 +1108,8 @@ function imgui.OnDrawFrame()
 				"@min@ - текущая минута вашего ПК",
 				"@sec@ - текущая секунда вашего ПК",
 				"@myclist@ - текущий ваш клист",
-				"@mainclist@ - ваш главный клист (см.меню 'Клавиши')"
+				"@mainclist@ - ваш главный клист (см.меню 'Клавиши')",
+				"@kv@ - текущий квадрат/сектор на карте"
 			}
 			local w = 0
 			local sortvars = {}
@@ -1742,14 +1664,12 @@ function ev.onServerMessage(col, text)
 		end
 		if col == strings.color.boost then 
 			if text:match(strings.boost) and isBoost then 
-				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then script.sendMessage("Информация успешно получена") end
 				checkedBoost = true
 				return false 
 			end 
 		end
 		if col == strings.color.noboost then 
 			if text:match(strings.noboost) and isBoost then
-				if not checkedBoost and srp_ini.bools['Нарко'] and not srp_ini.bools['Ежедневные задания'] and not srp_ini.bools['Инвентарь'] then script.sendMessage("Информация успешно получена") end
 				isBoost = false 
 				checkedBoost = true 
 				return false 
@@ -1951,10 +1871,6 @@ function ev.onServerMessage(col, text)
 			chatManager.addMessageToQueue('/en')
 			return false
 		end
-		if col == strings.color.safe and text:match(strings.safe) then 
-			isInventory = true 
-			chatManager.addMessageToQueue('/inventory') 
-		end
 		if col == strings.color.minusbalaklava and text:match(strings.minusbalaklava) then 
 			if tonumber(srp_ini['Инвентарь']['Балаклава']) ~= nil and tonumber(srp_ini['Инвентарь']['Балаклава']) > 0 then 
 				srp_ini['Инвентарь']['Балаклава'] = tonumber(srp_ini['Инвентарь']['Балаклава']) - 1                                                                
@@ -2033,15 +1949,6 @@ function ev.onServerMessage(col, text)
 						srp_ini['Инвентарь'][u8(k)] = 0                                                         		    		
 					end 
 				end
-			end 
-		end
-		if col == strings.color.mats and text:match(strings.mats) then 
-			local n = text:match(strings.mats) 
-			if n ~= nil then 
-				if n == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then 
-					isInventory = true 
-					chatManager.addMessageToQueue('/inventory') 
-				end 
 			end 
 		end
 		if col == strings.color.adr and text:match(strings.adr) then 
@@ -2144,17 +2051,15 @@ function ev.onServerMessage(col, text)
 		if srp_ini.bools['Ломка'] then
 			if col == strings.color.stay and text:match(strings.stay) then 
 				if isLomka then 
-					usedrugs(1) 
-					else 
 					usedrugs() 
 				end 
 			end
 			if col == strings.color.wasAFK and text:match(strings.wasAFK) and isLomka then 
-				usedrugs(1)
+				usedrugs()
 			end
 			if col == strings.color.lomka and text:match(strings.lomka) then
 				isLomka = true 
-				usedrugs(1) 
+				usedrugs() 
 			end
 		end
 		if srp_ini.bools['Спам'] then
@@ -2201,7 +2106,6 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				if isBoost then 
 					sampCloseCurrentDialogWithButton(0) 
 					isBoost = false
-					if not checkedBoost and checkedQuest and checkedInventory then script.sendMessage("Информация успешно получена") end
 					checkedBoost = true
 					return false 
 				end
@@ -2226,7 +2130,6 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				if isQuest then 
 					sampCloseCurrentDialogWithButton(0) 
 					isQuest = false 
-					if checkedBoost and not checkedQuest and checkedInventory then script.sendMessage("Информация успешно получена") end
 					checkedQuest = true
 					return false 
 				end
@@ -2258,7 +2161,6 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 			if isInventory then 
 				sampCloseCurrentDialogWithButton(0) 
 				isInventory = false 
-				if checkedBoost and checkedQuest and not checkedInventory then script.sendMessage("Информация успешно получена") end
 				checkedInventory = true
 				return false 
 			end
@@ -2453,25 +2355,21 @@ end
 
 function usedrugs(arg)
 	lua_thread.create(function()
-		if not isLomka and arg ~= 1 then 
-			if tonumber(arg) == nil then chatManager.addMessageToQueue('/usedrugs') else chatManager.addMessageToQueue('/usedrugs ' .. arg) end
-			else
-			if srp_ini.bools['Ломка без копов'] then 
-				for _, v in ipairs(getAllChars()) do 
-					if v ~= PLAYER_PED then 
-						if copskins[getCharModel(v)] ~= nil and sampGetPlayerIdByCharHandle(v) then 
-							local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
-							local cX, cY, cZ = getCharCoordinates(v) 
-							if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
-								script.sendMessage("Наркотики не будут употреблены, возле вас стоит коп!") 
-								return 
-							end
+		if srp_ini.bools['Ломка'] and isLomka and srp_ini.bools['Ломка без копов'] then 
+			for _, v in ipairs(getAllChars()) do 
+				if v ~= PLAYER_PED then 
+					if copskins[getCharModel(v)] ~= nil and sampGetPlayerIdByCharHandle(v) then 
+						local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
+						local cX, cY, cZ = getCharCoordinates(v) 
+						if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
+							script.sendMessage("Наркотики не будут употреблены, возле вас стоит коп!")
+							return 
 						end
 					end
 				end
 			end
-			chatManager.addMessageToQueue('/usedrugs 1')
 		end
+		if tonumber(arg) == nil then chatManager.addMessageToQueue('/usedrugs') else chatManager.addMessageToQueue('/usedrugs ' .. arg) end
 	end)
 end
 
@@ -2827,6 +2725,7 @@ function insertvars(str, bind)
 	if str:match("@sec@") then str = str:gsub("@sec@", os.date("%S")) end
 	if str:match("@myclist@") then str = str:gsub("@myclist@", tostring(clists.numbers[sampGetPlayerColor(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))])) end
 	if str:match("@mainclist@") then str = str:gsub("@mainclist@", tostring(srp_ini.values.clist)) end
+	if str:match("@kv@") then str = str:gsub("@kv@", currentSector()) end
 	return str
 end
 
@@ -3053,6 +2952,41 @@ function cmd_sw(sparams)
 	if weather ~= nil and weather >= 0 and weather <= 45 then
 		forceWeatherNow(weather)
 	end
+end
+
+function currentSector()
+	local KV = {
+        [1] = "А",
+        [2] = "Б",
+        [3] = "В",
+        [4] = "Г",
+        [5] = "Д",
+        [6] = "Ж",
+        [7] = "З",
+        [8] = "И",
+        [9] = "К",
+        [10] = "Л",
+        [11] = "М",
+        [12] = "Н",
+        [13] = "О",
+        [14] = "П",
+        [15] = "Р",
+        [16] = "С",
+        [17] = "Т",
+        [18] = "У",
+        [19] = "Ф",
+        [20] = "Х",
+        [21] = "Ц",
+        [22] = "Ч",
+        [23] = "Ш",
+        [24] = "Я",
+	}
+    local X, Y, Z = getCharCoordinates(playerPed)
+    X = math.ceil((X + 3000) / 250)
+    Y = math.ceil((Y * - 1 + 3000) / 250)
+    Y = u8:decode(KV[Y])
+    local KVX = (Y .. "-" .. X)
+    return KVX
 end
 
 function ev.onSendChat(message)
