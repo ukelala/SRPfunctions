@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("29.03.2023")
-script_version_number(25)
+script_version("03.04.2023")
+script_version_number(26)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -233,9 +233,7 @@ local noequest = false
 local isInventory = false
 local checkedInventory = false
 local isFlood = false
-local connected = false
 local needtoreload = false
-local isLogined = false
 local isRobbing = false
 local isLomka = false
 local needtohold = false
@@ -1450,7 +1448,7 @@ function imgui.OnDrawFrame()
 		local carhandles = getcars() -- получаем все машины вокруг
 		if carhandles ~= nil then -- если машина обнаружена
 			for k, v in pairs(carhandles) do -- перебор всех машин в прорисовке
-				if doesVehicleExist(v) and isCarOnScreen(v) then -- если машина на экране
+				if doesVehicleExist(v) and isCarOnScreen(v) and not sampIsDialogActive(-1) then -- если машина на экране и не открыт диалог
 					local idcar = getCarModel(v) -- получаем ид модельки
 					local myX, myY, myZ = getCharCoordinates(PLAYER_PED) -- получаем свои координаты
 					local cX, cY, cZ = getCarCoordinates(v) -- получаем координаты машины
@@ -1615,7 +1613,7 @@ end
 -------------------------------------------------------------------------[ФУНКЦИИ]-----------------------------------------------------------------------------------------
 function ev.onServerMessage(col, text)
 	if script.loaded then
-		if col == strings.color.connected and text:match(strings.connected) then connected = true if needtoreload then script.reload = true thisScript():reload() end end
+		if col == strings.color.connected and text:match(strings.connected) then if needtoreload then script.reload = true thisScript():reload() end end
 		if col == strings.color.mechanic then
 			if isCharInAnyCar(PLAYER_PED) then
 				fcarHandle = storeCarCharIsInNoSave(PLAYER_PED)
@@ -2165,13 +2163,21 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				return false 
 			end
 		end
-		if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) and connected then
-			connected = false
+		if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) then
 			if srp_ini.bools['Автологин'] then
-				if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then script.sendMessage("Автологина не будет, пароль не задан в меню!") return end
-				sampSendDialogResponse(1, 1, 0, srp_ini.values['Пароль'])
-				isLogined = true
-				return false
+				lua_thread.create(function()
+					local A_Index = 0
+					while true do
+						if A_Index == 5 then break end
+						local str = sampGetChatString(99 - A_Index)
+						if str:match(strings.connected) then
+							if srp_ini.values['Пароль'] == nil or srp_ini.values['Пароль'] == '' then script.sendMessage("Автологина не будет, пароль не задан в меню!") return end
+							sampSendDialogResponse(dialogid, 1, 0, srp_ini.values['Пароль'])
+							return false
+						end
+						A_Index = A_Index + 1
+					end
+				end)
 			end
 		end
 		if srp_ini.bools['Автоаренда'] then
@@ -3186,234 +3192,235 @@ function imgui.Hotkey(name, numkey, width)
 			function()
 				local curkeys = ""
 				local tbool = false
-				while true do
-					wait(0)
-					if not tbool then
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
-								if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
-									if not curkeys:find(sv) then
-										curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									end
-								end
-							end
-						end
-						
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									tbool = true
-								end
-							end
-						end
-						else
-						tbool2 = false
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								tbool2 = true
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-								end
-							end
-						end
-						
-						if not tbool2 then break end
-					end
-				end
-				
-				local keys = ""
-				if tonumber(curkeys) == vkeys.VK_BACK then
-					srp_ini.hotkey[numkey] = "0"
-					else
-					local tNames = string.split(curkeys, " ")
-					for _, v in ipairs(tNames) do
-						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
-					end
-				end
-				
-				srp_ini.hotkey[numkey] = keys
-				inicfg.save(srp_ini, settings)
+			while true do
+			wait(0)
+			if not tbool then
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
+			if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
 			end
-		)
-	end
-end
-
-function imgui.binderHotkey(name, numkey, width)
-	local hstr = ""
-	local b = decodeJson(binder_ini.list[numkey])
-	for _, v in ipairs(string.split(b.hotkey, ", ")) do
-		if v ~= "0" then
+			end
+			end
+			end
+			
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+			tbool = true
+			end
+			end
+			end
+			else
+			tbool2 = false
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+			tbool2 = true
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+			end
+			end
+			end
+			
+			if not tbool2 then break end
+			end
+			end
+			
+			local keys = ""
+			if tonumber(curkeys) == vkeys.VK_BACK then
+			srp_ini.hotkey[numkey] = "0"
+			else
+			local tNames = string.split(curkeys, " ")
+			for _, v in ipairs(tNames) do
+			local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
+			keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+			end
+			end
+			
+			srp_ini.hotkey[numkey] = keys
+			inicfg.save(srp_ini, settings)
+			end
+			)
+			end
+			end
+			
+			function imgui.binderHotkey(name, numkey, width)
+			local hstr = ""
+			local b = decodeJson(binder_ini.list[numkey])
+			for _, v in ipairs(string.split(b.hotkey, ", ")) do
+			if v ~= "0" then
 			hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. ""
-		end
-	end
-	hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
-	imgui.Button(hstr, imgui.ImVec2(90.0, width))
-	if imgui.IsItemClicked() then
-		lua_thread.create(
+			end
+			end
+			hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
+			imgui.Button(hstr, imgui.ImVec2(90.0, width))
+			if imgui.IsItemClicked() then
+			lua_thread.create(
 			function()
-				local curkeys = ""
-				local tbool = false
-				while true do
-					wait(0)
-					if not tbool then
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
-								if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
-									if not curkeys:find(sv) then
-										curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									end
-								end
-							end
-						end
-						
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-									tbool = true
-								end
-							end
-						end
-						else
-						tbool2 = false
-						for k, v in pairs(vkeys) do
-							sv = tostring(v)
-							if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
-								tbool2 = true
-								if not curkeys:find(sv) then
-									curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
-								end
-							end
-						end
-						
-						if not tbool2 then break end
-					end
-				end
-				
-				local keys = ""
-				if tonumber(curkeys) == vkeys.VK_BACK then
-					b.hotkey = "0"
-					else
-					local tNames = string.split(curkeys, " ")
-					for _, v in ipairs(tNames) do
-						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
-					end
-				end
-				b.hotkey = tostring(keys)
-				binder_ini.list[numkey] = encodeJson(b)
-				inicfg.save(binder_ini, binds)
+			local curkeys = ""
+			local tbool = false
+			while true do
+			wait(0)
+			if not tbool then
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v == vkeys.VK_MENU or v == vkeys.VK_CONTROL or v == vkeys.VK_SHIFT or v == vkeys.VK_LMENU or v == vkeys.VK_RMENU or v == vkeys.VK_RCONTROL or v == vkeys.VK_LCONTROL or v == vkeys.VK_LSHIFT or v == vkeys.VK_RSHIFT) then
+			if v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT then
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
 			end
-		)
-	end
-end
-
-function checkUpdates() -- проверка обновлений
-	local fpath = getWorkingDirectory() .. '/SRPfunctions.dat'
-	downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
-		if status == dlstatus.STATUSEX_ENDDOWNLOAD then
+			end
+			end
+			end
+			
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+			tbool = true
+			end
+			end
+			end
+			else
+			tbool2 = false
+			for k, v in pairs(vkeys) do
+			sv = tostring(v)
+			if isKeyDown(v) and (v ~= vkeys.VK_MENU and v ~= vkeys.VK_CONTROL and v ~= vkeys.VK_SHIFT and v ~= vkeys.VK_LMENU and v ~= vkeys.VK_RMENU and v ~= vkeys.VK_RCONTROL and v ~= vkeys.VK_LCONTROL and v ~= vkeys.VK_LSHIFT and v ~=vkeys. VK_RSHIFT) then
+			tbool2 = true
+			if not curkeys:find(sv) then
+			curkeys = tostring(curkeys):len() == 0 and sv or curkeys .. " " .. sv
+			end
+			end
+			end
+			
+			if not tbool2 then break end
+			end
+			end
+			
+			local keys = ""
+			if tonumber(curkeys) == vkeys.VK_BACK then
+			b.hotkey = "0"
+			else
+			local tNames = string.split(curkeys, " ")
+			for _, v in ipairs(tNames) do
+			local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
+			keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+			end
+			end
+			b.hotkey = tostring(keys)
+			binder_ini.list[numkey] = encodeJson(b)
+			inicfg.save(binder_ini, binds)
+			end
+			)
+			end
+			end
+			
+			function checkUpdates() -- проверка обновлений
+			local fpath = getWorkingDirectory() .. '/SRPfunctions.dat'
+			downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
+			if status == dlstatus.STATUSEX_ENDDOWNLOAD then
 			if doesFileExist(fpath) then
-				local file = io.open(fpath, 'r')
-				if file then
-					local info = decodeJson(file:read('*a'))
-					file:close()
-					os.remove(fpath)
-					script.v.num = info.version_num
-					script.v.date = info.version_date
-					script.url = info.version_url
-					script.quest = info.version_quest
-					script.label = info.version_label
-					script.upd.changes = info.version_upd
-					if script.quest then
-						for k, v in pairs(script.quest) do
-							srp_ini['Описание заданий'][k] = v
-						end
-						inicfg.save(srp_ini, settings)
-					end
-					if script.upd.changes then
-						for k in pairs(script.upd.changes) do
-							table.insert(script.upd.sort, k)
-						end
-						table.sort(script.upd.sort, function(a, b) return a > b end)
-					end
-					script.checked = true
-					if info['version_num'] > thisScript()['version_num'] then
-						script.available = true
-						if script.update then updateScript() return end
-						script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", пропишите /srpup для обновления")
-						script.sendMessage(updatingprefix .. "Изменения в новой версии:")
-						if script.upd.sort ~= {} then
-							for k in ipairs(script.upd.sort) do
-								if script.upd.changes[tostring(k)] ~= nil then
-									script.sendMessage(updatingprefix .. k .. ') ' .. script.upd.changes[tostring(k)])
-								end
-							end
-						end
-						return true
-						else
-						if script.update then script.sendMessage("Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. " за " .. script.v.date) script.update = false return end
-					end
-					else
-					script.sendMessage("Не удалось получить информацию про обновления(")
-					thisScript():unload()
-				end
-				else
-				script.sendMessage("Не удалось получить информацию про обновления(")
-				thisScript():unload()
+			local file = io.open(fpath, 'r')
+			if file then
+			local info = decodeJson(file:read('*a'))
+			file:close()
+			os.remove(fpath)
+			script.v.num = info.version_num
+			script.v.date = info.version_date
+			script.url = info.version_url
+			script.quest = info.version_quest
+			script.label = info.version_label
+			script.upd.changes = info.version_upd
+			if script.quest then
+			for k, v in pairs(script.quest) do
+			srp_ini['Описание заданий'][k] = v
 			end
-		end
-	end)
-end
-
-function updateScript()
-	script.update = true
-	if script.available then
-		downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
+			inicfg.save(srp_ini, settings)
+			end
+			if script.upd.changes then
+			for k in pairs(script.upd.changes) do
+			table.insert(script.upd.sort, k)
+			end
+			table.sort(script.upd.sort, function(a, b) return a > b end)
+			end
+			script.checked = true
+			if info['version_num'] > thisScript()['version_num'] then
+			script.available = true
+			if script.update then updateScript() return end
+			script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", пропишите /srpup для обновления")
+			script.sendMessage(updatingprefix .. "Изменения в новой версии:")
+			if script.upd.sort ~= {} then
+			for k in ipairs(script.upd.sort) do
+			if script.upd.changes[tostring(k)] ~= nil then
+			script.sendMessage(updatingprefix .. k .. ') ' .. script.upd.changes[tostring(k)])
+			end
+			end
+			end
+			return true
+			else
+			if script.update then script.sendMessage("Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. " за " .. script.v.date) script.update = false return end
+			end
+			else
+			script.sendMessage("Не удалось получить информацию про обновления(")
+			thisScript():unload()
+			end
+			else
+			script.sendMessage("Не удалось получить информацию про обновления(")
+			thisScript():unload()
+			end
+			end
+			end)
+			end
+			
+			function updateScript()
+			script.update = true
+			if script.available then
+			downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
 			if status == 6 then
-				script.sendMessage(updatingprefix .. "Скрипт был обновлён!")
-				if script.find("ML-AutoReboot") == nil then
-					thisScript():reload()
-				end
+			script.sendMessage(updatingprefix .. "Скрипт был обновлён!")
+			if script.find("ML-AutoReboot") == nil then
+			thisScript():reload()
 			end
-		end)
-		else
-		checkUpdates()
-	end
-end
-
-function onScriptTerminate(s, bool)
-	if s == thisScript() and not bool then
-		imgui.Process = false
-		for i = 0, 1000 do
+			end
+			end)
+			else
+			checkUpdates()
+			end
+			end
+			
+			function onScriptTerminate(s, bool)
+			if s == thisScript() and not bool then
+			imgui.Process = false
+			for i = 0, 1000 do
 			if textlabel[i] ~= nil then
-				sampDestroy3dText(textlabel[i])
-				textlabel[i] = nil
+			sampDestroy3dText(textlabel[i])
+			textlabel[i] = nil
 			end
-		end
-		if not script.reload then
+			end
+			if not script.reload then
 			if not script.update then
-				if not script.unload then
-					script.sendMessage("Скрипт крашнулся: отправьте moonloader.log разработчику tg: @Imykhailovich")
-					else
-					script.sendMessage("Скрипт был выгружен")
-				end
-				else
-				script.sendMessage(updatingprefix .. "Старый скрипт был выгружен, загружаю обновлённую версию...")
+			if not script.unload then
+			script.sendMessage("Скрипт крашнулся: отправьте moonloader.log разработчику tg: @Imykhailovich")
+			else
+			script.sendMessage("Скрипт был выгружен")
+			end
+			else
+			script.sendMessage(updatingprefix .. "Старый скрипт был выгружен, загружаю обновлённую версию...")
 			end
 			else
 			script.sendMessage("Перезагружаюсь...")
-		end
-	end
-end		
-
-
-
-
-
+			end
+			end
+			end		
+			
+			
+			
+			
+			
+						
