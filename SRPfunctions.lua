@@ -376,6 +376,7 @@ local strings = {
 	accepttaxi = u8:decode"^ Диспетчер%: (.*) принял вызов от (.*)%[%d+%]$",
 	full24 = u8:decode"^ У вас нет места$",
 	full24sec = u8:decode"^ У вас нет дома%/квартиры$",
+	afksec = u8:decode"%[AFK%] %[(%d+) секунд%]",
 	
 	color = {
 		mechanic = 1790050303,
@@ -1418,7 +1419,13 @@ function imgui.OnDrawFrame()
 		local y = SetMode and soverlay['Сквад'].y or srp_ini.overlay['СквадY']
 		for k, v in ipairs(smem) do
 			y = y + 25
-			renderFontDrawText(imfonts.ovFontSquadRender, v.name .. " [" .. v.id .. "]" .. (sampIsPlayerPaused(v.id) and " {008000}[AFK]" or ""), x, y, (sampGetCharHandleBySampPlayerId(v.id) or v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) and v.color or v.colorns)
+			local status = ""
+			if sampIsPlayerPaused(v.id) then 
+				status = " {008000}[AFK] " .. (v.afk ~= nil and "[" .. v.afk .. u8:decode" секунд]" or "")
+				else
+				v.afk = nil
+			end
+			renderFontDrawText(imfonts.ovFontSquadRender, v.name .. " [" .. v.id .. "]" .. status, x, y, (sampGetCharHandleBySampPlayerId(v.id) or v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) and v.color or v.colorns)
 			renderDrawLine(x + 2, y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 144 or 90), y + 22, 5.0, 0xFF808080)
 			renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + 90, y + 22, 5.0, 0xFF808080)
 			if v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)) then
@@ -2256,6 +2263,16 @@ function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
 			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
 			script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(playerId) .. "[" .. playerId .. "] {FFFAFA}- употребил психохил")
 		end
+		if srp_ini.bools['Сквад'] then
+			local afk = tonumber(message:match(strings.afksec))
+			if afk ~= nil then
+				for k, v in ipairs(smem) do
+					if v.id == playerId then
+						smem[k].afk = afk
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -2313,6 +2330,7 @@ function ev.onShowTextDraw(id, data)
 				table.insert(smem, {
 					id = id,
 					name = v,
+					afk = 0,
 					color = join_argb(230.0, r, g, b),
 					colorns = join_argb(150.0, r, g, b),
 				})
@@ -2350,6 +2368,7 @@ function ev.onTextDrawSetString(id, str)
 				table.insert(smem, {
 					id = id,
 					name = v,
+					afk = 0,
 					color = join_argb(230.0, r, g, b),
 					colorns = join_argb(150.0, r, g, b),
 				})
@@ -2418,6 +2437,7 @@ function findsquad()
 					table.insert(smem, {
 						id = id,
 						name = v,
+						afk = 0,
 						color = join_argb(230.0, r, g, b),
 						colorns = join_argb(150.0, r, g, b),
 					})
@@ -2962,37 +2982,37 @@ end
 
 function currentSector()
 	local KV = {
-        [1] = "А",
-        [2] = "Б",
-        [3] = "В",
-        [4] = "Г",
-        [5] = "Д",
-        [6] = "Ж",
-        [7] = "З",
-        [8] = "И",
-        [9] = "К",
-        [10] = "Л",
-        [11] = "М",
-        [12] = "Н",
-        [13] = "О",
-        [14] = "П",
-        [15] = "Р",
-        [16] = "С",
-        [17] = "Т",
-        [18] = "У",
-        [19] = "Ф",
-        [20] = "Х",
-        [21] = "Ц",
-        [22] = "Ч",
-        [23] = "Ш",
-        [24] = "Я",
+		[1] = "А",
+		[2] = "Б",
+		[3] = "В",
+		[4] = "Г",
+		[5] = "Д",
+		[6] = "Ж",
+		[7] = "З",
+		[8] = "И",
+		[9] = "К",
+		[10] = "Л",
+		[11] = "М",
+		[12] = "Н",
+		[13] = "О",
+		[14] = "П",
+		[15] = "Р",
+		[16] = "С",
+		[17] = "Т",
+		[18] = "У",
+		[19] = "Ф",
+		[20] = "Х",
+		[21] = "Ц",
+		[22] = "Ч",
+		[23] = "Ш",
+		[24] = "Я",
 	}
-    local X, Y, Z = getCharCoordinates(playerPed)
-    X = math.ceil((X + 3000) / 250)
-    Y = math.ceil((Y * - 1 + 3000) / 250)
-    Y = u8:decode(KV[Y])
-    local KVX = (Y .. "-" .. X)
-    return KVX
+	local X, Y, Z = getCharCoordinates(playerPed)
+	X = math.ceil((X + 3000) / 250)
+	Y = math.ceil((Y * - 1 + 3000) / 250)
+	Y = u8:decode(KV[Y])
+	local KVX = (Y .. "-" .. X)
+	return KVX
 end
 
 function ev.onSendChat(message)
@@ -3418,6 +3438,8 @@ function onScriptTerminate(s, bool)
 		end
 	end
 end		
+
+
 
 
 
