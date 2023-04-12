@@ -1,6 +1,6 @@
 {
-  "version_num": 26,
-  "version_date": "03.04.2023",
+  "version_num": 27,
+  "version_date": "12.04.2023",
   "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
   "version_quest": {
              "Нежность и спокойствие": "Поцелуйте трех человек",
@@ -67,12 +67,10 @@
    "version_label": {
              "Cody_Webb": {"color": "0xFFB30000", "text": "Основатель скрипта"},
              "Lavrentiy_Beria": {"color": "0xFFB30000", "text": "Основатель скрипта"},
-             "Redsun_Reaper": {"color": "0xFFB30000", "text": "Основатель скрипта"},
              "bier": {"color": "0xFFFFFF00", "text": "Пухляш"},
              "Vladanus": {"color": "0xFFFFFF00", "text": "Пухляш"}
   },
    "version_upd": {
-             "1": "Теперь ХП машин не будет оторабажться с активным диалогом",
-             "2": "Изменён механизм автологина, теперь после реконнекта и последующей перезагрузки скрипта, автологин работает нормально"
+             "1": "Добавлено отображение кол-ва секунд АФК в скваде"
   }       
 }
