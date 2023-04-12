@@ -1,7 +1,7 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb | Telegram: @Imykhailovich")
-script_version("03.04.2023")
-script_version_number(26)
+script_version("12.04.2023")
+script_version_number(27)
 local script = {checked = false, available = false, update = false, v = {date, num}, url, reload, loaded, unload, quest = {}, upd = {changes = {}, sort = {}}, label = {}}
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -3438,11 +3438,3 @@ function onScriptTerminate(s, bool)
 		end
 	end
 end		
-
-
-
-
-
-
-
-
