@@ -1,11 +1,15 @@
 script_name('SRPfunctions')
 script_author("Cody_Webb")
-script_version("04.06.2023")
-script_version_number(28)
+script_version("12.04.2023")
+script_version_number(27)
 local script = {
 	telegram = {
 		nick = "@ibm287",
 		url = "https://t.me/ibm287"
+	},
+	request = {
+		complete = true,
+		free = true
 	},
 	checked = false, 
 	available = false, 
@@ -470,6 +474,9 @@ function main()
     if server == nil then script.sendMessage('Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
 	currentNick = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
 	
+	while sampGetGamestate() ~= 3 do wait(0) end
+	while sampGetPlayerScore(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) <= 0 and not sampIsLocalPlayerSpawned() do wait(0) end
+	
 	AdressConfig = string.format("%s\\config", thisScript().directory)
     AdressFolder = string.format("%s\\config\\SRPfunctions by Webb\\%s\\%s", thisScript().directory, server, currentNick)
 	settings = string.format("SRPfunctions by Webb\\%s\\%s\\settings.ini", server, currentNick)
@@ -605,22 +612,20 @@ function main()
 	sampRegisterChatCommand("samprpflood", cmd_flood)
 	sampRegisterChatCommand("srpstop", function() chatManager.initQueue() script.sendMessage("Очередь отправляемых сообщений очищена!") end)
 	sampRegisterChatCommand("samprpstop", function() chatManager.initQueue() script.sendMessage("Очередь отправляемых сообщений очищена!") end)
-	sampRegisterChatCommand('srpup', updateScript)
-	sampRegisterChatCommand('samprpup', updateScript)
 	sampRegisterChatCommand("whenhouse", function() whenhouse() end)
 	sampRegisterChatCommand("st", cmd_st)
 	sampRegisterChatCommand("sw", cmd_sw)
 	
 	script.loaded = true
-	while sampGetGamestate() ~= 3 do wait(0) end
-	while sampGetPlayerScore(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) <= 0 and not sampIsLocalPlayerSpawned() do wait(0) end
+	
 	checkUpdates()
+	
 	script.sendMessage("Скрипт запущен. Открыть главное меню - /srp")
 	imgui.Process = true
 	if srp_ini.bools.house then whenhouse() end
 	needtoreload = true
-	lua_thread.create(function() CTask() end)
 	lua_thread.create(function() onfoot() end)
+	lua_thread.create(function() CTask() end)
 	
 	findsquad()
 	
@@ -869,7 +874,7 @@ function imgui.OnDrawFrame()
 		imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
 		imgui.SetNextWindowSize(imgui.ImVec2(1200, 700), imgui.Cond.FirstUseEver)
 		imgui.GetStyle().WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
-		imgui.Begin(thisScript().name .. (script.available and ' [Доступно обновление: v' .. script.v.num .. ' от ' .. script.v.date .. ']' or ' v' .. script.v.num .. ' от ' .. script.v.date), menu.main, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
+		imgui.Begin(thisScript().name .. ' v' .. script.v.num .. ' от ' .. script.v.date, menu.main, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 		local ww = imgui.GetWindowWidth()
 		local wh = imgui.GetWindowHeight()
 		
@@ -3352,77 +3357,81 @@ function imgui.binderHotkey(name, numkey, width)
 end
 
 function checkUpdates() -- проверка обновлений
-	local fpath = getWorkingDirectory() .. '/SRPfunctions.dat'
-	downloadUrlToFile("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json", fpath, function(_, status, _, _)
-		if status == dlstatus.STATUSEX_ENDDOWNLOAD then
-			if doesFileExist(fpath) then
-				local file = io.open(fpath, 'r')
-				if file then
-					local info = decodeJson(file:read('*a'))
-					file:close()
-					os.remove(fpath)
-					script.v.num = info.version_num
-					script.v.date = info.version_date
-					script.url = info.version_url
-					script.quest = info.version_quest
-					script.label = info.version_label
-					script.upd.changes = info.version_upd
-					if script.quest then
-						for k, v in pairs(script.quest) do
-							srp_ini.description[k] = v
-						end
-						inicfg.save(srp_ini, settings)
-					end
-					if script.upd.changes then
-						for k in pairs(script.upd.changes) do
-							table.insert(script.upd.sort, k)
-						end
-						table.sort(script.upd.sort, function(a, b) return a > b end)
-					end
-					script.checked = true
-					if info['version_num'] > thisScript()['version_num'] then
-						script.available = true
-						updateScript()
-						if script.update then updateScript() return end
-						script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", пропишите /srpup для обновления")
-						script.sendMessage(updatingprefix .. "Изменения в новой версии:")
-						if script.upd.sort ~= {} then
-							for k in ipairs(script.upd.sort) do
-								if script.upd.changes[tostring(k)] ~= nil then
-									script.sendMessage(updatingprefix .. k .. ') ' .. script.upd.changes[tostring(k)])
-								end
-							end
-						end
-						return true
-						else
-						if script.update then script.sendMessage("Обновлений не обнаружено, вы используете самую актуальную версию: v" .. script.v.num .. " за " .. script.v.date) script.update = false return end
-					end
-					else
-					script.sendMessage("Не удалось получить информацию про обновления(")
-					thisScript():unload()
-				end
-				else
-				script.sendMessage("Не удалось получить информацию про обновления(")
-				thisScript():unload()
+	lua_thread.create(function()
+		local response = request("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json")
+		local info = decodeJson(response)
+		if info == nil then script.sendMessage("Не удалось получить информацию про обновления") script.unload = true thisScript():unload() return end
+		script.v.num = info.version_num
+		script.v.date = info.version_date
+		script.url = info.version_url
+		script.quest = info.version_quest
+		script.label = info.version_label
+		script.upd.changes = info.version_upd
+		if script.quest then
+			for k, v in pairs(script.quest) do
+				srp_ini.description[k] = v
 			end
+			inicfg.save(srp_ini, settings)
 		end
+		if script.upd.changes then
+			for k in pairs(script.upd.changes) do
+				table.insert(script.upd.sort, k)
+			end
+			table.sort(script.upd.sort, function(a, b) return a > b end)
+		end
+		if info['version_num'] > thisScript()['version_num'] then
+			script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", начинаю обновление...")
+			updateScript()
+			return true
+		end
+		script.checked = true
 	end)
+end
+
+function request(u)
+	while not script.request.free do wait(0) end
+	script.request.free = false
+	local url = u
+	local file_path = os.tmpname()
+	while true do
+		script.request.complete = false
+		download_id = downloadUrlToFile(url, file_path, download_handler)
+		while not script.request.complete do wait(0) end
+		local responsefile = io.open(file_path, "r")
+		if responsefile ~= nil then
+			local responsetext = responsefile:read("*a")
+			io.close(responsefile)
+			os.remove(file_path)
+			script.request.free = true
+			return responsetext
+		end
+		os.remove(file_path)
+	end
+	return ""
+end
+
+function download_handler(id, status, p1, p2)
+	if stop_downloading then
+		stop_downloading = false
+		download_id = nil
+		return false -- прервать загрузку
+	end
+	
+	if status == dlstatus.STATUS_ENDDOWNLOADDATA then
+		script.request.complete = true
+	end
 end
 
 function updateScript()
 	script.update = true
-	if script.available then
-		downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
-			if status == 6 then
-				script.sendMessage(updatingprefix .. "Скрипт был обновлён!")
-				if script.find("ML-AutoReboot") == nil then
-					thisScript():reload()
-				end
+	downloadUrlToFile(script.url, thisScript().path, function(_, status, _, _)
+		if status == 6 then
+			script.sendMessage(updatingprefix .. "Скрипт был обновлён!")
+			if script.find("ML-AutoReboot") == nil then
+				thisScript():reload()
 			end
-		end)
-		else
-		checkUpdates()
-	end
+		end
+	end)
 end
 
 function onScriptTerminate(s, bool)
@@ -3442,10 +3451,10 @@ function onScriptTerminate(s, bool)
 					script.sendMessage("Скрипт был выгружен")
 				end
 				else
-				script.sendMessage(updatingprefix .. "Старый скрипт был выгружен, загружаю обновлённую версию...")
+				script.sendMessage(updatingprefix .. "Перезагружаюсь...")
 			end
 			else
 			script.sendMessage("Перезагружаюсь...")
 		end
 	end
-end		
+end
