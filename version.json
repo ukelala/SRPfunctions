@@ -1,8 +1,8 @@
 {
-    "version_num": 27,
-    "version_date": "12.04.2023",
-    "version_url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
-    "version_quest": {
+    "version": 27,
+    "date": "12.04.2023",
+    "url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
+    "quest": {
         "Нежность и спокойствие": "Поцелуйте трех человек",
         "Экстрим на крыше": "Поучаствуйте в дерби",
         "Запись на приём": "Пропустите игрока в закрытую часть Мэрии",
@@ -65,13 +65,11 @@
         "Что там у автодилера?": "Посмотрите автомобиль в салоне",
         "Запасливый автолюбитель": "Купите канистру на АЗС"
     },
-    "version_label": {
-        "Cody_Webb": {"color": "0xFFB30000", "text": "Основатель скрипта"},
+    "fame": {
+        "Cody_Webb": {"color": "0xFFB30000", "text": "Основатель SRP.functions"},
         "bier": {"color": "0xFFFFFF00", "text": "Пухляш"},
-        "Vladanus": {"color": "0xFFFFFF00", "text": "Пухляш"}
-    },
-    "version_upd": {
-        "1": "Добавлено отображение кол-ва секунд АФК в скваде"
+        "Vladanus": {"color": "0xFFFFFF00", "text": "Пухляш"},
+		"pivo": {"color": "0xFFFFFF00", "text": "Лучший таксист"},
     },
     "changelog": {
 		"26": {
