@@ -1,8 +1,10 @@
 script_name('SRPfunctions')
-script_author("Cody_Webb")
-script_version("12.04.2023")
-script_version_number(27)
+script_author("Webb")
+script_version("07.06.2023")
+script_version_number(28)
+
 local script = {
+	author = "Cody_Webb",
 	telegram = {
 		nick = "@ibm287",
 		url = "https://t.me/ibm287"
@@ -12,7 +14,6 @@ local script = {
 		free = true
 	},
 	checked = false, 
-	available = false, 
 	update = false, 
 	v = {date, num}, 
 	url, 
@@ -24,7 +25,10 @@ local script = {
 		changes = {}, 
 		sort = {}
 	}, 
-	label = {}
+	label = {
+		fame = {},
+		sort = {}
+	}
 }
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 local ev = require 'samp.events'
@@ -34,7 +38,8 @@ local vkeys = require 'vkeys'
 local rkeys = require 'rkeys'
 local inicfg = require 'inicfg'
 local ffi = require 'ffi'
-local dlstatus = require "moonloader".download_status
+local lfs = require 'lfs'
+local dlstatus = require 'moonloader'.download_status
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
@@ -51,20 +56,24 @@ local config = {
 		jfcoloring = false,
 		fcoloring = false,
 		quit = false,
-		psychoheal = false,
+		psycho = false,
+		knockpsycho = false,
+		psychoeat = false,
+		knockmushroom = false,
 		autologin = false,
 		autorent = false,
 		robbing = false,
-		lomka = false,
+		withdrawal = false,
 		withoutcops = false,
 		date = false,
 		nick = false,
 		ping = false,
-		drugs = false,
+		drugscooldown = false,
 		event = false,
 		stream = false,
 		status = false,
 		squad = false,
+		disablesquad = false,
 		hpcars = false,
 		chatinfo = false,
 		equest = false,
@@ -73,41 +82,44 @@ local config = {
 		variables = false,
 		spam = false,
 		house = false,
-		repairkits = false
+		repairkit = false
 	},
 	hotkey = {
-		contextkey = "0",
+		context = "0",
 		drugs = "0",
+		psycho = "0",
 		changeclist = "0",
 		enterhouse	= "0",
 		lock = "0",
-		autowalk	= "0",
+		autowalk = "0",
 		fastmenu = "0",
 		eject = "0"
 	},
-	overlay = {
-		dateX = 846,
-		dateY = 215,
-		nickX = 823,
-		nickY = 249,
-		pingX = 892,
-		pingY = 312,
-		narkoX = 901,
-		narkoY = 284,
-		eventX = 803,
-		eventY = 647,
-		streamX = 786,
-		streamY = 340,
-		statusX = 775,
-		statusY = 366,
-		squadX = 515,
-		squadY = 338,
-		deilyX = 803,
-		deilyY = 407,
-		inventoryX = 789,
-		inventoryY = 755,
-		robbingX = 799,
-		robbingY = 544,
+	render = {
+		dateX = 0,
+		dateY = 0,
+		nickX = 0,
+		nickY = 0,
+		pingX = 0,
+		pingY = 0,
+		drugsX = 0,
+		drugsY = 0,
+		eventX = 0,
+		eventY = 0,
+		streamX = 0,
+		streamY = 0,
+		statusX = 0,
+		statusY = 0,
+		squadX = 0,
+		squadY = 0,
+		equestX = 0,
+		equestY = 0,
+		inventoryX = 0,
+		inventoryY = 0,
+		robbingX = 0,
+		robbingY = 0,
+		fastbinderX = 0,
+		fastbinderY = 0
 	},
 	values = {
 		autorefill = 1500,
@@ -120,7 +132,7 @@ local config = {
         robbing = 0,
 		cartheft = 0,
 		house = 0,
-		repairkits = 2500
+		repairkit = 2500
 	},
 	ivent = {
 		race = false,
@@ -133,26 +145,17 @@ local config = {
 	},
 	description = {},
 	task = {},
-	inventory = {
-		narko = false,
+	inventoryItem = {
+		drugs = false,
 		mats = false,
-		directory = false,
-		mp3 = false,
 		keys = false,
 		canister = false,
-		drivelicense = false,
-		helilicense = false,
-		planelicense = false,
-		boatlicense = false,
-		fishlicense = false,
-		weaponlicense = false,
 		fish = false,
 		cookedfish = false,
-		mushrooms = false,
+		mushroom = false,
 		repairkit = false,
 		psychoheal = false,
 		cookedmushroom = false,
-		cigarette = false,
 		adrenaline = false,
 		cork = false,
 		balaclava = false,
@@ -160,7 +163,24 @@ local config = {
 		energy = false,
 		robkit = false
 	},
-	inventory = {}
+	inventory = {
+		drugs = 0,
+		mats = 0,
+		keys = 0,
+		canister = 0,
+		fish = 0,
+		cookedfish = 0,
+		mushroom = 0,
+		repairkit = 0,
+		psychoheal = 0,
+		cookedmushroom = 0,
+		adrenaline = 0,
+		cork = 0,
+		balaclava = 0,
+		scrap = 0,
+		energy = 0,
+		robkit = 0
+	}
 }
 local bindertable = {
 	list = {}
@@ -168,13 +188,21 @@ local bindertable = {
 -------------------------------------------------------------------------[Переменные и маcсивы]-----------------------------------------------------------------
 local clists = {
 	numbers = {
-		[16777215] = 0,    [2852758528] = 1,  [2857893711] = 2,  [2857434774] = 3,  [2855182459] = 4, [2863589376] = 5,
-		[2854722334] = 6,  [2858002005] = 7,  [2868839942] = 8,  [2868810859] = 9,  [2868137984] = 10,
-		[2864613889] = 11, [2863857664] = 12, [2862896983] = 13, [2868880928] = 14, [2868784214] = 15,
-		[2868878774] = 16, [2853375487] = 17, [2853039615] = 18, [2853411820] = 19, [2855313575] = 20,
-		[2853260657] = 21, [2861962751] = 22, [2865042943] = 23, [2860620717] = 24, [2868895268] = 25,
-		[2868899466] = 26, [2868167680] = 27, [2868164608] = 28, [2864298240] = 29, [2863640495] = 30,
-		[2864232118] = 31, [2855811128] = 32, [2866272215] = 33
+		[16777215] = 0,    [2852758528] = 1,  [2857893711] = 2,  [2857434774] = 3,  [2855182459] = 4, [2863589376] = 5, 
+		[2854722334] = 6,  [2858002005] = 7,  [2868839942] = 8,  [2868810859] = 9,  [2868137984] = 10, 
+		[2864613889] = 11, [2863857664] = 12, [2862896983] = 13, [2868880928] = 14, [2868784214] = 15, 
+		[2868878774] = 16, [2853375487] = 17, [2853039615] = 18, [2853411820] = 19, [2855313575] = 20, 
+		[2853260657] = 21, [2861962751] = 22, [2865042943] = 23, [2860620717] = 24, [2868895268] = 25, 
+		[2868899466] = 26, [2868167680] = 27, [2868164608] = 28, [2864298240] = 29, [2863640495] = 30, 
+		[2864232118] = 31, [2855811128] = 32, [2866272215] = 33,
+		
+		[-256] = 0, [161743018] = 1, [1476349866] = 2, [1358861994] = 3, [782269354] = 4, [-1360527190] = 5,
+		[664477354] = 6, [1504073130] = 7, [-16382294] = 8, [-23827542] = 9,  [-196083542] = 10,
+		[-1098251862] = 11, [-1291845462] = 12, [-1537779798] = 13, [-5889878] = 14, [-30648662] = 15,
+		[-6441302] = 16, [319684522] = 17, [233701290] = 18, [328985770] = 19, [815835050] = 20,
+		[290288042] = 21, [-1776943190] = 22, [-988414038] = 23, [-2120503894] = 24, [-2218838] = 25,
+		[-1144150] = 26, [-188481366] = 27, [-189267798] = 28, [-1179058006] = 29, [-1347440726] = 30,
+		[-1195985238] = 31, [943208618] = 32, [-673720406] = 33
 	},
 	names = {
 		"[0] Без цвета", "[1] Зелёный", "[2] Светло-зелёный", "[3] Ярко-зелёный",
@@ -197,26 +225,19 @@ local timezones = {
 	"МСК+6", "МСК+7", "МСК+8", "МСК+9"
 }
 
-local copskins = { -- модели скинов мусоров, на которые будет реагировать скрипт
-	[76] = '',  [265] = '', [266] = '', [267] = '', 
-	[280] = '', [281] = '', [282] = '', [283] = '', 
-	[284] = '', [285] = '', [288] = '', [265] = '', 
-	[300] = '', [301] = '', [302] = '', [303] = '', 
-	[304] = '', [305] = '', [306] = '', [307] = '', 
-	[308] = '', [309] = '', [310] = '', [311] = ''
-}
-
 local main_color = 0xB30000
 local prefix = "{B30000}[SRP] {FFFAFA}"
 local updatingprefix = "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}"
+local errorprefix = "{FF0000}[ERROR] {FFFAFA}"
 local antiflood = 0
 
 local menu = { -- imgui-меню
 	main = imgui.ImBool(false), 
 	automatic = imgui.ImBool(true), 
-	commands = imgui.ImBool(false), 
+	commands = imgui.ImBool(false),
+	fame = imgui.ImBool(false),
 	binds = imgui.ImBool(false), 
-	overlay = imgui.ImBool(false), 
+	render = imgui.ImBool(false), 
 	password = imgui.ImBool(false), 
 	inventory = imgui.ImBool(false), 
 	binder = imgui.ImBool(false),
@@ -225,61 +246,97 @@ local menu = { -- imgui-меню
 	fastbinder = imgui.ImBool(false),
 	variables = imgui.ImBool(false)
 }
-local overlay = {
-	date = imgui.ImBool(true),
-	nick = imgui.ImBool(true),
-	drugs = imgui.ImBool(true),
-	event = imgui.ImBool(true),
-	stream = imgui.ImBool(true),
-	status = imgui.ImBool(true),
-	squad = imgui.ImBool(true),
-	chatinfo = imgui.ImBool(true),
-	equest = imgui.ImBool(true),
-	inventory = imgui.ImBool(true),
-    robbing = imgui.ImBool(true)
-}
-imgui.ShowCursor = false
 
 local style = imgui.GetStyle()
 local colors = style.Colors
 local clr = imgui.Col
-local SetModeCond = 4
-local SetMode = false
-local SetModeFirstShow = false
-local soverlay = {}
-local drugtimer = 60
-local isBoost = false
-local checkedBoost = false
-local isQuest = false
-local checkedQuest = false
-local noequest = false
-local isInventory = false
-local checkedInventory = false
-local isFlood = false
-local needtoreload = false
-local isRobbing = false
-local isLomka = false
-local needtohold = false
-local needtobuy = true
-local rent
-local killerid
-local taxipassenger
-local argument = {}
-local td = nil
-local smem = {}
-local saveid = {}
-local rCache = {
-    enable = false,
-    font = nil,
-    pos = {
-		x = 0,
-		y = 0
+local var = {
+	satiety,
+	drugtimer = 60,
+	rent,
+	killerid,
+	taxipassenger,
+	td,
+	squadenable = false,
+	squad = {},
+	squadIndex = {},
+	argument = {},
+	current = {
+		nick,
+		bind,
+		client,
+		clientRP
+	},
+	is = {
+		boost = false,
+		equest = false,
+		inventory = false,
+		flood = false,
+		robbing = false,
+		withdrawal = false,
+		purchased = false
+	},
+	need = {
+		reload = false,
+		hold = false,
+		buy = true
+	},
+	items = {
+		IndexFromName = {
+			["Наркотики"] = "drugs",
+			["Материалы"] = "mats",
+			["Ключи от камеры"] = "keys",
+			["Канистра с бензином"] = "canister",
+			["Сырая рыба"] = "fish",
+			["Готовая рыба"] = "cookedfish",
+			["Грибы"] = "mushroom",
+			["Комплект «автомеханик»"] = "repairkit",
+			["Психохил"] = "psychoheal",
+			["Готовые грибы"] = "cookedmushroom",
+			["Адреналин"] = "adrenaline",
+			["Защита от насильников"] = "cork",
+			["Балаклава"] = "balaclava",
+			["Лом"] = "scrap",
+			["Энергетик"] = "energy",
+			["Набор для взлома"] = "robkit"
+		},
+		NameFromIndex = {
+			["drugs"] = "Наркотики",
+			["mats"] = "Материалы",
+			["keys"] = "Ключи от камеры",
+			["canister"] = "Канистра с бензином",
+			["fish"] = "Сырая рыба",
+			["cookedfish"] = "Готовая рыба",
+			["mushroom"] = "Грибы",
+			["repairkit"] = "Комплект «автомеханик»",
+			["psychoheal"] = "Психохил",
+			["cookedmushroom"] = "Готовые грибы",
+			["adrenaline"] = "Адреналин",
+			["cork"] = "Защита от насильников",
+			["balaclava"] = "Балаклава",
+			["scrap"] = "Лом",
+			["energy"] = "Энергетик",
+			["robkit"] = "Набор для взлома"
+		}
+	},
+	motos = {
+		[581] = "BF-400", 
+		[522] = "NRG-500", 
+		[521] = "FCR-900", 
+		[468] = "Sanchez",
+		[463] = "Freeway",
+		[462] = "Faggio",
+		[461] = "PCJ-600"
+	},
+	copskins = {
+		[76] = true,  [265] = true, [266] = true, [267] = true, 
+		[280] = true, [281] = true, [282] = true, [283] = true, 
+		[284] = true, [285] = true, [288] = true, [265] = true, 
+		[300] = true, [301] = true, [302] = true, [303] = true, 
+		[304] = true, [305] = true, [306] = true, [307] = true, 
+		[308] = true, [309] = true, [310] = true, [311] = true
 	}
 }
-local currentNick
-local currentBind
-local currentClient
-local gekauft = false
 local keybbb = {KeyboardLayoutName = ffi.new("char[?]", 32), LocalInfo = ffi.new("char[?]", 32)}
 ffi.cdef[[
 	int SendMessageA(int, int, int, int);
@@ -323,7 +380,7 @@ local CTaskArr = {
 	}
 }
 local ImVec4 = imgui.ImVec4
-local imfonts = {mainFont = nil, font = nil, ovFont = nil, ovFontSquad = nil, ovFontCars = nil, ovFontSquadRender = nil}
+local fonts = {}
 
 local strings = {
 	acceptrepair = u8:decode"^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
@@ -333,7 +390,7 @@ local strings = {
 	faction = u8:decode"^ (.*)  (.*)%[(%d+)%]%: (.*)",
 	boost = u8:decode"^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
 	noboost = u8:decode"^ Бонусы отключены",
-	narko = u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
+	drugs = u8:decode'^ %(%( Остаток%: (%d+) грамм %)%)',
 	painttime = u8:decode"^ Внимание%! Начало пейнтбола через (%d) минуты?%. Место проведения%: военный завод K%.A%.C%.C%.",
 	squidtime = u8:decode"^ Внимание%! Начало %'Игра в Кальмара%' через (%d) минуты?%! Место проведения%: Арена LS %(%( %/gps %[Важное%] %>%> %[Игра в Кальмара%] %)%)",
 	derbytime = u8:decode"^ Внимание%! Начало гонок дерби через (%d) минуты?%. Стадион Сан Фиерро%. Регистрация на первом этаже",
@@ -364,22 +421,22 @@ local strings = {
 	taxi = u8:decode"%<%< Бесплатное такси %>%>",
 	rent = u8:decode"^ Вы арендовали транспортное средство$",
 	minusbalaklava = u8:decode"^ Вы надели балаклаву$",
-	minuslom = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
-	kanistra = u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
+	minusscrap = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
+	canister = u8:decode"^ Вы купили канистру с 50 литрами бензина за .* вирт",
 	fillcar = u8:decode"^ Вы дозаправили свою машину на 50",
-	outbagazhnik = u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
-	inbagazhnik = u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
+	outtrunk = u8:decode"^ Вы забрали из багажника%: %{FFFFFF%}%'(.*)%' %{C0C0C0%}в количестве%: %{FFFFFF%}(%d+)",
+	intrunk = u8:decode"^ Вы положили в багажник %{FFFFFF%}%'(.*)%' %{6AB1FF%}в количестве %d+ штук%, остаток (%d+) штук",
 	shop24 = u8:decode"^ (.*) приобретена?%. Осталось%: (%d+)%/%d+",
 	grib = u8:decode"^ Вы нашли гриб \".+\". Теперь у вас (%d+) грибов",
 	fish = u8:decode"^ Сытость полностью восстановлена%. У вас осталось (%d+) %/ %d+ пачек рыбы$",
 	cookfish = u8:decode"^ У вас (%d+) %/ %d+ пачек рыбы$",
 	trash = u8:decode"^ (.*) выбросила? %'(.*)%'$",
 	reward = u8:decode"^ %[Quest%] %{FFFFFF%}Ваша награда%: %{FF9DB6%}(.*)",
-	disconnect = u8:decode"^ Вы отключились от сообщества$",
 	cookgrib= u8:decode"^ Грибы готовы%. Грибы%: (%d+)%. Психохил%: (%d+)%/%d+%. Г%.Грибы%: (%d+)%/%d+$",
-	adr = u8:decode"^ Вы приняли адреналин. Эффект продлится (%d+) минут$",
-	gribeat = u8:decode"^ Сытость пополнена до %d+%. У вас осталось (%d+)%/%d+ готовых грибов$",
-	psiho = u8:decode"^ Здоровье %d+%/%d+%. Сытость %d+%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
+	adr = u8:decode"^ Вы приняли адреналин%. Эффект продлится (%d+) минут$",
+	gribeat = u8:decode"^ Сытость пополнена до (%d+)%. У вас осталось (%d+)%/%d+ готовых грибов$",
+	psycho = u8:decode"^ Здоровье %d+%/%d+%. Сытость (%d+)%/%d+%. У вас осталось (%d+)%/%d+ психохила$",
+	psychohungry = u8:decode"^ Вы истощены%. Здоровье снижено до %d+%/%d+%. У вас осталось (%d+)/%d+ психохила$",
 	roul = u8:decode"^ Вы получили %{FFFFFF%}(.*)%{EAC700%}%. Количество%: %{FFFFFF%}%d+%{EAC700%}%. В инвентаре%: (%d+) %/ %d+$",
 	stolen = u8:decode"^ Вы украли (.*), отнесите награбленное в фургон$",
 	breaken = u8:decode"^ Отлично! Замок взломан, скорее выноси ценные вещи$",
@@ -390,7 +447,7 @@ local strings = {
 	donetheft = u8:decode"^ Отличная тачка. Будет нужна работа, приходи%.$",
 	stay = u8:decode"^ %(%( После ввода команды вы должны стоять на месте %)%)$",
 	wasAFK = u8:decode"^ В AFK ввод команд заблокирован$",
-	lomka = u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
+	withdrawal = u8:decode"^ ~~~~~~~~ У вас началась ломка ~~~~~~~~$",
 	plswait = u8:decode"^ Пожалуйста подождите$",
 	spam = u8:decode"^ SMS%: {FF8000}СКРЫТО%. {FFFF00}Отправитель%: .*%[(%d+)%]",
 	noequest = u8:decode"^ Доступно со 2 уровня",
@@ -398,14 +455,16 @@ local strings = {
 	slet = u8:decode"^ Домашний счёт оплачен до (.*)",
 	accepttaxi = u8:decode"^ Диспетчер%: (.*) принял вызов от (.*)%[%d+%]$",
 	full24 = u8:decode"^ У вас нет места$",
-	full24sec = u8:decode"^ У вас нет дома%/квартиры$",
 	afksec = u8:decode"%[AFK%] %[(%d+) секунд%]",
+	changenick = u8:decode'Ваш новый ник %" (.*) %"%. Укажите его в клиенте SA%-MP%, в поле %"Name%"',
+	changenickmsg = u8:decode".* одобрил%(а%) заявку на смену ника%: (.*) %>%> ",
+	repairkitshop = u8:decode"Комплект %«автомеханик%»%s+%[%$(%d+)%]",
 	
 	color = {
 		mechanic = 1790050303,
 		jfchat = 815835135,
 		faction = {33357823, -1920073729},
-		narko = -1,
+		drugs = -1,
 		boost = -1,
 		noboost = -1,
 		paint = -5570561,
@@ -421,18 +480,17 @@ local strings = {
 		fish = -1342193921,
 		grib = -1,
 		minusbalaklava = -1347440641,
-		minuslom = 1790050303,
-		kanistra = 1687547391,
+		minusscrap = 1790050303,
+		canister = 1687547391,
 		fillcar = 1687547391,
-		outbagazhnik = -1061109505,
-		inbagazhnik =  1790050303,
+		outtrunk = -1061109505,
+		intrunk =  1790050303,
 		shop24 =  1687547391,
 		trash = -1029514497,
 		reward = 1790050303,
-		disconnect = -1,
 		cookgrib = 1358862079,
-		adr = -1342193921,
-		psiho = -1,
+		adr = 1790050303,
+		psycho = -1,
 		roul = -356056833,
 		repair1 = 1358862079,
 		repair2 = -1347440641,
@@ -445,24 +503,25 @@ local strings = {
 		donetheft =  1790050303,
 		stay = -1347440641,
 		wasAFK = -2769921,
-		lomka = -1627389697,
+		withdrawal = -1627389697,
 		plswait = -1347440641,
 		spam = -65281,
 		noequest = -1347440641,
 		accepttaxi = -1137955670,
-		full24 = -1347440641
-	},
-	
-	dialog = {
-		narko = {str  = u8:decode"%[%d+%] Таймер на Нарко(.*)", id = 22, style = 5, title = u8:decode'Бонусы'},
-		login = {str  = u8:decode"Этот аккаунт зарегистрирован", id = 1, style = 3, title = u8:decode'Авторизация'},
-		quest = {str  = u8:decode"%{FFFFFF%}(.*).+%{[F3][F3][4A][2A][43][23]%}(%[Н?е?.?[Вв]ыполнено%])", id = 1013, style = 5, title = u8:decode'%{FFFFFF%}Обновление заданий%: %{6AB1FF%}(.*)'},
-		description = {str1 = u8:decode"%{FFFFFF%}Название квеста%: ", str2 = u8:decode"Описание%: ", str3 = u8:decode"%{6AB1FF%}(.*)%{FFFFFF%}", id = 1014, style = 0, title = u8:decode'{6AB1FF}Ежедневные квесты'},
-		inventory = {id = 22, style = 4, title = u8:decode'Карманы'},
-		autorent = {str = u8:decode"Стоимость аренды%: {FFFF00}(%d+) вирт", id = {276, 277}, style = 0, title = u8:decode'Аренда транспорта'}
+		full24 = -1347440641,
+		changenick = {-65281, -10270721}
 	}
 }
-local motos = {[522] = "NRG-500", [463] = "Freeway", [461] = "PCJ-600", [581] = "BF-400", [521] = "FCR-900", [468] = "Sanchez", [462] = "Faggio"}
+local dialogs = {
+	drugs = {str  = u8:decode"%[%d+%] Таймер на Нарко(.*)", id = 22, style = 5, title = u8:decode'Бонусы'},
+	login = {str  = u8:decode"Этот аккаунт зарегистрирован", id = 1, style = 3, title = u8:decode'Авторизация'},
+	errorlogin = {str  = u8:decode"Внимание! Вы ввели неверный пароль!", id = 57, style = 0, title = u8:decode'Ошибка!'},
+	quest = {str  = u8:decode"%{FFFFFF%}(.*).+%{[F3][F3][4A][2A][43][23]%}(%[Н?е?.?[Вв]ыполнено%])", id = 1013, style = 5, title = u8:decode'%{FFFFFF%}Обновление заданий%: %{6AB1FF%}(.*)'},
+	description = {str1 = u8:decode"%{FFFFFF%}Название квеста%: ", str2 = u8:decode"Описание%: ", str3 = u8:decode"%{6AB1FF%}(.*)%{FFFFFF%}", id = 1014, style = 0, title = u8:decode'{6AB1FF}Ежедневные квесты'},
+	inventory = {id = 22, style = 4, title = u8:decode'Карманы'},
+	autorent = {str = u8:decode"Стоимость аренды%: {FFFF00}(%d+) вирт", id = {276, 277}, style = 0, title = u8:decode'Аренда транспорта'},
+	shop = {id = 16, style = 4, title = u8:decode"Магазин 24/7", button1 = u8:decode"Купить", button2 = u8:decode"Отмена"}
+}
 -------------------------------------------------------------------------[MAIN]--------------------------------------------------------------------------------------------
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
@@ -471,16 +530,13 @@ function main()
 	while sampGetCurrentServerName() == "SA-MP" do wait(0) end
 	server = sampGetCurrentServerName():gsub('|', '')
 	server = (server:find('02') and 'Two' or (server:find('Revo') and 'Revolution' or (server:find('Legacy') and 'Legacy' or (server:find('Classic') and 'Classic' or nil))))
-    if server == nil then script.sendMessage('Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
-	currentNick = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
-	
-	while sampGetGamestate() ~= 3 do wait(0) end
-	while sampGetPlayerScore(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) <= 0 and not sampIsLocalPlayerSpawned() do wait(0) end
+	if server == nil then script.sendMessage('Данный сервер не поддерживается, выгружаюсь...') script.unload = true thisScript():unload() end
+	var.current.nick = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
 	
 	AdressConfig = string.format("%s\\config", thisScript().directory)
-    AdressFolder = string.format("%s\\config\\SRPfunctions by Webb\\%s\\%s", thisScript().directory, server, currentNick)
-	settings = string.format("SRPfunctions by Webb\\%s\\%s\\settings.ini", server, currentNick)
-	binds = string.format("SRPfunctions by Webb\\%s\\%s\\binder.ini", server, currentNick)
+	AdressFolder = string.format("%s\\config\\SRPfunctions by Webb\\%s\\%s", thisScript().directory, server, var.current.nick)
+	settings = string.format("SRPfunctions by Webb\\%s\\%s\\settings.ini", server, var.current.nick)
+	binds = string.format("SRPfunctions by Webb\\%s\\%s\\binder.ini", server, var.current.nick)
 	
 	if not doesDirectoryExist(AdressConfig) then createDirectory(AdressConfig) end
 	if not doesDirectoryExist(AdressFolder) then createDirectory(AdressFolder) end
@@ -504,54 +560,49 @@ function main()
 		jfcoloring = srp_ini.bools.jfcoloring and imgui.ImBool(true) or imgui.ImBool(false),
 		fcoloring = srp_ini.bools.fcoloring and imgui.ImBool(true) or imgui.ImBool(false),
 		quit = srp_ini.bools.quit and imgui.ImBool(true) or imgui.ImBool(false),
-		psychoheal = srp_ini.bools.psychoheal and imgui.ImBool(true) or imgui.ImBool(false),
+		psycho = srp_ini.bools.psycho and imgui.ImBool(true) or imgui.ImBool(false),
+		knockpsycho = srp_ini.bools.knockpsycho and imgui.ImBool(true) or imgui.ImBool(false),
+		psychoeat = srp_ini.bools.psychoeat and imgui.ImBool(true) or imgui.ImBool(false),
+		knockmushroom = srp_ini.bools.knockmushroom and imgui.ImBool(true) or imgui.ImBool(false),
 		autologin = srp_ini.bools.autologin and imgui.ImBool(true) or imgui.ImBool(false),
 		autorent = srp_ini.bools.autorent and imgui.ImBool(true) or imgui.ImBool(false),
 		robbing = srp_ini.bools.robbing and imgui.ImBool(true) or imgui.ImBool(false),
-		lomka = srp_ini.bools.lomka and imgui.ImBool(true) or imgui.ImBool(false),
+		withdrawal = srp_ini.bools.withdrawal and imgui.ImBool(true) or imgui.ImBool(false),
 		withoutcops = srp_ini.bools.withoutcops and imgui.ImBool(true) or imgui.ImBool(false),
 		date = srp_ini.bools.date and imgui.ImBool(true) or imgui.ImBool(false),
 		nick = srp_ini.bools.nick and imgui.ImBool(true) or imgui.ImBool(false),
 		ping = srp_ini.bools.ping and imgui.ImBool(true) or imgui.ImBool(false),
-		drugs = srp_ini.bools.drugs and imgui.ImBool(true) or imgui.ImBool(false),
+		drugscooldown = srp_ini.bools.drugscooldown and imgui.ImBool(true) or imgui.ImBool(false),
 		event = srp_ini.bools.event and imgui.ImBool(true) or imgui.ImBool(false),
 		stream = srp_ini.bools.stream and imgui.ImBool(true) or imgui.ImBool(false),
 		status = srp_ini.bools.status and imgui.ImBool(true) or imgui.ImBool(false),
 		squad = srp_ini.bools.squad and imgui.ImBool(true) or imgui.ImBool(false),
+		disablesquad = srp_ini.bools.disablesquad and imgui.ImBool(true) or imgui.ImBool(false),
 		hpcars = srp_ini.bools.hpcars and imgui.ImBool(true) or imgui.ImBool(false),
 		chatinfo = srp_ini.bools.chatinfo and imgui.ImBool(true) or imgui.ImBool(false),
 		equest = srp_ini.bools.equest and imgui.ImBool(true) or imgui.ImBool(false),
 		inventory = srp_ini.bools.inventory and imgui.ImBool(true) or imgui.ImBool(false),
-		narko = srp_ini.inventory.narko and imgui.ImBool(true) or imgui.ImBool(false),
-		mats = srp_ini.inventory.mats and imgui.ImBool(true) or imgui.ImBool(false),
-		directory = srp_ini.inventory.directory and imgui.ImBool(true) or imgui.ImBool(false),
-		mp3 = srp_ini.inventory.mp3 and imgui.ImBool(true) or imgui.ImBool(false),
-		keys = srp_ini.inventory.keys and imgui.ImBool(true) or imgui.ImBool(false),
-		canister = srp_ini.inventory.canister and imgui.ImBool(true) or imgui.ImBool(false),
-		drivelicense = srp_ini.inventory.drivelicense and imgui.ImBool(true) or imgui.ImBool(false),
-		helilicense = srp_ini.inventory.helilicense and imgui.ImBool(true) or imgui.ImBool(false),
-		planelicense = srp_ini.inventory.planelicense and imgui.ImBool(true) or imgui.ImBool(false),
-		boatlicense = srp_ini.inventory.boatlicense and imgui.ImBool(true) or imgui.ImBool(false),
-		fishlicense = srp_ini.inventory.fishlicense and imgui.ImBool(true) or imgui.ImBool(false),
-		weaponlicense = srp_ini.inventory.weaponlicense and imgui.ImBool(true) or imgui.ImBool(false),
-		fish = srp_ini.inventory.fish and imgui.ImBool(true) or imgui.ImBool(false),
-		cookedfish = srp_ini.inventory.cookedfish and imgui.ImBool(true) or imgui.ImBool(false),
-		mushroom = srp_ini.inventory.mushroom and imgui.ImBool(true) or imgui.ImBool(false),
-		repairkit = srp_ini.inventory.repairkit and imgui.ImBool(true) or imgui.ImBool(false),
-		psychoheal = srp_ini.inventory.psychoheal and imgui.ImBool(true) or imgui.ImBool(false),
-		cookedmushroom = srp_ini.inventory.cookedmushroom and imgui.ImBool(true) or imgui.ImBool(false),
-		cigarette = srp_ini.inventory.cigarette and imgui.ImBool(true) or imgui.ImBool(false),
-		adrenaline = srp_ini.inventory.adrenaline and imgui.ImBool(true) or imgui.ImBool(false),
-		cork = srp_ini.inventory.cork and imgui.ImBool(true) or imgui.ImBool(false),
-		balaclava  = srp_ini.inventory.balaclava and imgui.ImBool(true) or imgui.ImBool(false),
-		scrap = srp_ini.inventory.scrap and imgui.ImBool(true) or imgui.ImBool(false),
-		energy = srp_ini.inventory.energy and imgui.ImBool(true) or imgui.ImBool(false),
-		robkit = srp_ini.inventory.robkit and imgui.ImBool(true) or imgui.ImBool(false),
+		drugs = srp_ini.inventoryItem.drugs and imgui.ImBool(true) or imgui.ImBool(false),
+		mats = srp_ini.inventoryItem.mats and imgui.ImBool(true) or imgui.ImBool(false),
+		keys = srp_ini.inventoryItem.keys and imgui.ImBool(true) or imgui.ImBool(false),
+		canister = srp_ini.inventoryItem.canister and imgui.ImBool(true) or imgui.ImBool(false),
+		fish = srp_ini.inventoryItem.fish and imgui.ImBool(true) or imgui.ImBool(false),
+		cookedfish = srp_ini.inventoryItem.cookedfish and imgui.ImBool(true) or imgui.ImBool(false),
+		mushroom = srp_ini.inventoryItem.mushroom and imgui.ImBool(true) or imgui.ImBool(false),
+		repairkit = srp_ini.inventoryItem.repairkit and imgui.ImBool(true) or imgui.ImBool(false),
+		psychoheal = srp_ini.inventoryItem.psychoheal and imgui.ImBool(true) or imgui.ImBool(false),
+		cookedmushroom = srp_ini.inventoryItem.cookedmushroom and imgui.ImBool(true) or imgui.ImBool(false),
+		adrenaline = srp_ini.inventoryItem.adrenaline and imgui.ImBool(true) or imgui.ImBool(false),
+		cork = srp_ini.inventoryItem.cork and imgui.ImBool(true) or imgui.ImBool(false),
+		balaclava  = srp_ini.inventoryItem.balaclava and imgui.ImBool(true) or imgui.ImBool(false),
+		scrap = srp_ini.inventoryItem.scrap and imgui.ImBool(true) or imgui.ImBool(false),
+		energy = srp_ini.inventoryItem.energy and imgui.ImBool(true) or imgui.ImBool(false),
+		robkit = srp_ini.inventoryItem.robkit and imgui.ImBool(true) or imgui.ImBool(false),
 		kd = srp_ini.bools.kd and imgui.ImBool(true) or imgui.ImBool(false),
 		variables = srp_ini.bools.variables and imgui.ImBool(true) or imgui.ImBool(false),
 		spam = srp_ini.bools.spam and imgui.ImBool(true) or imgui.ImBool(false),
 		house = srp_ini.bools.house and imgui.ImBool(true) or imgui.ImBool(false),
-		repairkits = srp_ini.bools.repairkits and imgui.ImBool(true) or imgui.ImBool(false)
+		repairkit = srp_ini.bools.repairkit and imgui.ImBool(true) or imgui.ImBool(false)
 	}
 	
 	buffer = {
@@ -561,7 +612,7 @@ function main()
 		password = imgui.ImBuffer(u8(srp_ini.values.password), 256),
 		autorent = imgui.ImBuffer(u8(srp_ini.values.autorent), 256),
 		timezonedifference = imgui.ImInt(srp_ini.values.timezonedifference + 14),
-		repairkits = imgui.ImBuffer(u8(srp_ini.values.repairkits), 256)
+		repairkit = imgui.ImBuffer(u8(srp_ini.values.repairkit), 256)
 	}
 	
 	sampRegisterChatCommand("samprp", function() 
@@ -579,15 +630,15 @@ function main()
 					rkeys.unRegisterHotKey(bhk)
 				end
 				sampUnregisterChatCommand(b.cmd)
-				argument[k] = nil
+				var.argument[k] = nil
 			end
 		end
 		suspendkeys = 1 
 		menu.main.v = not menu.main.v
 	end)
 	sampRegisterChatCommand("srp", function() 
-		for k, v in pairs(srp_ini.hotkey) do 
-			local hk = makeHotKey(k) 
+		for k, v in pairs(srp_ini.hotkey) do
+			local hk = makeHotKey(k)
 			if tonumber(hk[1]) ~= 0 then 
 				rkeys.unRegisterHotKey(hk) 
 			end 
@@ -600,14 +651,12 @@ function main()
 					rkeys.unRegisterHotKey(bhk)
 				end
 				sampUnregisterChatCommand(b.cmd)
-				argument[k] = nil
+				var.argument[k] = nil
 			end
 		end
 		suspendkeys = 1 
 		menu.main.v = not menu.main.v
 	end)
-	sampRegisterChatCommand("setoverlay", cmd_setoverlay)
-	sampRegisterChatCommand("setov", cmd_setoverlay)
 	sampRegisterChatCommand("srpflood", cmd_flood)
 	sampRegisterChatCommand("samprpflood", cmd_flood)
 	sampRegisterChatCommand("srpstop", function() chatManager.initQueue() script.sendMessage("Очередь отправляемых сообщений очищена!") end)
@@ -618,40 +667,69 @@ function main()
 	
 	script.loaded = true
 	
+	while sampGetGamestate() ~= 3 do wait(0) end
+	while sampGetPlayerScore(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) <= 0 and not sampIsLocalPlayerSpawned() do wait(0) end
+	var.need.reload = true
+	
 	checkUpdates()
 	
 	script.sendMessage("Скрипт запущен. Открыть главное меню - /srp")
 	imgui.Process = true
-	if srp_ini.bools.house then whenhouse() end
-	needtoreload = true
-	lua_thread.create(function() onfoot() end)
-	lua_thread.create(function() CTask() end)
-	
-	findsquad()
+	imgui.ShowCursor = false
 	
 	chatManager.initQueue()
 	lua_thread.create(chatManager.checkMessagesQueueThread)
-	checkdialogs()
+	
+	if srp_ini.bools.house then whenhouse() end
+	
+	lua_thread.create(function() onfoot() end)
+	lua_thread.create(function() CTask() end)
+	lua_thread.create(function() setSquadPos() end)
+	
+	findsquad()
+	
+	script.sendMessage("Начинаю сбор информации из диалогов...")
+	checkdialog("boostinfo")
+	while var.is.boost do wait(0) end
+	if srp_ini.bools.equest then
+		checkdialog("equest")
+		while var.is.equest do wait(0) end
+	end
+	if srp_ini.bools.inventory then
+		checkdialog("inventory")
+		while var.is.inventory do wait(0) end
+	end
+	script.sendMessage("Информация успешно получена, приятной игры")
+	
 	while true do
 		wait(0)
+		
 		if time then setTimeOfDay(time, 0) end
-		for i = 0, 3000 do
-			if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match(u8:decode"SQUAD") then
-				if srp_ini.bools.squad then
-					sampTextdrawSetPos(i, 1488, 1488)
-					else
-					sampTextdrawSetPos(i, 1, 172)
-				end
-			end
-		end
+		
 		if suspendkeys == 2 then
-			rkeys.registerHotKey(makeHotKey("Контекстная клавиша"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end if srp_ini.bools.status then ct() end end)
-			rkeys.registerHotKey(makeHotKey("Нарко"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end usedrugs() end)
-			rkeys.registerHotKey(makeHotKey("Сменить клист"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end setclist() end)
-			rkeys.registerHotKey(makeHotKey("Войти в дом"), true, function() if sampIsChatInputActive() or isSampfuncsConsoleActive() then return end enterhouse() end)
-			rkeys.registerHotKey(makeHotKey("Lock"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end chatManager.addMessageToQueue("/lock") end)
-			rkeys.registerHotKey(makeHotKey("Автобег"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end needtohold = not needtohold end)
-			rkeys.registerHotKey(makeHotKey("eject"), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end eject() end)
+			rkeys.registerHotKey(makeHotKey('context'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end if srp_ini.bools.status then ct() end end)
+			rkeys.registerHotKey(makeHotKey('drugs'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end usedrugs() end)
+			rkeys.registerHotKey(makeHotKey('psycho'), true, function() 
+				if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then 
+					return 
+				end
+				if not srp_ini.bools.psychoeat then sampSendChat("/grib heal") return end
+				if var.satiety == nil then sampSendChat("/grib heal") return end
+				if var.satiety > 20 then 
+					sampSendChat("/grib heal") 
+					else
+					lua_thread.create(function()
+						sampSendChat((srp_ini.bools.knockmushroom and "/grib" or "/fish") .. " eat")
+						wait(600)
+						sampSendChat("/grib heal")
+					end)
+				end 
+			end)
+			rkeys.registerHotKey(makeHotKey('changeclist'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end setclist() end)
+			rkeys.registerHotKey(makeHotKey('enterhouse'), true, function() if sampIsChatInputActive() or isSampfuncsConsoleActive() then return end enterhouse() end)
+			rkeys.registerHotKey(makeHotKey('lock'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end chatManager.addMessageToQueue("/lock") end)
+			rkeys.registerHotKey(makeHotKey('autowalk'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end var.need.hold = not var.need.hold end)
+			rkeys.registerHotKey(makeHotKey('eject'), true, function() if sampIsChatInputActive() or sampIsDialogActive(-1) or isSampfuncsConsoleActive() then return end eject() end)
 			for k, v in ipairs(binder_ini.list) do
 				if v ~= nil then
 					local b = decodeJson(v)
@@ -661,12 +739,13 @@ function main()
 						rkeys.unRegisterHotKey(makebinderHotKey(k))
 					end
 					if b.cmd ~= "" and b.cmd ~= " " then
-						sampRegisterChatCommand(b.cmd,  function(params) if params ~= nil and params ~= "" then argument[k] = params else argument[k] = nil end binder(k) end)
+						sampRegisterChatCommand(b.cmd,  function(params) if params ~= nil and params ~= "" then var.argument[k] = params else var.argument[k] = nil end binder(k) end)
 					end
 				end
 			end
 			suspendkeys = 0
 		end
+		
 		if not menu.main.v then 
 			imgui.ShowCursor = false
 			if suspendkeys == 1 then 
@@ -674,9 +753,11 @@ function main()
 				sampSetChatDisplayMode(3) 
 			end
 		end
+		
 		textLabelOverPlayerNickname()
+		
 		-- Активация быстрого меню биндера
-		if isKeyDown(makeHotKey('Быстрое меню биндера')[1]) and not menu.main.v and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() then 
+		if isKeyDown(makeHotKey('fastmenu')[1]) and not menu.main.v and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() then 
 			wait(0) 
 			menu.fastbinder.v = true 
 			else 
@@ -684,40 +765,11 @@ function main()
 			menu.fastbinder.v = false 
 			imgui.ShowCursor = false 
 		end
-		if SetMode then
-			if isKeyDown(vkeys.VK_MBUTTON) then
-				wait(300)
-				if isKeyDown(vkeys.VK_MBUTTON) then
-					srp_ini.overlay.dateX = 846
-					srp_ini.overlay.dateY = 215
-					srp_ini.overlay.nickX = 823
-					srp_ini.overlay.nickY = 249
-					srp_ini.overlay.pingX = 892
-					srp_ini.overlay.pingY = 312
-					srp_ini.overlay.narkoX = 901
-					srp_ini.overlay.narkoY = 284
-					srp_ini.overlay.eventX  = 803
-					srp_ini.overlay.eventY = 647
-					srp_ini.overlay.streamX = 786
-					srp_ini.overlay.streamY = 340
-					srp_ini.overlay.statusX = 775
-					srp_ini.overlay.statusY = 366
-					srp_ini.overlay.squadX = 515
-					srp_ini.overlay.squadY = 338
-					srp_ini.overlay.deilyX = 803
-					srp_ini.overlay.deilyY = 407
-					srp_ini.overlay.inventoryX = 789
-					srp_ini.overlay.inventoryY  = 755
-					srp_ini.overlay.robbingX = 799
-					srp_ini.overlay.robbingY = 544
-					inicfg.save(srp_ini, settings)
-					SetMode, SetModeFirstShow = true, true
-					script.sendMessage("Координаты элементов были успешно сброшены")
-				end
-			end
-		end
-		if needtohold and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() and (wasKeyPressed(vkeys.VK_W) or wasKeyPressed(vkeys.VK_S)) then needtohold = false end
-		if getActiveInterior() == 0 then needtobuy = true gekauft = false end
+		
+		if var.need.hold and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() and (wasKeyPressed(vkeys.VK_W) or wasKeyPressed(vkeys.VK_S)) then var.need.hold = false end
+		
+		if getActiveInterior() == 0 then var.need.buy = true var.is.purchased = false end
+		
 	end
 end
 -------------------------------------------------------------------------[IMGUI]-------------------------------------------------------------------------------------------
@@ -728,7 +780,7 @@ function apply_custom_styles()
 	local clr    = imgui.Col
 	local ImVec4 = imgui.ImVec4
 	
-    style.FrameRounding    = 4.0
+	style.FrameRounding    = 4.0
 	style.GrabRounding     = 4.0
 	
 	colors[clr.FrameBg]                = ImVec4(0.48, 0.16, 0.16, 0.54)
@@ -742,7 +794,7 @@ function apply_custom_styles()
 	colors[clr.SliderGrabActive]       = ImVec4(0.98, 0.26, 0.26, 1.00)
 	colors[clr.Button]                 = ImVec4(0.98, 0.26, 0.26, 0.40)
 	colors[clr.ButtonHovered]          = ImVec4(0.98, 0.26, 0.26, 1.00)
-	colors[clr.ButtonActive]           = ImVec4(0.98, 0.06, 0.06, 1.00)
+	colors[clr.ButtonActive]           = ImVec4(0.80, 0.16, 0.16, 1.00)
 	colors[clr.Header]                 = ImVec4(0.98, 0.26, 0.26, 0.31)
 	colors[clr.HeaderHovered]          = ImVec4(0.98, 0.26, 0.26, 0.80)
 	colors[clr.HeaderActive]           = ImVec4(0.98, 0.26, 0.26, 1.00)
@@ -775,21 +827,24 @@ function apply_custom_styles()
 	colors[clr.PlotHistogramHovered]   = ImVec4(1.00, 0.60, 0.00, 1.00)
 	colors[clr.ModalWindowDarkening]   = ImVec4(0.80, 0.80, 0.80, 0.35)
 	
+	local glyph_ranges = imgui.GetIO().Fonts:GetGlyphRangesCyrillic()
+	local path = getFolderPath(0x14)
 	
 	imgui.GetIO().Fonts:Clear()
-	imfonts.mainFont = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont1 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 18.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.smainFont2 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 16.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	fonts.arial20 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\arial.ttf', 20.0, nil, glyph_ranges)
+	fonts.arial18 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\arial.ttf', 18.0, nil, glyph_ranges)
+	fonts.arial16 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\arial.ttf', 16.0, nil, glyph_ranges)
 	
-	imfonts.ovFont = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 28.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont1 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 20.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFont2 = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 25.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
-	imfonts.ovFontSquad = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\trebuc.ttf', 15.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	fonts.times28 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\times.ttf', 28.0, nil, glyph_ranges)
+	fonts.times25 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\times.ttf', 25.0, nil, glyph_ranges)
+	fonts.times20 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\times.ttf', 20.0, nil, glyph_ranges)
+	fonts.times14 = renderCreateFont("times", 14, 12)
+	fonts.times11 = renderCreateFont("times", 11, 12)
 	
-	imfonts.ovFontCars = renderCreateFont("times", 14, 12)
-	imfonts.ovFontSquadRender = renderCreateFont("times", 11, 12)
+	fonts.trebuc20 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\trebuc.ttf', 20.0, nil, glyph_ranges)
+	fonts.trebuc17 = imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\trebuc.ttf', 17.0, nil, glyph_ranges)
 	
-	imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14)..'\\times.ttf', 14.0, nil, imgui.GetIO().Fonts:GetGlyphRangesCyrillic())
+	imgui.GetIO().Fonts:AddFontFromFileTTF(path .. '\\times.ttf', 14.0, nil, glyph_ranges)
 	imgui.RebuildFonts()
 end
 apply_custom_styles()
@@ -838,14 +893,14 @@ function imgui.TextColoredRGB(text)
 			
 			if text[0] then
 				for i = 0, #text do
-					imgui.TextColored(colors_[i] or colors[1], u8(text[i]))
+					imgui.TextColored(colors_[i] or colors[1], text[i])
 					if imgui.IsItemClicked() then	if SelectedRow == A_Index then ChoosenRow = SelectedRow	else	SelectedRow = A_Index	end	end
 					imgui.SameLine(nil, 0)
 				end
 				
 				imgui.NewLine()
 				else
-				imgui.Text(u8(w))
+				imgui.Text(w)
 				if imgui.IsItemClicked() then	if SelectedRow == A_Index then ChoosenRow = SelectedRow	else	SelectedRow = A_Index	end	end
 			end
 		end
@@ -868,51 +923,54 @@ function imgui.OnDrawFrame()
 	if menu.main.v and script.checked then -- меню скрипта
 		imgui.SwitchContext()
 		colors[clr.WindowBg] = ImVec4(0.06, 0.06, 0.06, 0.94)
-		imgui.PushFont(imfonts.mainFont)
+		imgui.PushFont(fonts.arial20)
 		imgui.ShowCursor = true
+		imgui.LockPlayer = true
 		local sw, sh = getScreenResolution()
-		imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-		imgui.SetNextWindowSize(imgui.ImVec2(1200, 700), imgui.Cond.FirstUseEver)
-		imgui.GetStyle().WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
+		imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+		imgui.SetNextWindowSize(vec(400, 300), imgui.Cond.FirstUseEver)
+		imgui.GetStyle().WindowTitleAlign = vec(0.17, 0.21)
 		imgui.Begin(thisScript().name .. ' v' .. script.v.num .. ' от ' .. script.v.date, menu.main, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 		local ww = imgui.GetWindowWidth()
 		local wh = imgui.GetWindowHeight()
 		
-		imgui.PushFont(imfonts.smainFont1)
-		imgui.SetCursorPos(imgui.ImVec2(ww/2 - 568, wh/2 - 320))
-		if imgui.Button("Автоматические действия", imgui.ImVec2(280.0, 35.0)) then menu.automatic.v = true menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = false menu.binder.v = false  menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		imgui.BeginChild('top', vec(395, 13), false)
+		imgui.PushFont(fonts.arial18)
+		if imgui.Button("Автоматические действия", vec(96.75, 12)) then menu.automatic.v = true menu.commands.v = false menu.binds.v = false menu.render.v = false menu.information.v = false menu.binder.v = false  menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
 		imgui.SameLine()
-		if imgui.Button("Клавиши и команды", imgui.ImVec2(280.0, 35.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = true menu.overlay.v = false menu.information.v = false menu.binder.v = false  menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		if imgui.Button("Клавиши и команды", vec(96.75, 12)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = true menu.render.v = false menu.information.v = false menu.binder.v = false menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
 		imgui.SameLine()
-		if imgui.Button("Overlay", imgui.ImVec2(280.0, 35.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = true menu.information.v = false menu.binder.v = false  menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		if imgui.Button("Рендер", vec(96.75, 12)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.render.v = true menu.information.v = false menu.binder.v = false menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
 		imgui.SameLine()
-		if imgui.Button("Кастомный биндер", imgui.ImVec2(280.0, 35.0)) then currentBind = nil menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		if imgui.Button("Кастомный биндер", vec(96.75, 12)) then var.current.bind = nil menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.render.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
 		imgui.PopFont()
+		imgui.EndChild()
 		
-		if menu.automatic.v and not menu.binds.v and not menu.overlay.v and not menu.binder.v and not menu.information.v and not menu.editor.v then
-			imgui.BeginChild('automatics', imgui.ImVec2(1185, 500), true)
-			if imgui.ToggleButton("automatic1", togglebools.autorepair) then srp_ini.bools.autorepair = togglebools.autorepair.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о починке") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением починить вас от механика") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic2", togglebools.autorefill) then srp_ini.bools.autorefill = togglebools.autorefill.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о заправке (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением заправить вас от механика") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d1', buffer.autorefill) then srp_ini.values.autorefill = tostring(u8:decode(buffer.autorefill.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic3", togglebools.autofill) then srp_ini.bools.autofill = togglebools.autofill.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт на АЗС (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима, вы будете автоматически заправлены") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d2', buffer.autofill) then srp_ini.values.autofill = tostring(u8:decode(buffer.autofill.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic4", togglebools.autocanister) then srp_ini.bools.autocanister = togglebools.autocanister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Покупать канистру на АЗС, (исходя из цены заправки)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима (цена заправки на АЗС), вы автоматически купите канистру если её нет в инвентаре") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic5", togglebools.autorefillcanister) then srp_ini.bools.autorefillcanister = togglebools.autorefillcanister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт канистрой в случае если закончилось топливо") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только в вашем транспорте закончится топливо, скрипт моментально использует канистру (если она есть в инвентаре)") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic6", togglebools.jfcoloring) then srp_ini.bools.jfcoloring = togglebools.jfcoloring.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате профсоюза в цвет клиста") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в рации профсоюза будут иметь одну особенность: ник и ID игрока будет в цвете его клиста") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic7", togglebools.fcoloring) then srp_ini.bools.fcoloring = togglebools.fcoloring.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате фракции в цвет клиста") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в рации фракции будут иметь одну особенность: ник и ID игрока будет в цвете его клиста") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic8", togglebools.quit) then srp_ini.bools.quit = togglebools.quit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать о вышедших из игры игроках в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке, по той или иной причине покинет игру, то в чате появится сообщение о том кто вышел (в цвете клиста) и с какой причиной") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic9", togglebools.psychoheal) then srp_ini.bools.psychoheal = togglebools.psychoheal.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать об употреблении психохила игроками в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке употребит психохил, то в чате появится сообщение о том кто употребил (в цвете клиста)") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic10", togglebools.autologin) then srp_ini.bools.autologin = togglebools.autologin.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Вводить пароль в диалог авторизации") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы подключитесь к серверу и вам высветится диалог авторизации, скрипт моментально введёт ваш пароль в строку и примет диалог") imgui.EndTooltip() end imgui.SameLine(350)  imgui.PushFont(imfonts.smainFont2) if imgui.Button("Ввести пароль для автологина", imgui.ImVec2(215.0, 23.0)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = false menu.password.v = true end imgui.PopFont()
-			if imgui.ToggleButton("automatic11", togglebools.autorent) then srp_ini.bools.autorent = togglebools.autorent.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Арендовать транспорт (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вам высветится диалог с предложением арендовать транспорт и цена аренды будет приемлима, то вы его моментально арендуете и запустите двигатель") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d3', buffer.autorent) then srp_ini.values.autorent = tostring(u8:decode(buffer.autorent.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
-			if imgui.ToggleButton("automatic12", togglebools.robbing) then srp_ini.bools.robbing = togglebools.robbing.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Помощник для ограбления домов (автоматически выносит из дома и заходит обратно)") if imgui.IsItemHovered() then local hstr = "" for _, v in ipairs(string.split(srp_ini.hotkey.enterhouse, ", ")) do if v ~= "0" then hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" end end hstr = (hstr == "" or hstr == "nil") and "" or hstr imgui.BeginTooltip() imgui.TextUnformatted("Что бы взломать дом нажмите " .. (hstr ~= "" and hstr .. " (клавиша входа в дом)" or "клавишу входа в дом (можно задать в разделе 'Клавиши')") .. ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic13", togglebools.lomka) then srp_ini.bools.lomka = togglebools.lomka.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine(475) if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools.withoutcops) then srp_ini.bools.withoutcops = togglebools.withoutcops.v inicfg.save(srp_ini, settings) end
-			if imgui.ToggleButton("automatic14", togglebools.spam) then srp_ini.bools.spam = togglebools.spam.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic15", togglebools.house) then srp_ini.bools.house = togglebools.house.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Уведомлять о слете недвижимости при заходе в игру") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слета недвижимости") imgui.EndTooltip() end
-			if imgui.ToggleButton("automatic16", togglebools.repairkits) then srp_ini.bools.repairkits = togglebools.repairkits.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Автоматически покупать ремкомплекты (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вдруг вам нужно купить их ещё раз (не сработало из-за лимита), то перезайдите в магазин") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d4', buffer.repairkits) then srp_ini.values.repairkits = tostring(u8:decode(buffer.repairkits.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+		if menu.automatic.v and not menu.binds.v and not menu.render.v and not menu.binder.v and not menu.information.v and not menu.editor.v then
+			imgui.BeginChild('automatics', vec(395, 232), true)
+			if imgui.ToggleButton("autorepair", togglebools.autorepair) then srp_ini.bools.autorepair = togglebools.autorepair.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о починке") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением починить вас от механика") imgui.EndTooltip() end
+			if imgui.ToggleButton("autorefill", togglebools.autorefill) then srp_ini.bools.autorefill = togglebools.autorefill.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Принимать предложение механика о заправке (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением заправить вас от механика") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d1', buffer.autorefill) then srp_ini.values.autorefill = tostring(u8:decode(buffer.autorefill.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("autofill", togglebools.autofill) then srp_ini.bools.autofill = togglebools.autofill.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт на АЗС (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима, вы будете автоматически заправлены") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d2', buffer.autofill) then srp_ini.values.autofill = tostring(u8:decode(buffer.autofill.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("autocanister", togglebools.autocanister) then srp_ini.bools.autocanister = togglebools.autocanister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Покупать канистру на АЗС, (исходя из цены заправки)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы заедите на заправку и скрипт убедится в том что цена приемлима (цена заправки на АЗС), вы автоматически купите канистру если её нет в инвентаре") imgui.EndTooltip() end
+			if imgui.ToggleButton("autorefillcanister", togglebools.autorefillcanister) then srp_ini.bools.autorefillcanister = togglebools.autorefillcanister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Заправлять транспорт канистрой в случае если закончилось топливо") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только в вашем транспорте закончится топливо, скрипт моментально использует канистру (если она есть в инвентаре)") imgui.EndTooltip() end
+			if imgui.ToggleButton("jfcoloring", togglebools.jfcoloring) then srp_ini.bools.jfcoloring = togglebools.jfcoloring.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате профсоюза в цвет клиста") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в рации профсоюза будут иметь одну особенность: ник и ID игрока будет в цвете его клиста") imgui.EndTooltip() end
+			if imgui.ToggleButton("fcoloring", togglebools.fcoloring) then srp_ini.bools.fcoloring = togglebools.fcoloring.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Окрашивать ники в чате фракции в цвет клиста") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Все новые появляющиеся сообщения в рации фракции будут иметь одну особенность: ник и ID игрока будет в цвете его клиста") imgui.EndTooltip() end
+			if imgui.ToggleButton("quit", togglebools.quit) then srp_ini.bools.quit = togglebools.quit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать о вышедших из игры игроках в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке, по той или иной причине покинет игру, то в чате появится сообщение о том кто вышел (в цвете клиста) и с какой причиной") imgui.EndTooltip() end
+			if imgui.ToggleButton("psycho", togglebools.psycho) then srp_ini.bools.psycho = togglebools.psycho.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Оповещать об употреблении психохила игроками в зоне прорисовки") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если кто-то в зоне прорисовке употребит психохил, то в чате появится сообщение о том кто употребил (в цвете клиста)") imgui.EndTooltip() end
+			if imgui.ToggleButton("knockpsycho", togglebools.knockpsycho) then srp_ini.bools.knockpsycho = togglebools.knockpsycho.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сбивать анимацию употребления психохила") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При употреблении психохила (/grib heal) анимация собъётся пустым сообщением в чат") imgui.EndTooltip() end
+			if imgui.ToggleButton("autologin", togglebools.autologin) then srp_ini.bools.autologin = togglebools.autologin.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Вводить пароль в диалог авторизации") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вы подключитесь к серверу и вам высветится диалог авторизации, скрипт моментально введёт ваш пароль в строку и примет диалог") imgui.EndTooltip() end imgui.SameLine() imgui.PushFont(fonts.arial16) if imgui.Button("Ввести пароль для автологина", vec(71.0, 9.5)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = false menu.password.v = true menu.fame.v = false end imgui.PopFont()
+			if imgui.ToggleButton("autorent", togglebools.autorent) then srp_ini.bools.autorent = togglebools.autorent.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Арендовать транспорт (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Как только вам высветится диалог с предложением арендовать транспорт и цена аренды будет приемлима, то вы его моментально арендуете и запустите двигатель") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d3', buffer.autorent) then srp_ini.values.autorent = tostring(u8:decode(buffer.autorent.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
+			if imgui.ToggleButton("robbing", togglebools.robbing) then srp_ini.bools.robbing = togglebools.robbing.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Помощник для ограбления домов (автоматически выносит из дома и заходит обратно)") if imgui.IsItemHovered() then local hstr = "" for _, v in ipairs(string.split(srp_ini.hotkey.enterhouse, ", ")) do if v ~= "0" then hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" end end hstr = (hstr == "" or hstr == "nil") and "" or hstr imgui.BeginTooltip() imgui.TextUnformatted("Что бы взломать дом нажмите " .. (hstr ~= "" and hstr .. " (клавиша входа в дом)" or "клавишу входа в дом (можно задать в разделе 'Клавиши')") .. ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома") imgui.EndTooltip() end
+			if imgui.ToggleButton("withdrawal", togglebools.withdrawal) then srp_ini.bools.withdrawal = togglebools.withdrawal.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Употребить нарко в случае если у вас началась ломка") imgui.SameLine() if imgui.Checkbox("Не употреблять нарко при ломке, если на экране есть копы", togglebools.withoutcops) then srp_ini.bools.withoutcops = togglebools.withoutcops.v inicfg.save(srp_ini, settings) end
+			if imgui.ToggleButton("spam", togglebools.spam) then srp_ini.bools.spam = togglebools.spam.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Сразу отвечать на спам-СМС (что бы увидеть что хотел вам написать игрок)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд") imgui.EndTooltip() end
+			if imgui.ToggleButton("house", togglebools.house) then srp_ini.bools.house = togglebools.house.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Уведомлять о слете недвижимости при заходе в игру") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слета недвижимости") imgui.EndTooltip() end
+			if imgui.ToggleButton("repairkit", togglebools.repairkit) then srp_ini.bools.repairkit = togglebools.repairkit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Автоматически покупать ремкомплекты (не дороже ") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если вдруг вам нужно купить их ещё раз (не сработало из-за лимита), то перезайдите в магазин") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(90) if imgui.InputText('##d4', buffer.repairkit) then srp_ini.values.repairkit = tostring(u8:decode(buffer.repairkit.v)) inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.PopItemWidth() imgui.Text(" вирт.)")
 			imgui.EndChild()
 		end
 		
 		if menu.password.v then
-			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-			imgui.SetNextWindowSize(imgui.ImVec2(470, 195), imgui.Cond.FirstUseEver)
+			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+			imgui.SetNextWindowSize(vec(156.00, 80.00), imgui.Cond.FirstUseEver)
 			imgui.Begin("Ввод пароля", menu.password, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Text("Введите в текстовую строку ваш пароль от аккаунта\nВНИМАНИЕ!!! Ваш пароль никуда не отправляется\nОн всего лишь сохранится в ваш .ini файл\nНикому не отправляйте свой конфиг!")
 			imgui.NewLine()
@@ -922,143 +980,169 @@ function imgui.OnDrawFrame()
 			imgui.End()
 		end
 		
-		if not menu.automatic.v and menu.binds.v and not menu.overlay.v and not menu.binder.v then
-			imgui.BeginChild('hotkeys', imgui.ImVec2(1185, 500), true)
-			imgui.PushFont(imfonts.smainFont2)
-			imgui.Hotkey("hotkey", "Контекстная клавиша", 100) imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню Overlay") imgui.EndTooltip() end
-			imgui.Hotkey("hotkey1", "Нарко", 100) imgui.SameLine() imgui.Text("Употребить нарко\n(нужно находится на месте)")
-			imgui.Hotkey("hotkey2", "Сменить клист", 100) imgui.SameLine() imgui.Text("Сменить клист\n(если надет не нулевой клист, то будет введён /clist 0)") imgui.SameLine(800 - imgui.CalcTextSize('(если надет не нулевой клист, то будет введён /clist 0)').x) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.clist, clists.names) then srp_ini.values.clist = tostring(u8:decode(buffer.clist.v)) inicfg.save(srp_ini, settings) end
-			imgui.Hotkey("hotkey3", "Войти в дом", 100) imgui.SameLine() imgui.Text("Войти в ближайший дом\n(Аналогично если вы находитесь внутри дома возле входа, то скрипт выйдет из него)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Настоятельно рекомендую использовать эту клавишу для ограбления домов!") imgui.EndTooltip() end 
-			imgui.Hotkey("hotkey4", "Lock", 100) imgui.SameLine() imgui.Text("Открыть дверь транспорта\n(/lock)")
-			imgui.Hotkey("hotkey5", "Автобег", 100) imgui.SameLine() imgui.Text("Зажать клавишу бега\n(Работает как переключатель)")
-			imgui.Hotkey("hotkey6", "Быстрое меню биндера", 100) imgui.SameLine() imgui.Text("При зажатии откроется быстрое меню биндера\n(Что бы настроить биндер см.меню 'Кастомный биндер')")
-			imgui.Hotkey("hotkey7", "eject", 100) imgui.SameLine() imgui.Text("Выкинуть всех игроков из транспорта\n(Работает только если игрок не в АФК)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если клавишу зажать, то можно будет выбрать конкретного игрока") imgui.EndTooltip() end 
+		if not menu.automatic.v and menu.binds.v and not menu.render.v and not menu.binder.v then
+			imgui.BeginChild('hotkeys', vec(395, 232), true)
+			imgui.PushFont(fonts.arial16)
+			imgui.Hotkey("context", "context", 100) imgui.SameLine() imgui.Text("Контекстная клавиша\n(удерживайте чтобы отменить задачу - только одиночная клавиша)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Функция работает только если у вас включён рендер статуса контекстной клавиши в меню \"Рендер\"") imgui.EndTooltip() end
+			imgui.Hotkey("drugs", "drugs", 100) imgui.SameLine() imgui.Text("Употребить нарко\n(нужно находится на месте)")
+			imgui.Hotkey("psycho", "psycho", 100) imgui.SameLine() imgui.Text("Употребить психохил\n(/grib heal)") 
+			if srp_ini.hotkey["psycho"] ~= "0" then 
+				imgui.SameLine() 
+				if imgui.ToggleButton("psychoeat", togglebools.psychoeat) then 
+					srp_ini.bools.psychoeat = togglebools.psychoeat.v 
+					inicfg.save(srp_ini, settings) 
+				end 
+				imgui.SameLine()
+				local hstr = "" 
+				for _, v in ipairs(string.split(srp_ini.hotkey.psycho, ", ")) do
+					if v ~= "0" then 
+						hstr = hstr == "" and tostring(vkeys.id_to_name(tonumber(v))) or "" .. hstr .. " + " .. tostring(vkeys.id_to_name(tonumber(v))) .. "" 
+					end 
+				end 
+				hstr = (hstr == "" or hstr == "nil") and "" or hstr
+				imgui.Text("Кушать рыбу от голода при нажатии горячей клавиши " .. (hstr ~= "" and hstr or "приёма психохила")) 
+				if imgui.IsItemHovered() then
+					imgui.BeginTooltip() 
+					imgui.TextUnformatted("При попытке употребить психохил горячей клавишей, если сытость будет ниже 20 ед., то сначало будет употреблена готовая рыба")
+					imgui.EndTooltip() 
+				end
+				if srp_ini.bools.psychoeat then
+					imgui.SameLine()
+					if imgui.Checkbox("Кушать грибы вместо рыбы", togglebools.knockmushroom) then
+						srp_ini.bools.knockmushroom = togglebools.knockmushroom.v 
+						inicfg.save(srp_ini, settings) 
+					end 
+					if imgui.IsItemHovered() then 
+						imgui.BeginTooltip() 
+						imgui.TextUnformatted("Аналогично функции левее, однако теперь вместо рыбы будут поедаться готовые грибы") 
+						imgui.EndTooltip() 
+					end 
+				end
+			end
+			imgui.Hotkey("changeclist", "changeclist", 100) imgui.SameLine() imgui.Text("Сменить клист\n(если надет не нулевой клист, то будет введён /clist 0)") imgui.SameLine() imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.clist, clists.names) then srp_ini.values.clist = tostring(u8:decode(buffer.clist.v)) inicfg.save(srp_ini, settings) end
+			imgui.Hotkey("enterhouse", "enterhouse", 100) imgui.SameLine() imgui.Text("Войти в ближайший дом\n(Аналогично если вы находитесь внутри дома возле входа, то скрипт выйдет из него)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Настоятельно рекомендую использовать эту клавишу для ограбления домов!") imgui.EndTooltip() end 
+			imgui.Hotkey("lock", "lock", 100) imgui.SameLine() imgui.Text("Открыть дверь транспорта\n(/lock)")
+			imgui.Hotkey("autowalk", "autowalk", 100) imgui.SameLine() imgui.Text("Зажать клавишу бега\n(Работает как переключатель)")
+			imgui.Hotkey("fastmenu", "fastmenu", 100) imgui.SameLine() imgui.Text("При зажатии откроется быстрое меню биндера\n(Что бы настроить биндер см.меню 'Кастомный биндер')")
+			imgui.Hotkey("eject", "eject", 100) imgui.SameLine() imgui.Text("Выкинуть всех игроков из транспорта\n(Работает только если игрок не в АФК)") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если клавишу зажать, то можно будет выбрать конкретного игрока") imgui.EndTooltip() end 
 			imgui.PopFont()
 			imgui.EndChild()
 		end
 		
-		if not menu.automatic.v and not menu.binds.v and menu.overlay.v and not menu.binder.v then
-			imgui.Text("Что бы изменить положение элемента, пропишите команду /setov")
-			imgui.Text("Далее просто нужно курсором перенести все элементы")
-			imgui.BeginChild('overlay', imgui.ImVec2(1185, 452), true)
-			if imgui.ToggleButton("overlay.1", togglebools.date) then srp_ini.bools.date = togglebools.date.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
-			if imgui.ToggleButton("overlay.2", togglebools.nick) then srp_ini.bools.nick = togglebools.nick.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
-			if imgui.ToggleButton("overlay.3", togglebools.ping) then srp_ini.bools.ping = togglebools.ping.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
-			if imgui.ToggleButton("overlay.4", togglebools.drugs) then srp_ini.bools.drugs = togglebools.drugs.v inicfg.save(srp_ini, settings) if srp_ini.bools.drugs then isBoost = true chatManager.addMessageToQueue("/boostinfo") end end imgui.SameLine() imgui.Text("Отображение статуса употребления нарко")
-			if imgui.ToggleButton("overlay.5", togglebools.event) then srp_ini.bools.event = togglebools.event.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
-			if imgui.ToggleButton("overlay.6", togglebools.stream) then srp_ini.bools.stream = togglebools.stream.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
-			if imgui.ToggleButton("overlay.7", togglebools.status) then srp_ini.bools.status = togglebools.status.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
-			if imgui.ToggleButton("overlay.8", togglebools.squad) then srp_ini.bools.squad = togglebools.squad.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение улучшенного вида сквада")
-			if imgui.ToggleButton("overlay.9", togglebools.hpcars) then srp_ini.bools.hpcars = togglebools.hpcars.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
-			if imgui.ToggleButton("overlay.10", togglebools.chatinfo) then srp_ini.bools.chatinfo = togglebools.chatinfo.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
-			if imgui.ToggleButton("overlay.11", togglebools.equest) then srp_ini.bools.equest = togglebools.equest.v inicfg.save(srp_ini, settings) if srp_ini.bools.equest then isQuest = true chatManager.addMessageToQueue("/equest") end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг " .. script.telegram.nick .. " название и описание задания") imgui.EndTooltip() end imgui.SameLine(750) imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.timezonedifference, timezones) then srp_ini.values.timezonedifference = tostring(u8:decode(buffer.timezonedifference.v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools.equest then chatManager.addMessageToQueue("/equest") end end
-			if imgui.ToggleButton("overlay.12", togglebools.inventory) then srp_ini.bools.inventory = togglebools.inventory.v inicfg.save(srp_ini, settings) if srp_ini.bools.inventory then isInventory = true chatManager.addMessageToQueue("/inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine(355) imgui.PushFont(imfonts.smainFont2) if imgui.Button("Настроить предметы инвентаря", imgui.ImVec2(215.0, 23.0)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = true menu.password.v = false end imgui.PopFont()
-			if imgui.ToggleButton("overlay.13", togglebools.kd) then srp_ini.bools.kd = togglebools.kd.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение КД до следующего ограбления домов/автоугона")
+		if not menu.automatic.v and not menu.binds.v and menu.render.v and not menu.binder.v then
+			imgui.Text("Что бы изменить положение элемента, перетяните его на экране")
+			imgui.Text("Положение элемента сохранится автоматически")
+			imgui.BeginChild('render', vec(395, 212), true)
+			if imgui.ToggleButton("date", togglebools.date) then srp_ini.bools.date = togglebools.date.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
+			if imgui.ToggleButton("nick", togglebools.nick) then srp_ini.bools.nick = togglebools.nick.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
+			if imgui.ToggleButton("ping", togglebools.ping) then srp_ini.bools.ping = togglebools.ping.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
+			if imgui.ToggleButton("drugscooldown", togglebools.drugscooldown) then srp_ini.bools.drugscooldown = togglebools.drugscooldown.v inicfg.save(srp_ini, settings) if srp_ini.bools.drugscooldown then checkdialog("boostinfo") end end imgui.SameLine() imgui.Text("Отображение КД употребления нарко (синхронизировано с boostinfo)")
+			if imgui.ToggleButton("event", togglebools.event) then srp_ini.bools.event = togglebools.event.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
+			if imgui.ToggleButton("stream", togglebools.stream) then srp_ini.bools.stream = togglebools.stream.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
+			if imgui.ToggleButton("status", togglebools.status) then srp_ini.bools.status = togglebools.status.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Обязательно задайте клавишу в меню 'Команды и клавиши'") imgui.EndTooltip() end
+			if imgui.ToggleButton("squad", togglebools.squad) then srp_ini.bools.squad = togglebools.squad.v inicfg.save(srp_ini, settings) end imgui.SameLine()  imgui.Text("Отображение улучшенного вида сквада")  if srp_ini.bools.squad then  imgui.SameLine() if imgui.Checkbox("Скрывать сквад если активна строка чата", togglebools.disablesquad) then srp_ini.bools.disablesquad = togglebools.disablesquad.v inicfg.save(srp_ini, settings) end end
+			if imgui.ToggleButton("hpcars", togglebools.hpcars) then srp_ini.bools.hpcars = togglebools.hpcars.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
+			if imgui.ToggleButton("chatinfo", togglebools.chatinfo) then srp_ini.bools.chatinfo = togglebools.chatinfo.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
+			if imgui.ToggleButton("equest", togglebools.equest) then srp_ini.bools.equest = togglebools.equest.v inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkdialog("equest") end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг " .. script.telegram.nick .. " название и описание задания") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(200) if imgui.Combo("##Combo", buffer.timezonedifference, timezones) then srp_ini.values.timezonedifference = tostring(u8:decode(buffer.timezonedifference.v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkdialog("equest") end end
+			if imgui.ToggleButton("inventory", togglebools.inventory) then srp_ini.bools.inventory = togglebools.inventory.v inicfg.save(srp_ini, settings) if srp_ini.bools.inventory then checkdialog("inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine() imgui.PushFont(fonts.arial16) if imgui.Button("Настроить предметы инвентаря", vec(80.00, 9.54)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = true menu.password.v = false menu.fame.v = false end imgui.PopFont()
+			if imgui.ToggleButton("kd", togglebools.kd) then srp_ini.bools.kd = togglebools.kd.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение КД до следующего ограбления домов/автоугона")
 			imgui.EndChild()			
 		end
 		
 		if menu.inventory.v then
-			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-			imgui.SetNextWindowSize(imgui.ImVec2(580, 820), imgui.Cond.FirstUseEver)
+			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+			imgui.SetNextWindowSize(vec(205.00, 230.00), imgui.Cond.FirstUseEver)
 			imgui.Begin("Выбор предметов для отображения", menu.inventory, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Text("Выберите предметы, количество которых будет выводится на экран\nЕсли предмет светится жёлтым/красным - значит его мало/отсутствует")
-			imgui.BeginChild('inventory', imgui.ImVec2(565, 730), true)
-			if imgui.ToggleButton("inventory1", togglebools.narko) then srp_ini.inventory.narko = togglebools.narko.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Наркотики\"")
-			if imgui.ToggleButton("inventory2", togglebools.mats) then srp_ini.inventory.mats = togglebools.mats.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Материалы\"")
-			if imgui.ToggleButton("inventory3", togglebools.directory) then srp_ini.inventory.directory = togglebools.directory.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Телефонная книга\"")
-			if imgui.ToggleButton("inventory4", togglebools.mp3) then srp_ini.inventory.mp3 = togglebools.mp3.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"MP3\"")
-			if imgui.ToggleButton("inventory5", togglebools.keys) then srp_ini.inventory.keys = togglebools.keys.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Ключи от камеры\"")
-			if imgui.ToggleButton("inventory6", togglebools.canister) then srp_ini.inventory.canister = togglebools.canister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Канистра с бензином\"")
-			if imgui.ToggleButton("inventory7", togglebools.drivelicense) then srp_ini.inventory.drivelicense = togglebools.drivelicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Водительские права\"")
-			if imgui.ToggleButton("inventory8", togglebools.helilicense) then srp_ini.inventory.helilicense = togglebools.helilicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на вертолеты\"")
-			if imgui.ToggleButton("inventory9", togglebools.planelicense) then srp_ini.inventory.planelicense = togglebools.planelicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на самолеты\"")
-			if imgui.ToggleButton("inventory10", togglebools.boatlicense) then srp_ini.inventory.boatlicense = togglebools.boatlicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на лодки\"")
-			if imgui.ToggleButton("inventory11", togglebools.fishlicense) then srp_ini.inventory.fishlicense = togglebools.fishlicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на рыболовство\"")
-			if imgui.ToggleButton("inventory12", togglebools.weaponlicense) then srp_ini.inventory.weaponlicense = togglebools.weaponlicense.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лицензия на оружие\"")
-			if imgui.ToggleButton("inventory13", togglebools.fish) then srp_ini.inventory.fish = togglebools.fish.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сырая рыба\"")
-			if imgui.ToggleButton("inventory14", togglebools.cookedfish) then srp_ini.inventory.cookedfish = togglebools.cookedfish.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовая рыба\"")
-			if imgui.ToggleButton("inventory15", togglebools.mushrooms) then srp_ini.inventory.mushrooms = togglebools.mushrooms.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Грибы\"")
-			if imgui.ToggleButton("inventory16", togglebools.repairkit) then srp_ini.inventory.repairkit = togglebools.repairkit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Комплект «автомеханик»\"")
-			if imgui.ToggleButton("inventory17", togglebools.psychoheal) then srp_ini.inventory.psychoheal = togglebools.psychoheal.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Психохил\"")
-			if imgui.ToggleButton("inventory18", togglebools.cookedmushroom) then srp_ini.inventory.cookedmushroom = togglebools.cookedmushroom.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовые грибы\"")
-			if imgui.ToggleButton("inventory19", togglebools.cigarette) then srp_ini.inventory.cigarette = togglebools.cigarette.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сигареты\"")
-			if imgui.ToggleButton("inventory20", togglebools.adrenaline) then srp_ini.inventory.adrenaline = togglebools.adrenaline.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Адреналин\"")
-			if imgui.ToggleButton("inventory21", togglebools.cork) then srp_ini.inventory.cork = togglebools.cork.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Защита от насильников\"")
-			if imgui.ToggleButton("inventory22", togglebools.balaclava) then srp_ini.inventory.balaclava = togglebools.balaclava.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Балаклава\"")
-			if imgui.ToggleButton("inventory23", togglebools.scrap) then srp_ini.inventory.scrap = togglebools.scrap.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лом\"")
-			if imgui.ToggleButton("inventory24", togglebools.energy) then srp_ini.inventory.energy = togglebools.energy.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Энергетик\"")
-			if imgui.ToggleButton("inventory25", togglebools.robkit) then srp_ini.inventory.robkit = togglebools.robkit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Набор для взлома\"")
+			imgui.BeginChild('inventory', vec(200.00, 192.00), true)
+			if imgui.ToggleButton("drugs", togglebools.drugs) then srp_ini.inventoryItem.drugs = togglebools.drugs.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Наркотики\"")
+			if imgui.ToggleButton("mats", togglebools.mats) then srp_ini.inventoryItem.mats = togglebools.mats.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Материалы\"")
+			if imgui.ToggleButton("keys", togglebools.keys) then srp_ini.inventoryItem.keys = togglebools.keys.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Ключи от камеры\"")
+			if imgui.ToggleButton("canister", togglebools.canister) then srp_ini.inventoryItem.canister = togglebools.canister.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Канистра с бензином\"")
+			if imgui.ToggleButton("fish", togglebools.fish) then srp_ini.inventoryItem.fish = togglebools.fish.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Сырая рыба\"")
+			if imgui.ToggleButton("cookedfish", togglebools.cookedfish) then srp_ini.inventoryItem.cookedfish = togglebools.cookedfish.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовая рыба\"")
+			if imgui.ToggleButton("mushroom", togglebools.mushroom) then srp_ini.inventoryItem.mushroom = togglebools.mushroom.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Грибы\"")
+			if imgui.ToggleButton("repairkit", togglebools.repairkit) then srp_ini.inventoryItem.repairkit = togglebools.repairkit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Комплект «автомеханик»\"")
+			if imgui.ToggleButton("psychoheal", togglebools.psychoheal) then srp_ini.inventoryItem.psychoheal = togglebools.psychoheal.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Психохил\"")
+			if imgui.ToggleButton("cookedmushroom", togglebools.cookedmushroom) then srp_ini.inventoryItem.cookedmushroom = togglebools.cookedmushroom.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Готовые грибы\"")
+			if imgui.ToggleButton("adrenaline", togglebools.adrenaline) then srp_ini.inventoryItem.adrenaline = togglebools.adrenaline.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Адреналин\"")
+			if imgui.ToggleButton("cork", togglebools.cork) then srp_ini.inventoryItem.cork = togglebools.cork.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Защита от насильников\"")
+			if imgui.ToggleButton("balaclava", togglebools.balaclava) then srp_ini.inventoryItem.balaclava = togglebools.balaclava.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Балаклава\"")
+			if imgui.ToggleButton("scrap", togglebools.scrap) then srp_ini.inventoryItem.scrap = togglebools.scrap.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Лом\"")
+			if imgui.ToggleButton("energy", togglebools.energy) then srp_ini.inventoryItem.energy = togglebools.energy.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Энергетик\"")
+			if imgui.ToggleButton("robkit", togglebools.robkit) then srp_ini.inventoryItem.robkit = togglebools.robkit.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Предмет: \"Набор для взлома\"")
 			imgui.EndChild()
 			imgui.End()
 		end
 		
-		if not menu.automatic.v and not menu.binds.v and not menu.overlay.v and menu.binder.v and not menu.information.v and not menu.editor.v then
+		if not menu.automatic.v and not menu.binds.v and not menu.render.v and menu.binder.v and not menu.information.v and not menu.editor.v then
 			imgui.Text("Меню кастомного биндера на клавиши / команды (крайне не рекомендую вручную изменять .ini файл)")
-			imgui.PushFont(imfonts.smainFont2)
-			if imgui.Button("Добавить бинд", imgui.ImVec2(170.0, 23.0)) then
+			imgui.PushFont(fonts.arial16)
+			if imgui.Button("Добавить бинд", vec(56.67, 9.54)) then
 				table.insert(binder_ini.list, encodeJson({
-					name   = "Новый бинд",
-					msg    = {},
-					cmd    = "",
+					name = "Новый бинд",
+					msg = {},
+					cmd = "",
 					hotkey = "0",
-					fast   = false
+					fast = false
 				}))
 				inicfg.save(binder_ini, binds) 
 			end
 			imgui.SameLine()
-			if imgui.Button("Редактировать", imgui.ImVec2(175.0, 23.0)) then
-				if currentBind ~= nil then
+			if imgui.Button("Редактировать", vec(58.33, 9.54)) then
+				if var.current.bind ~= nil then
 					menu.editor.v = true
 				end
 			end
 			imgui.SameLine()
-			if imgui.Button("Вниз", imgui.ImVec2(175.0, 23.0)) then
-				if currentBind ~= nil then
-					if binder_ini.list[currentBind + 1] ~= nil then
-						local bk = binder_ini.list[currentBind]
-						binder_ini.list[currentBind] = binder_ini.list[currentBind + 1]
-						binder_ini.list[currentBind + 1] = bk
-						currentBind = currentBind + 1
+			if imgui.Button("Вниз", vec(58.33, 9.54)) then
+				if var.current.bind ~= nil then
+					if binder_ini.list[var.current.bind + 1] ~= nil then
+						local bk = binder_ini.list[var.current.bind]
+						binder_ini.list[var.current.bind] = binder_ini.list[var.current.bind + 1]
+						binder_ini.list[var.current.bind + 1] = bk
+						var.current.bind = var.current.bind + 1
 						inicfg.save(binder_ini, binds)
 					end
 				end
 			end
 			imgui.SameLine()
-			if imgui.Button("Вверх", imgui.ImVec2(175.0, 23.0)) then
-				if currentBind ~= nil then
-					if binder_ini.list[currentBind - 1] ~= nil then
-						local bk = binder_ini.list[currentBind]
-						binder_ini.list[currentBind] = binder_ini.list[currentBind - 1]
-						binder_ini.list[currentBind - 1] = bk
-						currentBind = currentBind - 1
+			if imgui.Button("Вверх", vec(58.33, 9.54)) then
+				if var.current.bind ~= nil then
+					if binder_ini.list[var.current.bind - 1] ~= nil then
+						local bk = binder_ini.list[var.current.bind]
+						binder_ini.list[var.current.bind] = binder_ini.list[var.current.bind - 1]
+						binder_ini.list[var.current.bind - 1] = bk
+						var.current.bind = var.current.bind - 1
 						inicfg.save(binder_ini, binds)
 					end
 				end
 			end
 			imgui.SameLine()
-			if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 23.0)) then
+			if imgui.CustomButton("Настройка текстовых переменных", ImVec4(0.85, 0.98, 0.26, 0.40), ImVec4(0.85, 0.98, 0.26, 1.00), ImVec4(0.82, 0.98, 0.06, 1.00), vec(83.33, 9.54)) then
 				menu.variables.v = true
 				menu.commands.v = false 
 				menu.inventory.v = false 
 				menu.password.v = false
+				menu.fame.v = false
 			end
-			imgui.BeginChild('binds', imgui.ImVec2(1185, 449), true)
+			imgui.BeginChild('binds', vec(395, 211.5), true)
 			for k, v in ipairs(binder_ini.list) do
 				imgui.PushID(k)
 				v = decodeJson(v)
 				local cmd = imgui.ImBuffer(v.cmd, 256)
-				if imgui.Button(tostring(k), imgui.ImVec2(50.0, 23.0)) then
-					currentBind = k
+				if imgui.Button(tostring(k), vec(16.67, 9.54)) then
+					var.current.bind = k
 					menu.editor.v = true
 				end
 				imgui.SameLine()
-				if currentBind == k then
-					if imgui.CustomButton(v.name, imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(350.0, 23.0)) then
-						currentBind = nil
+				if var.current.bind == k then
+					if imgui.CustomButton(v.name, ImVec4(0.85, 0.98, 0.26, 0.40), ImVec4(0.85, 0.98, 0.26, 1.00), ImVec4(0.82, 0.98, 0.06, 1.00), vec(116.67, 9.54)) then
+						var.current.bind = nil
 					end
 					else
-					if imgui.Button(v.name, imgui.ImVec2(350.0, 23.0)) then
-						currentBind = k
+					if imgui.Button(v.name, vec(116.67, 9.54)) then
+						var.current.bind = k
 					end
 				end
 				imgui.SameLine()
@@ -1073,7 +1157,7 @@ function imgui.OnDrawFrame()
 					end
 				end
 				imgui.PopItemWidth()
-				imgui.PushFont(imfonts.mainFont)
+				imgui.PushFont(fonts.arial20)
 				if imgui.IsItemHovered() then 
 					imgui.BeginTooltip() 
 					imgui.TextUnformatted('Команду вводить без "/"') 
@@ -1093,7 +1177,7 @@ function imgui.OnDrawFrame()
 					binder_ini.list[k] = encodeJson(v)
 					inicfg.save(binder_ini, binds)
 				end
-				imgui.PushFont(imfonts.mainFont)
+				imgui.PushFont(fonts.arial20)
 				if imgui.IsItemHovered() then 
 					imgui.BeginTooltip() 
 					imgui.TextUnformatted("Добавить бинд в быстрое-меню") 
@@ -1124,15 +1208,11 @@ function imgui.OnDrawFrame()
 				"@mainclist@ - ваш главный клист (см.меню 'Клавиши')",
 				"@kv@ - текущий квадрат/сектор на карте"
 			}
-			local w = 0
 			local sortvars = {}
 			for k, v in ipairs(vars) do table.insert(sortvars, imgui.CalcTextSize(v).x) end
 			table.sort(sortvars, function(a, b) return a < b end)
-			for k, v in ipairs(sortvars) do
-				w = v + 50
-			end
-			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-			imgui.SetNextWindowSize(imgui.ImVec2(w, 400), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
+			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+			imgui.SetNextWindowSize(vec(600, 185), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Begin("Все текстовые переменные скрипта", menu.variables, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Text("Переменные можно использовать в биндере, и просто в чате:")
 			if imgui.ToggleButton("variables",  togglebools.variables) then 
@@ -1146,21 +1226,21 @@ function imgui.OnDrawFrame()
 				imgui.TextUnformatted("Разница заключается в том, что если параметр будет активирован, то вы сможете помимо биндера также использовать переменные и просто в чате.")                                                
 				imgui.EndTooltip() 
 			end
-			imgui.BeginChild('variables', imgui.ImVec2(w - 15, 300), true)
+			imgui.BeginChild('variables', vec(594, 144), true)
 			for k, v in ipairs(vars) do imgui.Text(v) end
 			imgui.EndChild()
 			imgui.End()
 		end
 		
 		if menu.editor.v then
-			if currentBind ~= nil then
-				if tonumber(currentBind) ~= nil then
-					imgui.Text("Редактор бинда #" .. currentBind .. " | Настройки сохраняются автоматически, доступно использование текстовых переменных")
-					imgui.PushFont(imfonts.smainFont2)
-					local str = binder_ini.list[currentBind]
+			if var.current.bind ~= nil then
+				if tonumber(var.current.bind) ~= nil then
+					imgui.Text("Редактор бинда #" .. var.current.bind .. " | Настройки сохраняются автоматически, доступно использование текстовых переменных")
+					imgui.PushFont(fonts.arial16)
+					local str = binder_ini.list[var.current.bind]
 					local b   = decodeJson(str)
 					local name = imgui.ImBuffer(b.name, 256)
-					imgui.BeginChild('Editor', imgui.ImVec2(1185, 456), true)
+					imgui.BeginChild('Editor', vec(395.00, 222.00), true)
 					imgui.Text("Установить название бинда: ")
 					imgui.SameLine()
 					imgui.PushItemWidth(300) 
@@ -1169,15 +1249,16 @@ function imgui.OnDrawFrame()
 					end
 					imgui.PopItemWidth()
 					imgui.SameLine()
-					if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), imgui.ImVec2(250.0, 22.0)) then
+					if imgui.CustomButton("Настройка текстовых переменных", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), vec(83.33, 9.13)) then
 						menu.variables.v = true
 						menu.commands.v = false 
 						menu.inventory.v = false 
 						menu.password.v = false
+						menu.fame.v = false
 					end
 					imgui.SameLine(860)
-					if imgui.Button("Вернутся назад", imgui.ImVec2(300.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
-					if imgui.Button("Добавить строку", imgui.ImVec2(170.0, 23.0)) then
+					if imgui.Button("Вернутся назад", vec(100.00, 9.54)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.render.v = false menu.information.v = false menu.binder.v = true menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+					if imgui.Button("Добавить строку", vec(56.67, 9.54)) then
 						table.insert(b.msg, "")
 					end
 					for k, v in ipairs(b.msg) do
@@ -1188,12 +1269,12 @@ function imgui.OnDrawFrame()
 						end
 						imgui.SameLine()
 						imgui.PushID(k)
-						if imgui.Button('Удалить', imgui.ImVec2(90.0, 22.0)) then 
+						if imgui.Button('Удалить', vec(30.00, 9.13)) then 
 							table.remove(b.msg, k)
 						end
 						imgui.PopID()
 					end
-					binder_ini.list[currentBind] = encodeJson(b)
+					binder_ini.list[var.current.bind] = encodeJson(b)
 					inicfg.save(binder_ini, binds)
 					imgui.EndChild()
 					imgui.PopFont()
@@ -1205,66 +1286,73 @@ function imgui.OnDrawFrame()
 			end
 		end
 		
-		if not menu.automatic.v and not menu.binds.v and not menu.overlay.v and not menu.binder.v and menu.information.v and not menu.editor.v then
+		if not menu.automatic.v and not menu.binds.v and not menu.render.v and not menu.binder.v and menu.information.v and not menu.editor.v then
 			imgui.Text("Данный скрипт является многофункциональным хелпером для игроков проекта Samp RP")
-			imgui.Text("Автор: Cody_Webb | Telegram: @Imykhailovich")
 			imgui.SameLine()
-			imgui.PushFont(imfonts.smainFont2)
-			if imgui.Button("Написать разработчику", imgui.ImVec2(180.0, 23.0)) then os.execute("explorer " .. script.telegram.url) end
+			imgui.PushFont(fonts.arial16)
+			if imgui.Button("Список уважаемых игроков", vec(70.00, 9.54)) then menu.variables.v = false menu.commands.v = false menu.inventory.v = false menu.password.v = false menu.fame.v = true end
+			imgui.PopFont()
+			imgui.Text("Автор: " .. script.author .. " | Telegram: " .. script.telegram.nick)
+			imgui.SameLine()
+			imgui.PushFont(fonts.arial16)
+			if imgui.Button("Написать разработчику", vec(60.00, 9.54)) then os.execute("explorer " .. script.telegram.url) end
 			imgui.PopFont()
 			if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, в браузере по умолчанию откроется ссылка на телеграм разработчика") imgui.EndTooltip() end
-			imgui.Text("Все настройки автоматически сохраняются в файл moonloader//config//SRPfunctions by Webb//Server//Nick_Name")
-			--imgui.NewLine()
+			imgui.Text("Все настройки автоматически сохраняются config")
+			imgui.SameLine()
+			imgui.PushFont(fonts.arial16)
+			if imgui.Button("Открыть папку с настройками", vec(71.67, 9.54)) then os.execute("explorer " .. thisScript().directory .. "\\config\\SRPfunctions by Webb\\" .. server .. "\\" .. var.current.nick) end
+			imgui.PopFont()
+			if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии откроется папка, где сохранены настройки вашего текущего сервера и ника") imgui.EndTooltip() end
 			imgui.Text("Информация о последних обновлениях:")
-			imgui.BeginChild('information', imgui.ImVec2(1185, 384), true)
-			for k in ipairs(script.upd.sort) do
-				if script.upd.changes[tostring(k)] ~= nil then
-					imgui.Text(k .. ') ' .. script.upd.changes[tostring(k)])
-					imgui.NewLine()
+			imgui.BeginChild('changelog', vec(395.00, 190.50), true)
+			for _, ver in ipairs(script.upd.sort) do
+				local upd = script.upd.changes[tostring(ver)]
+				if upd ~= nil then
+					if imgui.CollapsingHeader("Версия v" .. ver .. " от " .. upd.date) then
+						imgui.PushTextWrapPos(toScreenX(390))
+						imgui.Text(upd.text)
+						imgui.PopTextWrapPos()
+					end
 				end
 			end
-			imgui.EndChild()
+			imgui.EndChild()	
 		end
 		
-		imgui.SetCursorPos(imgui.ImVec2(30, wh/2 + 305))
+		imgui.BeginChild('bottom', vec(395, 40), false)
 		local found = false
 		for i = 0, 1000 do
 			if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
-				if sampGetPlayerNickname(i) == "Cody_Webb" then
-					if imgui.Button("Cody_Webb[" .. i .. "] сейчас в сети", imgui.ImVec2(260.0, 30.0)) then
-						sampSetChatInputEnabled(true)
-						sampSetChatInputText("/t " .. i .. " ")
+				if sampGetPlayerNickname(i) == script.author then
+					if imgui.CustomButton(script.author .. "[" .. i .. "] сейчас в сети", imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67), imgui.ImVec4(0.98, 0.43, 0.26, 0.40), vec(100, 12)) then
+						chatManager.addMessageToQueue("/t " .. i .. " Привет, мой хороший")
 					end
 					found = true
 				end
 			end
 		end
 		if not found then
-			if imgui.Button("Cody Webb сейчас не в сети", imgui.ImVec2(245.0, 30.0)) then
-				script.sendMessage("Cody Webb играет на Revolution (сейчас не онлайн)")
+			if imgui.Button(script.author .. " сейчас не в сети", vec(100.00, 12.00)) then
+				script.sendMessage(script.author .. " играет на Revolution (сейчас не онлайн)")
 			end
 		end
-		
-		imgui.PushFont(imfonts.smainFont2)
-		imgui.SetCursorPos(imgui.ImVec2(30, wh/2 + 235))
-		if imgui.Button("Все команды скрипта", imgui.ImVec2(170.0, 23.0)) then menu.variables.v = false menu.commands.v = true menu.inventory.v = false menu.password.v = false end
-		imgui.SetCursorPos(imgui.ImVec2(30, wh/2 + 270))
-		if imgui.Button("Информация о скрипте", imgui.ImVec2(170.0, 23.0)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.overlay.v = false menu.information.v = true menu.binder.v = false menu.password.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
-		imgui.SetCursorPos(imgui.ImVec2(ww/2 + 400, wh/2 + 235))
-		if imgui.Button("Выгрузить скрипт", imgui.ImVec2(170.0, 23.0)) then showCursor(false) script.unload = true thisScript():unload() end if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, скрипт будет отключён до следующего запуска игры") imgui.EndTooltip() end
-		imgui.SetCursorPos(imgui.ImVec2(ww/2 + 400, wh/2 + 270))
-		if imgui.Button("Перезагрузить скрипт", imgui.ImVec2(170.0, 23.0)) then showCursor(false) script.reload = true thisScript():reload() end
-		imgui.SetCursorPos(imgui.ImVec2(ww/2 + 400, wh/2 + 305))
-		if imgui.Button("Открыть GitHub", imgui.ImVec2(170.0, 23.0)) then os.execute('explorer "https://github.com/WebbLua/SRPfunctions"') end if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, в браузере по умолчанию откроется ссылка на GitHub скрипта") imgui.EndTooltip() end
+		imgui.PushFont(fonts.arial16)
+		imgui.SameLine(toScreenX(329))
+		if imgui.Button("Перезагрузить скрипт", vec(66.00, 12.00)) then showCursor(false) script.reload = true thisScript():reload() end
+		if imgui.Button("Все команды скрипта", vec(66.00, 9.50)) then menu.variables.v = false menu.commands.v = true menu.inventory.v = false menu.password.v = false menu.fame.v = false end
+		imgui.SameLine(toScreenX(329))
+		if imgui.Button("Выгрузить скрипт", vec(66.00, 9.50)) then showCursor(false) script.unload = true thisScript():unload() end if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, скрипт будет отключён до следующего запуска игры") imgui.EndTooltip() end
+		if imgui.Button("Информация о скрипте", vec(66.00, 9.50)) then menu.automatic.v = false menu.commands.v = false menu.binds.v = false menu.render.v = false menu.information.v = true menu.binder.v = false menu.password.v = false menu.fame.v = false menu.inventory.v = false menu.editor.v = false menu.variables.v = false end
+		imgui.SameLine(toScreenX(329))
+		if imgui.Button("Открыть GitHub", vec(66.00, 9.50)) then os.execute('explorer "https://github.com/WebbLua/SRPfunctions"') end if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("При нажатии, в браузере по умолчанию откроется ссылка на GitHub скрипта") imgui.EndTooltip() end
 		imgui.PopFont()
+		imgui.EndChild()
 		
 		if menu.commands.v then
 			local cmds = {
 				"/srp (/samprp) - открыть/закрыть главное меню скрипта",
-				"/setov (/setoverlay) - изменить местоположения элементов оверлея на экране",
 				"/srpflood [Text] (/samprpflood [Text]) - флудить заданным текстом в чат",
 				"/srpstop - очистить очередь отправляемых сообщений в чат (очень полезно если биндер флудит без остановки)",
-				"/srpup (/samprpup) - обновить скрипт",
 				"/whenhouse - узнать когда слетит недвижимость",
 				"/st [0-24] - установить игровое время",
 				"/sw [0-45] - установить игровую погоду"
@@ -1273,15 +1361,35 @@ function imgui.OnDrawFrame()
 			local sortcmds = {}
 			for k, v in ipairs(cmds) do table.insert(sortcmds, imgui.CalcTextSize(v).x) end
 			table.sort(sortcmds, function(a, b) return a < b end)
-			for k, v in ipairs(sortcmds) do
-				w = v + 50
-			end
-			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-			imgui.SetNextWindowSize(imgui.ImVec2(w, 300), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
+			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+			imgui.SetNextWindowSize(vec(400, 95), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Begin("Все команды скрипта", menu.commands, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
 			imgui.Text("Данные команды являются системными, их нельзя изменить:")
-			imgui.BeginChild('commands', imgui.ImVec2(w - 15, 235), true)
+			imgui.BeginChild('commands', vec(395, 68), true)
 			for k, v in ipairs(cmds) do imgui.Text(v) end
+			imgui.EndChild()
+			imgui.End()
+		end
+		
+		if menu.fame.v then
+			imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+			imgui.SetNextWindowSize(vec(250, 400), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
+			imgui.Begin("Список уважаемых игроков, которые внесли свой вклад в развитие скрипта", menu.fame, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
+			imgui.Text("Что бы попасть в список, осуществите пожертвование игроку " .. script.author)
+			imgui.BeginChild('fame', vec(245, 373), true)
+			imgui.Columns(2, "Columns", true)
+			imgui.Text("Ник:")
+			imgui.NextColumn()
+			imgui.Text("Подпись:")
+			imgui.NextColumn()
+			for _, v in ipairs(script.label.sort) do
+				imgui.Separator()
+				imgui.Text(v.nick) 
+				imgui.NextColumn()
+				local color = string.format("{%X}", v.color % 0x1000000)
+				imgui.TextColoredRGB(color .. v.text)
+				imgui.NextColumn()
+			end
 			imgui.EndChild()
 			imgui.End()
 		end
@@ -1293,18 +1401,18 @@ function imgui.OnDrawFrame()
 	if menu.fastbinder.v then
 		imgui.SwitchContext()
 		colors[clr.WindowBg] = ImVec4(0.06, 0.06, 0.06, 0.94)
-		imgui.PushFont(imfonts.mainFont)
+		imgui.PushFont(fonts.arial20)
 		imgui.ShowCursor = true
 		local sw, sh = getScreenResolution()
-		imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-		imgui.SetNextWindowSize(imgui.ImVec2(400, 500), imgui.Cond.FirstUseEver)
+		imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
+		imgui.SetNextWindowSize(vec(133.00, 207.00), imgui.Cond.FirstUseEver)
 		imgui.Begin("Быстрое меню биндера", nil, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
-		imgui.BeginChild('fastbinder', imgui.ImVec2(385, 455), true)
+		imgui.BeginChild('fastbinder', vec(128.00, 188.00), true)
 		for k, v in ipairs(binder_ini.list) do
 			local b = decodeJson(v)
 			if b.fast then
 				imgui.PushID(k)
-				if imgui.Button(b.name, imgui.ImVec2(368, 25.0)) then 
+				if imgui.Button(b.name, vec(122.00, 10.00)) then 
 					binder(k)
 				end
 				imgui.PopID()
@@ -1315,72 +1423,93 @@ function imgui.OnDrawFrame()
 		imgui.PopFont()
 	end
 	
-	imgui.SwitchContext() -- Overlay
+	imgui.SwitchContext() -- render
 	colors[clr.WindowBg] = ImVec4(0, 0, 0, 0)
-	local SetModeCond = SetMode and 0 or 4
 	
 	if srp_ini.bools.date then -- показывать время
-		if not SetMode then	imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.dateX, srp_ini.overlay.dateY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.dateX, srp_ini.overlay.dateY))	end end
-		imgui.Begin('#empty_field', overlay.date, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont)
-		imgui.TextColoredRGB('{FFFF00}' .. os.date("%d.%m.%y %X") .. '')
+		imgui.SetNextWindowPos(vec(srp_ini.render.dateX, srp_ini.render.dateY), imgui.Cond.FirstUseEver)
+		imgui.Begin('date', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times28)
+		imgui.TextColoredRGB('{FFFF00}' .. os.date("%d.%m.%y %X"))
 		imgui.PopFont()
-		soverlay.date = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.dateX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.dateY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.dateX = math.ceil(savePosX)
+			srp_ini.render.dateY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.nick then -- ник и ид на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.nickX, srp_ini.overlay.nickY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.nickX, srp_ini.overlay.nickY))	end	end
+		imgui.SetNextWindowPos(vec(srp_ini.render.nickX, srp_ini.render.nickY), imgui.Cond.FirstUseEver)
 		local result, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
 		if result then
 			local name = sampGetPlayerNickname(id)
-			local clist = string.sub(string.format('%x', sampGetPlayerColor(id)), 3)
-			local clist = clist == "ffff" and "fffafa" or clist
-			imgui.Begin('#empty_field1', overlay.nick, 1 + 32 + 2 + SetModeCond + 64)
-			imgui.PushFont(imfonts.ovFont)
-			imgui.TextColoredRGB('{' .. clist .. '}' .. name .. '')
+			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
+			imgui.Begin('nick', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+			imgui.PushFont(fonts.times28)
+			imgui.TextColoredRGB(clist .. name)
 			imgui.SameLine()
-			imgui.TextColoredRGB('{' .. clist .. '}[' .. tostring(id) .. ']')
+			imgui.TextColoredRGB(clist .. '[' .. tostring(id) .. ']')
 			imgui.PopFont()
-			soverlay.nick = imgui.GetWindowPos()
+			local newPos = imgui.GetWindowPos()
+			local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+			if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.nickX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.nickY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+				srp_ini.render.nickX = math.ceil(savePosX)
+				srp_ini.render.nickY = math.ceil(savePosY)
+				inicfg.save(srp_ini, settings)
+			end
 			imgui.End()
 		end
 	end
 	
 	if srp_ini.bools.ping then -- пинг на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.pingX, srp_ini.overlay.pingY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.pingX, srp_ini.overlay.pingY))	end	end
-		imgui.Begin('#empty_field2', overlay.ping, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont2)
+		imgui.SetNextWindowPos(vec(srp_ini.render.pingX, srp_ini.render.pingY), imgui.Cond.FirstUseEver)
+		imgui.Begin('ping', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times25)
 		local ping = sampGetPlayerPing(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
-		if ping ~= nil then imgui.TextColoredRGB((ping > 80 and "{FF0000}" or "{00FF00}") .. u8:decode"Пинг: " .. ping) end
+		if ping ~= nil then imgui.TextColoredRGB((ping > 80 and "{FF0000}" or "{00FF00}") .. "Пинг: " .. ping) end
 		imgui.PopFont()
-		soverlay.ping = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.pingX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.pingY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.pingX = math.ceil(savePosX)
+			srp_ini.render.pingY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
-	if srp_ini.bools.drugs then -- КД нарко на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.narkoX, srp_ini.overlay.narkoY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.narkoX, srp_ini.overlay.narkoY))	end	end
-		imgui.Begin('#empty_field3', overlay.drugs, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont2)
-		if (os.time() - tonumber(srp_ini.values.drugs)) < drugtimer then
-			sec = drugtimer - (os.time() - tonumber(srp_ini.values.drugs))
+	if srp_ini.bools.drugscooldown then -- КД нарко на экране
+		imgui.SetNextWindowPos(vec(srp_ini.render.drugsX, srp_ini.render.drugsY), imgui.Cond.FirstUseEver)
+		imgui.Begin('drugs', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times25)
+		if (os.time() - tonumber(srp_ini.values.drugs)) < var.drugtimer then
+			sec = var.drugtimer - (os.time() - tonumber(srp_ini.values.drugs))
 			local mins = math.floor(sec / 60)
 			if math.fmod(sec, 60) >= 10 then secs = math.fmod(sec, 60) end
 			if math.fmod(sec, 60) < 10 then secs = "0" .. math.fmod(sec, 60) .. "" end
 			imgui.TextColoredRGB("{FF0000}" .. mins .. ":" .. secs .. "")
 			else
-			imgui.TextColoredRGB("{00FF00}" .. u8:decode"Юзай!")
+			imgui.TextColoredRGB("{00FF00}Юзай!")
 		end
 		imgui.PopFont()
-		soverlay.drugs = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.drugsX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.drugsY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.drugsX = math.ceil(savePosX)
+			srp_ini.render.drugsY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.event then -- таймеры до начала системных МП
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.eventX, srp_ini.overlay.eventY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.eventX, srp_ini.overlay.eventY))	end	end
-		imgui.Begin('#empty_field4', overlay.event, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся таймеры МП") end
+		imgui.SetNextWindowPos(vec(srp_ini.render.eventX, srp_ini.render.eventY), imgui.Cond.FirstUseEver)
+		imgui.Begin('event', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
 		for k, v in pairs(srp_ini.ivent) do
 			if v ~= false and tonumber(v) ~= nil then
 				local sec = tonumber(v) - os.time()
@@ -1388,82 +1517,120 @@ function imgui.OnDrawFrame()
 				if math.fmod(sec, 60) >= 10 then secs = math.fmod(sec, 60) end
 				if math.fmod(sec, 60) < 10 then secs = "0" .. math.fmod(sec, 60) .. "" end
 				if sec > 0 then
-					imgui.TextColoredRGB((sec > 60 and '{00FF00}' or "{FCF803}") .. u8:decode(k) .. u8:decode' через: ' .. mins .. ":" .. secs .. "")
+					imgui.TextColoredRGB((sec > 60 and '{00FF00}' or "{FCF803}") .. k .. ' через: ' .. mins .. ":" .. secs)
 					else
 					if sec > -30 then
-						imgui.TextColoredRGB("{FF0000}" .. u8:decode(k) .. u8:decode' начнётся СЕЙЧАС')
+						imgui.TextColoredRGB("{FF0000}" .. k .. ' начнётся СЕЙЧАС')
 					end
 				end
 			end
 		end
 		imgui.PopFont()
-		soverlay.event = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.eventX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.eventY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.eventX = math.ceil(savePosX)
+			srp_ini.render.eventY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.stream then -- количество игроков в зоне прорисовки на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.streamX, srp_ini.overlay.streamY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.streamX, srp_ini.overlay.streamY))	end	end
-		imgui.Begin('#empty_field5', overlay.stream, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		imgui.TextColoredRGB(u8:decode'Количество персонажей в прорисовке: ' .. (sampGetPlayerCount(true) - 1) .. '')
+		imgui.SetNextWindowPos(vec(srp_ini.render.streamX, srp_ini.render.streamY), imgui.Cond.FirstUseEver)
+		imgui.Begin('stream', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
+		imgui.TextColoredRGB('Количество персонажей в прорисовке: ' .. (sampGetPlayerCount(true) - 1) .. '')
 		imgui.PopFont()
-		soverlay.stream = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.streamX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.streamY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.streamX = math.ceil(savePosX)
+			srp_ini.render.streamY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.status then -- статус контекстной клавиши на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.statusX, srp_ini.overlay.statusY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.statusX, srp_ini.overlay.statusY))	end	end
-		imgui.Begin('#empty_field6', overlay.status, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		local CStatus = CTaskArr["CurrentID"] == 0 and "{FFFAFA}" .. u8:decode"Ожидание события" or "" .. u8:decode(CTaskArr["n"][CTaskArr[1][CTaskArr["CurrentID"]]]) .. " " .. u8:decode((indexof(CTaskArr[1][CTaskArr["CurrentID"]], CTaskArr["nn"]) ~= false and CTaskArr[3][CTaskArr["CurrentID"]] or "")) .. ""
-		imgui.TextColoredRGB(u8:decode'Статус контекстной клавиши: ' .. CStatus .. '')
+		imgui.SetNextWindowPos(vec(srp_ini.render.statusX, srp_ini.render.statusY), imgui.Cond.FirstUseEver)
+		imgui.Begin('status', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
+		local CStatus = CTaskArr["CurrentID"] == 0 and "{FFFAFA}Ожидание события" or "" .. CTaskArr["n"][CTaskArr[1][CTaskArr["CurrentID"]]] .. " " .. (indexof(CTaskArr[1][CTaskArr["CurrentID"]], CTaskArr["nn"]) ~= false and CTaskArr[3][CTaskArr["CurrentID"]] or "") .. ""
+		imgui.TextColoredRGB('Статус контекстной клавиши: ' .. CStatus .. '')
 		imgui.PopFont()
-		soverlay.status = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.statusX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.statusY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.statusX = math.ceil(savePosX)
+			srp_ini.render.statusY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
-	if srp_ini.bools.squad and ((not sampIsChatInputActive() and not isSampfuncsConsoleActive() and rCache.enable) or SetMode) then -- улучшенный сквад на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.squadX, srp_ini.overlay.squadY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.squadX, srp_ini.overlay.squadY))	end	end
-		imgui.Begin('#empty_field7', overlay.squad, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFontSquad)
-		local count = 0
-		for k in pairs(smem) do count = count + 1 end
-		imgui.TextColoredRGB("{B30000}" .. u8:decode"Состав отряда - " .. count .. ":")
-		soverlay.squad = imgui.GetWindowPos()
-		local x = SetMode and soverlay.squad.x + 5 or srp_ini.overlay.squadX + 5
-		local y = SetMode and soverlay.squad.y or srp_ini.overlay.squadY
-		for k, v in ipairs(smem) do
-			y = y + 25
-			local status = ""
-			if sampIsPlayerPaused(v.id) then 
-				status = " {008000}[AFK] " .. (v.afk ~= nil and "[" .. v.afk .. u8:decode" секунд]" or "")
-				else
-				v.afk = nil
+	if srp_ini.bools.squad and var.squadenable then -- улучшенный сквад на экране
+		local enable = true
+		if srp_ini.bools.disablesquad and (sampIsChatInputActive() or isSampfuncsConsoleActive()) then enable = false else enable = true end
+		if enable then
+			imgui.SetNextWindowPos(vec(srp_ini.render.squadX, srp_ini.render.squadY), imgui.Cond.FirstUseEver)
+			imgui.Begin('squad', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+			imgui.PushFont(fonts.trebuc17)
+			local count = 0
+			for k in pairs(var.squad) do count = count + 1 end
+			imgui.Text("SQUAD - " .. count .. ":")
+			local newPos = imgui.GetWindowPos()
+			local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+			if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.squadX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.squadY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+				srp_ini.render.squadX = math.ceil(savePosX)
+				srp_ini.render.squadY = math.ceil(savePosY)
+				inicfg.save(srp_ini, settings)
 			end
-			renderFontDrawText(imfonts.ovFontSquadRender, v.name .. " [" .. v.id .. "]" .. status, x, y, (sampGetCharHandleBySampPlayerId(v.id) or v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) and v.color or v.colorns)
-			renderDrawLine(x + 2, y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 144 or 90), y + 22, 5.0, 0xFF808080)
-			renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + 90, y + 22, 5.0, 0xFF808080)
-			if v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)) then
-				local myHP = getCharHealth(PLAYER_PED)
-				local myARM = getCharArmour(PLAYER_PED)
-				if myHP ~= 0 then renderDrawLine(x + 2, y + 22, x + ((sampGetPlayerHealth(v.id) > 100 and 144/160 or 90/100) * myHP), y + 22, 5.0, 0xFF800000) end
-				if myARM ~= 0 then renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + ((sampGetPlayerHealth(v.id) > 100 and 144/160 or 90/100) * myARM), y + 22, 5.0, 0xFFC0C0C0) end
-				else
-				local HP
-				local ARM
+			for k, v in ipairs(var.squad) do
+				local color, HP, ARM
 				if sampGetCharHandleBySampPlayerId(v.id) then
-					ARM = sampGetPlayerArmor(v.id)
+					color = "{" .. v.clist .. "}"
 					HP = sampGetPlayerHealth(v.id)
+					ARM = sampGetPlayerArmor(v.id)
 					else
-					ARM = 0
+					local red = tonumber(v.clist:sub(1, 2), 16)
+					local green = tonumber(v.clist:sub(3, 4), 16)
+					local blue = tonumber(v.clist:sub(5, 6), 16)
+					color = "{" .. string.format("%02X%02X%02X%s", red, green, blue, string.format("%02X", 0.75 * 255)) .. "}"
 					HP = 0
+					ARM = 0
+					v.afk = nil
 				end
-				if HP ~= 0 then renderDrawLine(x + 2, y + 22, x + ((sampGetPlayerHealth(v.id) > 100 and 144/160 or 90/100) * HP), y + 22, 5.0, 0xFF800000) end
-				if ARM ~= 0 then renderDrawLine(x + 2 + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) - (sampGetPlayerHealth(v.id) > 100 and 6 or 0), y + 22, x + (sampGetPlayerHealth(v.id) > 100 and 160 or 100) + ((sampGetPlayerHealth(v.id) > 100 and 144/160 or 90/100) * ARM), y + 22, 5.0, 0xFFC0C0C0) end
+				local afk = sampIsPlayerPaused(v.id) and " {008000}[AFK] " .. (v.afk ~= nil and "[" .. v.afk .. " секунд]" or "") or ""
+				imgui.TextColoredRGB(color .. v.name .. "[" .. v.id .. "]" .. afk)
+				imgui.PushStyleColor(imgui.Col.FrameBg, ImVec4(1.0, 1.0, 1.0, 0.35))
+				if v.id == select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)) then
+					local myHP = getCharHealth(PLAYER_PED)
+					local myARM = getCharArmour(PLAYER_PED)
+					imgui.SwitchContext()
+					imgui.PushStyleColor(imgui.Col.PlotHistogram, imgui.ImVec4(0.7, 0, 0, 1))
+					imgui.ProgressBar(myHP / 100, vec(24, 1.25)) 
+					imgui.PopStyleColor()
+					imgui.SameLine() 
+					imgui.SwitchContext()
+					imgui.PushStyleColor(imgui.Col.PlotHistogram, imgui.ImVec4(0.9, 0.9, 0.9, 1))
+					imgui.ProgressBar(myARM / 100, vec(24, 1.25))
+					imgui.PopStyleColor()
+					else
+					imgui.PushStyleColor(imgui.Col.PlotHistogram, imgui.ImVec4(0.7, 0, 0, 1))
+					imgui.ProgressBar(HP / 100, vec(24, 1.25)) 
+					imgui.PopStyleColor()
+					imgui.SameLine() 
+					imgui.SwitchContext() 
+					imgui.PushStyleColor(imgui.Col.PlotHistogram, imgui.ImVec4(0.9, 0.9, 0.9, 1))
+					imgui.ProgressBar(ARM / 100, vec(24, 1.25))
+					imgui.PopStyleColor()
+				end
+				imgui.PopStyleColor()
 			end
+			imgui.PopFont()
+			imgui.End()
 		end
-		imgui.PopFont()
-		imgui.End()
 	end
 	
 	if srp_ini.bools.hpcars then -- показывать ХП машин вокруг
@@ -1480,9 +1647,9 @@ function imgui.OnDrawFrame()
 						local cHP = getCarHealth(v) -- получаем хп машины
 						local cPosX, cPosY = convert3DCoordsToScreen(cX, cY, cZ) -- переводим 3Д координаты мира в координаты на экране
 						local col = cHP > 800 and 0xFF00FF00 or cHP > 500 and 0xFFFFFF00 or 0xFFFFFAFA -- получаем цвет текста в зависимости от ХП машины
-						local col = motos[idcar] ~= nil and isCarTireBurst(v, 1) and 0xFFFF0000 or col -- если колесо МОТОЦИКЛА пробито то цвет ХП всегда красный
+						local col = var.motos[idcar] ~= nil and isCarTireBurst(v, 1) and 0xFFFF0000 or col -- если колесо МОТОЦИКЛА пробито то цвет ХП всегда красный
 						local ctext = cHP
-						renderFontDrawText(imfonts.ovFontCars, ctext, cPosX - (renderGetFontDrawTextLength(imfonts.ovFontCars, ctext, false) / 2), cPosY, col, false) -- рисуем текст
+						renderFontDrawText(fonts.times14, ctext, cPosX - (renderGetFontDrawTextLength(fonts.times14, ctext, false) / 2), cPosY, col, false) -- рисуем текст
 					end
 				end
 			end
@@ -1498,11 +1665,11 @@ function imgui.OnDrawFrame()
 		local fib2 = in2 + 5
 		local success = ffi.C.GetKeyboardLayoutNameA(keybbb.KeyboardLayoutName)
 		local errorCode = ffi.C.GetLocaleInfoA(tonumber(ffi.string(keybbb.KeyboardLayoutName), 16), 0x00000002, keybbb.LocalInfo, 32)
-		local localName = ffi.string(keybbb.LocalInfo)
+		local localName = u8(ffi.string(keybbb.LocalInfo))
 		local capsState = ffi.C.GetKeyState(20)
 		imgui.SetNextWindowPos(imgui.ImVec2(fib2, fib))
-		imgui.Begin('#empty_field8', overlay.chatinfo, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.exFontsquad)
+		imgui.Begin('chatinfo', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.trebuc20)
 		local a = sampGetChatInputText()
 		local b = a:match("%/(%a+) .*")
 		local c = (b == nil or sym[b] == nil) and sym[1] or sym[b]
@@ -1512,18 +1679,17 @@ function imgui.OnDrawFrame()
 		end
 		local d = c - sym.myid - sym.mynick
 		local e = #a > d and "{FF0000}" .. #a .. "" or #a
-		imgui.TextColoredRGB(u8:decode"Раскладка: {ffffff}" .. localName .. "; CAPS: " .. getStrByState(capsState) .. u8:decode", Символы: " .. e .. "/" .. d .. ".")
+		imgui.TextColoredRGB("Раскладка: {ffffff}" .. localName .. "; CAPS: " .. getStrByState(capsState) .. ", Символы: " .. e .. "/" .. d .. ".")
 		imgui.PopFont()
 		imgui.End()
 	end
 	
 	if srp_ini.bools.equest then -- ежедневные задания на экране
-		if not SetMode then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.deilyX, srp_ini.overlay.deilyY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.deilyX, srp_ini.overlay.deilyY))	end	end
-		imgui.Begin('#empty_field9', overlay.equest, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся ежедневные задания") end
-		if srp_ini.questupdating ~= nil then
-			local sec = os.difftime(srp_ini.questupdating, os.time())
+		imgui.SetNextWindowPos(vec(srp_ini.render.equestX, srp_ini.render.equestY), imgui.Cond.FirstUseEver)
+		imgui.Begin('equest', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
+		if srp_ini.quest.updating ~= nil then
+			local sec = os.difftime(srp_ini.quest.updating, os.time())
 			if sec >= 0 then
 				local mins = math.floor(sec / 60)
 				local hours = math.floor(sec / 3600)
@@ -1537,80 +1703,82 @@ function imgui.OnDrawFrame()
 					else
 					timer = mins .. ":" .. secs
 				end
-				imgui.TextColoredRGB("{00FF00}" .. u8:decode"Обновление заданий через: " .. timer .. "")
+				imgui.TextColoredRGB("{00FF00}Обновление заданий через: " .. timer .. "")
 				else
-				imgui.TextColoredRGB("{FF0000}" .. u8:decode"Обновление заданий СЕЙЧАС")
+				imgui.TextColoredRGB("{FF0000}Обновление заданий СЕЙЧАС")
 			end
 		end
 		for k, v in pairs(srp_ini.task) do
 			if not v then
 				local inf = srp_ini.description[k] ~= nil and srp_ini.description[k] or 'Нет информации'
 				local col = srp_ini.description[k] ~= nil and "{FCF803}" or "{FF0000}"
-				imgui.TextColoredRGB(col .. u8:decode(k) .. " - " .. u8:decode(inf))
+				imgui.TextColoredRGB(col .. k .. " - " .. inf)
 			end
 		end
 		imgui.PopFont()
-		soverlay.equest = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.equestX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.equestY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.equestX = math.ceil(savePosX)
+			srp_ini.render.equestY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.inventory then -- cодержимое инвентаря на экране
-		if not SetMode then	imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.inventoryX, srp_ini.overlay.inventoryY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.inventoryX, srp_ini.overlay.inventoryY))	end end
-		imgui.Begin('#empty_field10', overlay.inventory, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находятся предметы инвентаря") end
-		if checkedInventory then
-			for k, v in pairs(srp_ini.inventory) do
-				if v and tonumber(srp_ini.inventory[k]) ~= nil then
-					if u8:decode(k) == u8:decode"Наркотики" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 25 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Материалы" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Телефонная книга" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"MP3" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Ключи от камеры" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Канистра с бензином" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Водительские права" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на вертолеты" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на самолеты" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на лодки" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на рыболовство" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лицензия на оружие" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Сырая рыба" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 50000 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Готовая рыба" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Грибы" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Комплект «автомеханик»" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Психохил" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Готовые грибы" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Сигареты" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Адреналин" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Защита от насильников" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Балаклава" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 3 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Лом" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 4 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Энергетик" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
-					if u8:decode(k) == u8:decode"Набор для взлома" then if tonumber(srp_ini.inventory[k]) ~= nil and tonumber(srp_ini.inventory[k]) >= 1 then col = tonumber(srp_ini.inventory[k]) > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
-					imgui.TextColoredRGB(col .. u8:decode(k) .. (tonumber(srp_ini.inventory[k]) > 1 and ": " .. srp_ini.inventory[k] or (tonumber(srp_ini.inventory[k]) == 1 and "" or u8:decode": Нету!")))
-				end
+		imgui.SetNextWindowPos(vec(srp_ini.render.inventoryX, srp_ini.render.inventoryY), imgui.Cond.FirstUseEver)
+		imgui.Begin('inventory', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
+		imgui.TextColoredRGB("{00FF00}Инвентарь:")
+		for item, status in pairs(srp_ini.inventoryItem) do
+			local amount = tonumber(srp_ini.inventory[item])
+			local name = var.items.NameFromIndex[item]
+			if amount ~= nil and status then
+				if item == "drugs" then if amount ~= nil and amount >= 1 then col = amount > 25 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "mats" then if amount ~= nil and amount >= 1 then col = amount > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "keys" then if amount ~= nil and amount >= 1 then col = amount > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "canister" then if amount ~= nil and amount >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+				if item == "fish" then if amount ~= nil and amount >= 1 then col = amount > 50000 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "cookedfish" then if amount ~= nil and amount >= 1 then col = amount > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "mushroom" then if amount ~= nil and amount >= 1 then col = amount > 50 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "repairkit" then if amount ~= nil and amount >= 1 then col = amount > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "psychoheal" then if amount ~= nil and amount >= 1 then col = amount > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "cookedmushroom" then if amount ~= nil and amount >= 1 then col = amount > 15 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "adrenaline" then if amount ~= nil and amount >= 1 then col = amount > 5 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "cork" then if amount ~= nil and amount >= 1 then col = amount > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "balaclava" then if amount ~= nil and amount >= 1 then col = amount > 3 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "scrap" then if amount ~= nil and amount >= 1 then col = amount > 4 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				if item == "energy" then if amount ~= nil and amount >= 1 then col = "{00FF00}" else col = "{FF0000}" end end
+				if item == "robkit" then if amount ~= nil and amount >= 1 then col = amount > 2 and "{00FF00}" or "{FCF803}" else col = "{FF0000}" end end
+				imgui.TextColoredRGB(col .. name .. ": " .. (amount > 1 and srp_ini.inventory[item] or (amount == 1 and "Есть!" or (amount == 0 and "Нету!" or ""))))
 			end
 		end
 		imgui.PopFont()
-		soverlay.inventory = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.inventoryX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.inventoryY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.inventoryX = math.ceil(savePosX)
+			srp_ini.render.inventoryY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
 	end
 	
 	if srp_ini.bools.kd then -- КД ограбы и автоугона
-		if not SetMode then	imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.robbingX, srp_ini.overlay.robbingY)) else if SetModeFirstShow then imgui.SetNextWindowPos(imgui.ImVec2(srp_ini.overlay.robbingX, srp_ini.overlay.robbingY))	end end
-		imgui.Begin('#empty_field11', overlay.robbing, 1 + 32 + 2 + SetModeCond + 64)
-		imgui.PushFont(imfonts.ovFont1)
-		if SetMode then imgui.TextColoredRGB("{00FF00}" .. u8:decode"Здесь находится КД ограбления домов и автоугона") end
+		imgui.SetNextWindowPos(vec(srp_ini.render.robbingX, srp_ini.render.robbingY), imgui.Cond.FirstUseEver)
+		imgui.Begin('robbing', _, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.AlwaysAutoResize)
+		imgui.PushFont(fonts.times20)
 		if ((os.time() - tonumber(srp_ini.values.cartheft))/60) < 15 then
 			local sec = 15*60 - (os.time() - tonumber(srp_ini.values.cartheft))
 			local mins = math.floor(sec / 60)
 			if math.fmod(sec, 60) >= 10 then secs = math.fmod(sec, 60) end
 			if math.fmod(sec, 60) < 10 then secs = "0" .. math.fmod(sec, 60) .. "" end
-			imgui.TextColoredRGB("{00FF00}" .. u8:decode"Угонять можно через: " .. mins .. ":" .. secs .. "")
+			imgui.TextColoredRGB("{00FF00}Угонять можно через: " .. mins .. ":" .. secs .. "")
 			else
 			local sec = 15*60 - (os.time() - tonumber(srp_ini.values.cartheft))
 			if sec > -30 then
-				imgui.TextColoredRGB("{FF0000}" .. u8:decode"Угонять можно СЕЙЧАС")
+				imgui.TextColoredRGB("{FF0000}Угонять можно СЕЙЧАС")
 			end
 		end
 		if ((os.time() - tonumber(srp_ini.values.robbing))/60) < 35 then
@@ -1618,24 +1786,28 @@ function imgui.OnDrawFrame()
 			local mins = math.floor(sec / 60)
 			if math.fmod(sec, 60) >= 10 then secs = math.fmod(sec, 60) end
 			if math.fmod(sec, 60) < 10 then secs = "0" .. math.fmod(sec, 60) .. "" end
-			imgui.TextColoredRGB("{00FF00}" .. u8:decode"Грабить можно через: " .. mins .. ":" .. secs .. "")
+			imgui.TextColoredRGB("{00FF00}Грабить можно через: " .. mins .. ":" .. secs .. "")
 			else
 			local sec = 35*60 - (os.time() - tonumber(srp_ini.values.robbing))
 			if sec > -30 then
-				imgui.TextColoredRGB("{FF0000}" .. u8:decode"Грабить можно СЕЙЧАС")
+				imgui.TextColoredRGB("{FF0000}Грабить можно СЕЙЧАС")
 			end
 		end
 		imgui.PopFont()
-		soverlay.robbing = imgui.GetWindowPos()
+		local newPos = imgui.GetWindowPos()
+		local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
+		if (math.ceil(savePosX) ~= math.ceil(srp_ini.render.robbingX) or math.ceil(savePosY) ~= math.ceil(srp_ini.render.robbingY)) and imgui.IsRootWindowOrAnyChildFocused() and imgui.IsMouseDragging(0) and imgui.IsRootWindowOrAnyChildHovered() then
+			srp_ini.render.robbingX = math.ceil(savePosX)
+			srp_ini.render.robbingY = math.ceil(savePosY)
+			inicfg.save(srp_ini, settings)
+		end
 		imgui.End()
-		
-		SetModeFirstShow = false
 	end
 end
 -------------------------------------------------------------------------[ФУНКЦИИ]-----------------------------------------------------------------------------------------
 function ev.onServerMessage(col, text)
 	if script.loaded then
-		if col == strings.color.connected and text:match(strings.connected) then if needtoreload then script.reload = true thisScript():reload() end end
+		if col == strings.color.connected and text:match(strings.connected) then if var.need.reload then script.reload = true thisScript():reload() end end
 		if col == strings.color.mechanic then
 			if isCharInAnyCar(PLAYER_PED) then
 				carHandle = storeCarCharIsInNoSave(PLAYER_PED)
@@ -1683,23 +1855,21 @@ function ev.onServerMessage(col, text)
 			end
 		end
 		if col == strings.color.boost then 
-			if text:match(strings.boost) and isBoost then 
-				checkedBoost = true
+			if text:match(strings.boost) and var.is.boost then 
 				return false 
 			end 
 		end
 		if col == strings.color.noboost then 
-			if text:match(strings.noboost) and isBoost then
-				isBoost = false 
-				checkedBoost = true 
+			if text:match(strings.noboost) and var.is.boost then
+				var.is.boost = false 
 				return false 
 			end 
 		end
-		if col == strings.color.narko then
+		if col == strings.color.drugs then
 			if srp_ini.bools.drugs then -- КД нарко
-				if tonumber(text:match(strings.narko)) then
-					isLomka = false
-					srp_ini.inventory.narko = tonumber(text:match(strings.narko))
+				if tonumber(text:match(strings.drugs)) then
+					var.is.withdrawal = false
+					srp_ini.inventory.drugs = tonumber(text:match(strings.drugs))
 					srp_ini.values.drugs = os.time()
 				end
 			end
@@ -1709,65 +1879,64 @@ function ev.onServerMessage(col, text)
 				local paint = tonumber(text:match(strings.painttime))
 				if paint ~= nil then 
 					paint = os.time() + paint * 60
-					srp_ini.iventpaintball = paint
+					srp_ini.ivent.paintball = paint
 				end
 			end
 			if text:match(strings.paintfalse1) then
-				srp_ini.iventpaintball = false
+				srp_ini.ivent.paintball = false
 			end
 			if text:match(strings.paintfalse2) then
-				srp_ini.iventpaintball = false
+				srp_ini.ivent.paintball = false
 			end
 		end
 		if col == strings.color.squid then
 			if text:match(strings.squidtime) then
 				local squid = tonumber(text:match(strings.squidtime))
 				if squid ~= nil then squid = os.time() + squid * 60 end
-				srp_ini.iventsquid = squid
+				srp_ini.ivent.squid = squid
 			end
 			if text:match(strings.squidfalse1) then
-				srp_ini.iventsquid = false
+				srp_ini.ivent.squid = false
 			end
 			if text:match(strings.squidfalse2) then
-				srp_ini.iventsquid = false
+				srp_ini.ivent.squid = false
 			end
 			if text:match(strings.squidfalse3) then
-				srp_ini.iventsquid = false
+				srp_ini.ivent.squid = false
 			end
 		end
 		if col == strings.color.race then
 			if text:match(strings.racetime) then
 				local race = tonumber(text:match(strings.racetime))
 				if race ~= nil then
-					if race == 5 then race = 7 end
 					race = os.time() + race * 60
-					srp_ini.iventrace = race
+					srp_ini.ivent.race = race
 				end
 			end
 			if text:match(strings.racefalse1) then
-				srp_ini.iventrace = false
+				srp_ini.ivent.race = false
 			end
 			if text:match(strings.racefalse2) then
-				srp_ini.iventrace = false
+				srp_ini.ivent.race = false
 			end
 			if text:match(strings.racefalse3) then
-				srp_ini.iventrace = false
+				srp_ini.ivent.race = false
 			end
 		end
 		if col == strings.color.derby then
 			if text:match(strings.derbytime) then
 				local derby = tonumber(text:match(strings.derbytime))
 				if derby ~= nil then derby = os.time() + derby * 60 end
-				srp_ini.iventderby = derby
+				srp_ini.ivent.derby = derby
 			end
 			if text:match(strings.derbyfalse1) then
-				srp_ini.iventderby = false
+				srp_ini.ivent.derby = false
 			end
 			if text:match(strings.derbyfalse2) then
-				srp_ini.iventderby = false
+				srp_ini.ivent.derby = false
 			end
 			if text:match(strings.derbyfalse3) then
-				srp_ini.iventderby = false
+				srp_ini.ivent.derby = false
 			end
 		end
 		if (text:match(strings.repair1) or text:match(strings.repair2) ~= nil or text:match(strings.repair3) ~= nil or text:match(strings.repair4) ~= nil) and CTaskArr[10][1] then CTaskArr[10][1] = false end
@@ -1795,12 +1964,12 @@ function ev.onServerMessage(col, text)
 		if indexof(col, strings.color.normalchat) or col == strings.color.sms then
 			local fpassenger, fid, ftxt = text:match(strings.normalchat)
 			local stxt, spassenger, sid = text:match(strings.sms)
-			if (fpassenger ~= nil and ftxt ~= nil and ftxt ~= "" and fpassenger == taxipassenger) or (spassenger ~= nil and stxt ~= nil and stxt ~= "" and spassenger == taxipassenger) then
+			if (fpassenger ~= nil and ftxt ~= nil and ftxt ~= "" and fpassenger == var.taxipassenger) or (spassenger ~= nil and stxt ~= nil and stxt ~= "" and spassenger == var.taxipassenger) then
 				if isCharInAnyCar(PLAYER_PED) then
 					fcarHandle = storeCarCharIsInNoSave(PLAYER_PED)
 					if getDriverOfCar(fcarHandle) == PLAYER_PED then
 						if isCarTaxi(fcarHandle) then
-							taxipassenger = nil
+							var.taxipassenger = nil
 							CTaskTaxiClear()
 							table.insert(CTaskArr[1], 5)
 							table.insert(CTaskArr[2], os.time())
@@ -1810,14 +1979,13 @@ function ev.onServerMessage(col, text)
 				end
 			end
 		end
-		--if col == strings.color.disconnect and text:match(strings.disconnect) then findsquad() end
 		if col == strings.color.taxi then
 			if isCharInAnyCar(PLAYER_PED) then
 				fcarHandle = storeCarCharIsInNoSave(PLAYER_PED)
 				if getDriverOfCar(fcarHandle) == PLAYER_PED then
 					local passenger = text:match(strings.newpassenger)
 					if sampGetPlayerIdByNickname(passenger) then
-						taxipassenger = passenger
+						var.taxipassenger = passenger
 						local passengerId = sampGetPlayerIdByNickname(passenger)
 						if sampGetCharHandleBySampPlayerId(tonumber(passengerId)) then
 							local res, passengerHandle = sampGetCharHandleBySampPlayerId(tonumber(passengerId))
@@ -1886,124 +2054,144 @@ function ev.onServerMessage(col, text)
 				end)
 			end
 		end
-		if col == strings.color.rent and text:match(strings.rent) and rent ~= nil then
-			script.sendMessage('Вы арендовали транспортное средство за ' .. rent .. ' вирт')
+		if col == strings.color.rent and text:match(strings.rent) and var.rent ~= nil then
+			script.sendMessage('Вы арендовали транспортное средство за ' .. var.rent .. ' вирт')
 			chatManager.addMessageToQueue('/en')
 			return false
 		end
 		if col == strings.color.minusbalaklava and text:match(strings.minusbalaklava) then 
-			if tonumber(srp_ini.inventory.balaclava) ~= nil and tonumber(srp_ini.inventory.balaclava) > 0 then 
-				srp_ini.inventory.balaclava = tonumber(srp_ini.inventory.balaclava) - 1                                                                
+			local balaclava = tonumber(srp_ini.inventory.balaclava)
+			if balaclava ~= nil and balaclava > 0 then 
+				srp_ini.inventory.balaclava = balaclava - 1                                                                
 			end 
 		end
-		if col == strings.color.minuslom and text:match(strings.minuslom) then 
-			if tonumber(srp_ini.inventory.scrap) ~= nil and tonumber(srp_ini.inventory.scrap) > 0 then 
-				srp_ini.inventory.scrap = tonumber(srp_ini.inventory.scrap) - 1                                                                
+		if col == strings.color.minusscrap and text:match(strings.minusscrap) then
+			local scrap = tonumber(srp_ini.inventory.scrap)
+			if scrap ~= nil and scrap > 0 then 
+				srp_ini.inventory.scrap = scrap - 1                                                                
 			end 
 		end
-		if col == strings.color.kanistra and text:match(strings.kanistra) then 
-			if tonumber(srp_ini.inventory.canister) == 0 then 
-				srp_ini.inventory.canister   = 1                                                                                                          		
-			end 
+		if col == strings.color.canister and text:match(strings.canister) then 
+			srp_ini.inventory.canister = 1                                                                                                          		
 		end
 		if col == strings.color.fillcar and text:match(strings.fillcar) then 
-			if tonumber(srp_ini.inventory.canister) == 1 then 
-				srp_ini.inventory.canister = 0                                                                                                          		
-			end 
+			srp_ini.inventory.canister = 0                                                                                                          		
 		end
-		if col == strings.color.inbagazhnik and text:match(strings.inbagazhnik) then 
-			local n, k = text:match(strings.inbagazhnik) 
-			if n ~= nil and tonumber(k) ~= nil then 
-				if tonumber(srp_ini.inventory[u8(n)]) ~= nil then 
-					srp_ini.inventory[u8(n)] = tonumber(k) 												                                                      
+		if col == strings.color.intrunk and text:match(strings.intrunk) then 
+			local item, amount = text:match(strings.intrunk)
+			item = var.items.IndexFromName[u8(item)]
+			amount = tonumber(amount)
+			if item ~= nil and amount ~= nil then 
+				if srp_ini.inventory[item] ~= nil then 
+					srp_ini.inventory[item] = amount											                                                      
 				end
 			end
 		end
-		if col == strings.color.outbagazhnik and text:match(strings.outbagazhnik) then 
-			local n, k = text:match(strings.outbagazhnik) 
-			if n ~= nil and tonumber(k) ~= nil then 
-				if tonumber(srp_ini.inventory[u8(n)]) ~= nil then
-					srp_ini.inventory[u8(n)] = tonumber(srp_ini.inventory[u8(n)]) + tonumber(k)                                                    
-				end 
+		if col == strings.color.outtrunk and text:match(strings.outtrunk) then 
+			local item, amount = text:match(strings.outtrunk) 
+			item = var.items.IndexFromName[u8(item)]
+			amount = tonumber(amount)
+			if item ~= nil and amount ~= nil then 
+				srp_ini.inventory[item] = srp_ini.inventory[item] + amount                                                  
 			end 
 		end
 		if col == strings.color.shop24 and text:match(strings.shop24) then 
-			local n, k = text:match(strings.shop24) 
-			if n ~= nil and tonumber(k) ~= nil then 
-				if tonumber(srp_ini.inventory[u8(n)]) ~= nil then 
-					srp_ini.inventory[u8(n)] = tonumber(k)                                                                                             
-				end 
+			local item, amount = text:match(strings.shop24) 
+			item = var.items.IndexFromName[u8(item)]
+			amount = tonumber(amount)
+			if item ~= nil and amount ~= nil then 
+				srp_ini.inventory[item] = amount                                                                                             
 			end
 		end
 		if col == strings.color.grib and text:match(strings.grib) then 
-			local k = text:match(strings.grib)
-			if tonumber(k) ~= nil then 
-				srp_ini.inventory.mushrooms = tonumber(k)                                                                                                     
+			local amount = tonumber(text:match(strings.grib))
+			if amount ~= nil then 
+				srp_ini.inventory.mushroom = amount                                                                                                     
 			end 
 		end
 		if col == strings.color.fish and text:match(strings.fish) then
-			local k = text:match(strings.fish)
-			if tonumber(k)  ~= nil then 
-				srp_ini.inventory.cookedfish = tonumber(k)                                                 										               
+			var.satiety = nil
+			local amount = tonumber(text:match(strings.fish))
+			if amount ~= nil then 
+				srp_ini.inventory.cookedfish = amount                                                 										               
 			end 
 		end
 		if col == strings.color.fish and text:match(strings.cookfish) then 
-			local k = text:match(strings.cookfish) 
-			if tonumber(k) ~= nil then 
-				srp_ini.inventory.cookedfish = tonumber(k)  
-				srp_ini.inventory['Cырая рыба'] = tonumber(srp_ini.inventory.fish) - 20000    
+			local amount = tonumber(text:match(strings.cookfish))
+			if amount ~= nil then 
+				srp_ini.inventory.cookedfish = amount
+				srp_ini.inventory.fish = srp_ini.inventory.fish - 20000    
 			end 
 		end
 		if col == strings.color.cookgrib and text:match(strings.cookgrib) then 
 			local sg, p, gg = text:match(strings.cookgrib) 
-			if tonumber(sg) ~= nil and tonumber(p) ~= nil and tonumber(gg) ~= nil then 
-				srp_ini.inventory.mushrooms = tonumber(sg) srp_ini.inventory.psychoheal = tonumber(p) 
-				srp_ini.inventory.cookedmushroom = tonumber(gg) 
+			sg = tonumber(sg) 
+			p = tonumber(p) 
+			gg = tonumber(gg)
+			if sg ~= nil and p ~= nil and gg ~= nil then 
+				srp_ini.inventory.mushroom = sg 
+				srp_ini.inventory.psychoheal = p
+				srp_ini.inventory.cookedmushroom = gg
 			end
 		end
 		if col == strings.color.trash and text:match(strings.trash) then 
-			local n, k = text:match(strings.trash) 
-			if n ~= nil and k ~= nil then 
-				if n == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then 
-					if tonumber(srp_ini.inventory[u8(k)]) ~= nil then 
-						srp_ini.inventory[u8(k)] = 0                                                         		    		
-					end 
+			local nick, item = text:match(strings.trash)
+			item = u8(item)
+			item = var.items.IndexFromName[item]
+			if nick ~= nil and item ~= nil then 
+				if nick == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then 
+					srp_ini.inventory[item] = 0                                                         		    		
 				end
 			end 
 		end
-		if col == strings.color.adr and text:match(strings.adr) then 
-			if tonumber(srp_ini.inventory.adrenaline) ~= nil and tonumber(srp_ini.inventory.adrenaline) > 0 then 
-				srp_ini.inventory.adrenaline = tonumber(srp_ini.inventory.adrenaline) - 1                                                               
+		if col == strings.color.adr and text:match(strings.adr) then
+			local adr = tonumber(srp_ini.inventory.adrenaline)
+			if adr ~= nil and adr > 0 then 
+				srp_ini.inventory.adrenaline = adr - 1                                                               
 			end 
 		end
 		if col == strings.color.gribeat and text:match(strings.gribeat) then 
-			local k = text:match(strings.gribeat) 
-			if tonumber(k) ~= nil then 
-				srp_ini.inventory.cookedmushroom = tonumber(k)                                                 										               
+			local satiety, amount = text:match(strings.gribeat)
+			satiety = tonumber(satiety)
+			amount = tonumber(amount)
+			if satiety ~= nil and amount ~= nil then
+				var.satiety = satiety
+				srp_ini.inventory.cookedmushroom = amount                                                 										               
 			end
 		end
-		if col == strings.color.psiho and text:match(strings.psiho) then 
-			local k = text:match(strings.psiho) 
-			if tonumber(k) ~= nil then 
-				srp_ini.inventory.psychoheal = tonumber(k)                                                                                                     
+		if col == strings.color.psycho and (text:match(strings.psycho) or text:match(strings.psychohungry)) then 
+			local satiety, amount = text:match(strings.psycho)
+			if amount == nil then amount = text:match(strings.psychohungry) end
+			satiety = tonumber(satiety)
+			amount = tonumber(amount)
+			if satiety ~= nil then 
+				var.satiety = satiety
+				else
+				var.satiety = 0
+			end
+			if srp_ini.bools.knockpsycho and not isCharInAnyCar(PLAYER_PED) then
+				lua_thread.create(function() wait(1) sampSendChat(" ") end)
+			end
+			if amount ~= nil then 
+				srp_ini.inventory.psychoheal = amount                                                                                                  
 			end 
 		end
 		if col == strings.color.roul and text:match(strings.roul) then 
-			local n, k = text:match(strings.roul) 
-			if n ~= nil and tonumber(k) ~= nil then 
-				if tonumber(srp_ini.inventory[u8(n)]) ~= nil then 
-					srp_ini.inventory[u8(n)]           		 = tonumber(k) 												                                                        
-				end 
+			local item, amount = text:match(strings.roul) 
+			item = u8(item)
+			amount = tonumber(amount)
+			if item ~= nil and amount ~= nil then 
+				srp_ini.inventory[item] = amount											                                                        
 			end 
 		end
 		if col == strings.color.repair1	and text:match(strings.repair1) then 
-			local k = text:match(strings.repair1) 
-			if tonumber(k) ~= nil then 
-				srp_ini.inventory.repairkit = tonumber(k)              																						
+			local amount = tonumber(text:match(strings.repair1))
+			if amount ~= nil then 
+				srp_ini.inventory.repairkit = amount             																						
 			end 
 		end
-		if col == strings.color.repair2	and text:match(strings.repair2) 
-			then srp_ini.inventory.repairkit = 0                                                                                                               
+		if col == strings.color.repair2	and text:match(strings.repair2) then 
+			srp_ini.inventory.repairkit = 0                                                                                                               
 		end                                                    							
 		if col == strings.color.reward then
 			if text:match(strings.reward) then
@@ -2013,11 +2201,13 @@ function ev.onServerMessage(col, text)
 					["Набор для взлома"] = "взлом", ["Защита от насильников"] = "насильник",
 					["Готовые грибы"] = "готов", ["Балаклава"] = "балаклав"
 				}
-				local list = string.split(text:match(strings.reward), u8:decode"/")
+				local list = string.split(text:match(strings.reward), "/")
 				for _, l in ipairs(list) do
 					for k, v in pairs(rewards) do
+						local item = var.items.IndexFromName[k]
 						local amount, r = l:match("(%d+) (.*)")
-						if tonumber(amount) ~= nil and r:match(u8:decode(v)) then srp_ini.inventory[k] = tonumber(srp_ini.inventory[k]) + tonumber(amount) end
+						amount = tonumber(amount)
+						if amount ~= nil and r:match(u8:decode(v)) then srp_ini.inventory[item] = srp_ini.inventory[item] + amount end
 					end
 				end
 			end
@@ -2029,23 +2219,23 @@ function ev.onServerMessage(col, text)
 				return false 
 			end
 			if col == strings.color.breaken and text:match(strings.breaken) then 
-				isRobbing = false script.sendMessage("Дверь вскрыта ломом, пытаюсь зайти в дом") 
-				if tonumber(srp_ini.inventory.scrap) ~= nil then 
-					srp_ini.inventory.scrap = tonumber(srp_ini.inventory.scrap) - 1 
-				end 
+				var.is.robbing = false script.sendMessage("Дверь вскрыта ломом, пытаюсь зайти в дом") 
+				srp_ini.inventory.scrap = srp_ini.inventory.scrap - 1 
 				enterhouse() 
 				return false 
 			end
 			if col == strings.color.open and text:match(strings.open) then 
-				isRobbing = false 
+				var.is.robbing = false 
 				script.sendMessage("Дверь открыта без лома, пытаюсь зайти в дом") 
 				enterhouse() 
 				return false 
 			end
 			if col == strings.color.put and text:match(strings.put) then 
-				local loaded, maxloaded = text:match(strings.put) 
-				if tonumber(loaded) ~= nil and tonumber(maxloaded) ~= nil then 
-					if tonumber(loaded) < tonumber(maxloaded) then 
+				local loaded, maxloaded = text:match(strings.put)
+				loaded = tonumber(loaded)
+				maxloaded = tonumber(maxloaded)
+				if loaded ~= nil and maxloaded ~= nil then 
+					if loaded < maxloaded then 
 						script.sendMessage("Положил награбленное в фургон: " .. loaded .. "/" .. maxloaded .. ", пытаюсь зайти в дом") 
 						enterhouse() 
 						return false 
@@ -2053,32 +2243,30 @@ function ev.onServerMessage(col, text)
 				end 
 			end
 			if col == strings.color.rob and text:match(strings.rob) then 
-				isRobbing = true 
-				if tonumber(srp_ini.inventory.balaclava) ~= nil then 
-					if tonumber(srp_ini.inventory.balaclava) == 0 then 
-						script.sendMessage("У вас нету балаклав, срочно едьте покупайте в ближайшем 24/7") 
-					end 
-				end
+				var.is.robbing = true 
+				if srp_ini.inventory.balaclava == 0 then 
+					script.sendMessage("У вас нету балаклав, срочно едьте покупайте в ближайшем 24/7") 
+				end 
 			end
 		end
 		if col == strings.color.donerob and text:match(strings.donerob) then 
-			isRobbing = false 
+			var.is.robbing = false 
 			srp_ini.values.robbing = os.time() 
 		end
 		if col == strings.color.donetheft and text:match(strings.donetheft) then 
 			srp_ini.values.cartheft = os.time() 						
 		end
-		if srp_ini.bools.lomka then
+		if srp_ini.bools.withdrawal then
 			if col == strings.color.stay and text:match(strings.stay) then 
-				if isLomka then 
+				if var.is.withdrawal then 
 					usedrugs() 
 				end 
 			end
-			if col == strings.color.wasAFK and text:match(strings.wasAFK) and isLomka then 
+			if col == strings.color.wasAFK and text:match(strings.wasAFK) and var.is.withdrawal then 
 				usedrugs()
 			end
-			if col == strings.color.lomka and text:match(strings.lomka) then
-				isLomka = true 
+			if col == strings.color.withdrawal and text:match(strings.withdrawal) then
+				var.is.withdrawal = true 
 				usedrugs() 
 			end
 		end
@@ -2088,7 +2276,7 @@ function ev.onServerMessage(col, text)
 				chatManager.addMessageToQueue('/t ' .. smsid .. ' СМС попало в спам, попробуй ещё раз написать через 30 сек')
 			end
 		end
-		if col == strings.color.noequest and text:match(strings.noequest) then noequest = true end
+		if col == strings.color.noequest and text:match(strings.noequest) then var.is.equest = false end
 		local slet = text:match(strings.slet)
 		if slet ~= nil then
 			srp_ini.values.house = slet:match("(%d%d%d%d%/%d%d%/%d%d %d%d%:%d%d)")
@@ -2098,15 +2286,52 @@ function ev.onServerMessage(col, text)
 			local who, whom = text:match(strings.accepttaxi)
 			if who ~= nil and whom ~= nil then
 				if who == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then
-					currentClient = whom
+					var.current.client = whom
 				end
 			end
 		end
-		if col == strings.color.full24 then
-			-- if text:match(strings.full24sec) then
-			-- end
-			if text:match(strings.full24) then
-				if not gekauft then gekauft = true return end
+		if col == strings.color.full24 and text:match(strings.full24) then
+			if not var.is.purchased then var.is.purchased = true return end
+		end
+		if indexof(col, strings.color.changenick) then
+			local newnick = text:match(strings.changenick)
+			if newnick ~= nil then
+				lua_thread.create(function()
+					script.sendMessage("Обнаружена смена игрового ника!")
+					script.sendMessage("Скрипт переименовывает папку конфигурций согласно новому нику...")
+					local i = 0
+					while true do
+						if i == 20 then break end
+						local text = sampGetChatString(99 - i)
+						
+						local oldnick = text:match(strings.changenickmsg .. newnick)
+						if oldnick ~= nil then
+							local folderPath = thisScript().directory .. "\\config\\SRPfunctions by Webb\\" .. server
+							for folder in lfs.dir(folderPath) do
+								local fullPath = folderPath .. "\\" .. folder
+								local isDirectory = lfs.attributes(fullPath, "mode") == "directory"
+								
+								if isDirectory and folder ~= "." and folder ~= ".." then
+									if folder == oldnick then
+										local newFolderPath = folderPath .. "\\" .. newnick
+										os.rename(fullPath, newFolderPath)
+										os.remove(fullPath)
+										elseif folder == newnick then
+										local newFolderPath = folderPath .. "\\" .. oldnick
+										os.rename(fullPath, newFolderPath)
+										os.remove(fullPath)
+									end
+								end
+							end
+							script.sendMessage("Папка успешно переименована.")
+							script.reload = true 
+							thisScript():reload()
+							return 
+						end
+						i = i + 1
+					end
+				end)
+				return false
 			end
 		end
 		inicfg.save(srp_ini, settings)
@@ -2116,100 +2341,106 @@ end
 function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 	if script.loaded then
 		if srp_ini.bools.drugs then
-			if dialogid == strings.dialog.narko.id and style == strings.dialog.narko.style and title == strings.dialog.narko.title then
+			if dialogid == dialogs.drugs.id and style == dialogs.drugs.style and title == dialogs.drugs.title then
 				for v in text:gmatch("[^\n]+") do
-					if v:match(strings.dialog.narko.str) then
-						local faktor = tonumber(v:match(strings.dialog.narko.str))
-						drugtimer = math.ceil(drugtimer * faktor)
+					if v:match(dialogs.drugs.str) then
+						local faktor = tonumber(v:match(dialogs.drugs.str))
+						var.drugtimer = math.ceil(var.drugtimer * faktor)
 					end
 				end
-				if isBoost then 
+				if var.is.boost then 
 					sampCloseCurrentDialogWithButton(0) 
-					isBoost = false
-					checkedBoost = true
+					var.is.boost = false
 					return false 
 				end
 			end
 		end
 		if srp_ini.bools.equest then
-			if dialogid == strings.dialog.quest.id and style == strings.dialog.quest.style and title:match(strings.dialog.quest.title) then
-				local date = title:match(strings.dialog.quest.title)
+			if dialogid == dialogs.quest.id and style == dialogs.quest.style and title:match(dialogs.quest.title) then
+				local date = title:match(dialogs.quest.title)
 				local datetime = {}
 				datetime.year, datetime.month, datetime.day, datetime.hour, datetime.min = string.match(date,"(%d%d%d%d)%/(%d%d)%/(%d%d) (%d%d)%:(%d%d)")
-				datetime.hour = tostring(tonumber(datetime.hour) + tonumber(srp_ini.values["Разница часовых поясов"]))
-				srp_ini.questupdating = os.time(datetime)
-				srp_ini.task = {}
-				local list = string.split(text, "\n")
-				for k, v in ipairs(list) do
-					local n, s = v:match(strings.dialog.quest.str)
-					if n ~= nil and n ~= "" then
-						local name = u8(n):gsub("%.", "!")
-						srp_ini.task[name] = s == u8:decode"[Выполнено]" and true or false
+				if datetime.year ~= nil and datetime.month ~= nil and datetime.day ~= nil and datetime.hour ~= nil and datetime.min ~= nil then
+					datetime.hour = tostring(tonumber(datetime.hour) + tonumber(srp_ini.values.timezonedifference))
+					srp_ini.quest.updating = os.time(datetime)
+					srp_ini.task = {}
+					local list = string.split(text, "\n")
+					for k, v in ipairs(list) do
+						local n, s = v:match(dialogs.quest.str)
+						if n ~= nil and n ~= "" then
+							local name = u8(n):gsub("%.", "!")
+							srp_ini.task[name] = s == u8:decode"[Выполнено]" and true or false
+						end
+					end
+					if var.is.equest then 
+						sampCloseCurrentDialogWithButton(0) 
+						var.is.equest = false 
+						return false 
 					end
 				end
-				if isQuest then 
-					sampCloseCurrentDialogWithButton(0) 
-					isQuest = false 
-					checkedQuest = true
-					return false 
-				end
 			end
-			if dialogid == strings.dialog.description.id and style == strings.dialog.description.style and title == strings.dialog.description.title then
+			if dialogid == dialogs.description.id and style == dialogs.description.style and title == dialogs.description.title then
 				local name, description
 				local list = string.split(text, "\n")
 				for k, v in ipairs(list) do
-					if v:match(strings.dialog.description.str1) then
-						name = list[k + 1]:match(strings.dialog.description.str3)
+					if v:match(dialogs.description.str1) then
+						name = list[k + 1]:match(dialogs.description.str3)
 						name = name:gsub("%.", "!")
 					end
-					if v:match(strings.dialog.description.str2) then
-						description = list[k + 1]:match(strings.dialog.description.str3)
+					if v:match(dialogs.description.str2) then
+						description = list[k + 1]:match(dialogs.description.str3)
 					end
 				end
 				if name ~= nil and description ~= nil then srp_ini.description[u8(name)] = u8(description) end
 			end
 		end
-		if dialogid == strings.dialog.inventory.id and style == strings.dialog.inventory.style and title == strings.dialog.inventory.title then
-			srp_ini.inventory = {}
-			for k, v in pairs(srp_ini.inventory) do
-				if text:match(u8:decode(k)) then
-					local amount = tonumber(text:match(u8:decode(k) .. "%s(%d+) %/ %d+"))
-					srp_ini.inventory[k] = amount ~= nil and amount or 1
+		if dialogid == dialogs.inventory.id and style == dialogs.inventory.style and title == dialogs.inventory.title then
+			for k, v in pairs(var.items.IndexFromName) do
+				local item = u8:decode(k)
+				if text:match(item) then
+					local amount = tonumber(text:match(item .. "%s(%d+) %/ %d+"))
+					srp_ini.inventory[v] = amount ~= nil and amount or 1
 				end
 			end
-			for k, v in pairs(srp_ini.inventory) do if tonumber(srp_ini.inventory[k]) == nil then srp_ini.inventory[k] = 0 end end
-			if isInventory then 
+			inicfg.save(srp_ini, settings)
+			if var.is.inventory then 
 				sampCloseCurrentDialogWithButton(0) 
-				isInventory = false 
-				checkedInventory = true
+				var.is.inventory = false 
 				return false 
 			end
 		end
-		if dialogid == strings.dialog.login.id and style == strings.dialog.login.style and title:match(strings.dialog.login.title) and text:match(strings.dialog.login.str) then
+		if dialogid == dialogs.login.id and style == dialogs.login.style and title:match(dialogs.login.title) and text:match(dialogs.login.str) then
 			if srp_ini.bools.autologin then
-				lua_thread.create(function()
-					local A_Index = 0
-					while true do
-						if A_Index == 5 then break end
-						local str = sampGetChatString(99 - A_Index)
-						if str:match(strings.connected) then
-							if srp_ini.values.password == nil or srp_ini.values.password == '' then script.sendMessage("Автологина не будет, пароль не задан в меню!") return end
-							sampSendDialogResponse(dialogid, 1, 0, srp_ini.values.password)
-							return false
-						end
-						A_Index = A_Index + 1
+				for i = 0, 20 do
+					local string = sampGetChatString(99 - i)
+					if string:match(strings.connected) then
+						if srp_ini.values.password == nil or srp_ini.values.password == '' then script.sendMessage("Автологина не будет, пароль не задан в меню!") return end
+						sampSendDialogResponse(dialogid, 1, 0, srp_ini.values.password)
+						return false
 					end
-				end)
+				end
+			end
+		end
+		if dialogid == dialogs.errorlogin.id and style == dialogs.errorlogin.style and title:match(dialogs.errorlogin.title) and text:match(dialogs.errorlogin.str) then
+			if srp_ini.bools.autologin then
+				script.sendMessage("Пароль в настройках задан неверно, исправьте ошибку!")
+				srp_ini.bools.autologin = false
+				togglebools.autologin.v = false
+				srp_ini.values.password = ""
+				buffer.password = imgui.ImBuffer(u8(srp_ini.values.password), 256)
+				inicfg.save(srp_ini, settings)
+				sampSendDialogResponse(dialogid, 1, 0, "")
+				return false
 			end
 		end
 		if srp_ini.bools.autorent then
-			if indexof(dialogid, strings.dialog.autorent.id) and strings.dialog.autorent.style == 0 and title:match(strings.dialog.autorent.title) then
+			if indexof(dialogid, dialogs.autorent.id) and dialogs.autorent.style == 0 and title:match(dialogs.autorent.title) then
 				local dialid = dialogid
-				local cost = tonumber(text:match(strings.dialog.autorent.str))
+				local cost = tonumber(text:match(dialogs.autorent.str))
 				local ncost = tonumber(srp_ini.values.autorent)
 				if ncost ~= nil and cost ~= nil then
 					if cost <= ncost then
-						rent = cost
+						var.rent = cost
 						sampSendDialogResponse(dialid, 1, 0, '')
 						return false
 						else
@@ -2218,19 +2449,17 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 				end
 			end
 		end
-		if srp_ini.bools.repairkits then
-			if needtobuy and dialogid == 16 and style == 4 and title == u8:decode"Магазин 24/7" and button1 == u8:decode"Купить" and button2 == u8:decode"Отмена" then
-				local rem = tonumber(text:match(u8:decode"Комплект %«автомеханик%»%s+%[%$(%d+)%]"))
-				if rem ~= nil and not gekauft then
-					if tonumber(srp_ini.values.repairkits) ~= nil then
-						if rem <= tonumber(srp_ini.values.repairkits) then
-							lua_thread.create(function() wait(200) sampSendDialogResponse(16, 1, 8, "") sampCloseCurrentDialogWithButton(0) end) return false
-							else
-							script.sendMessage("Покупки ремкомплектов не будет, цена выше лимита. Измените лимит (если хотите) и перезайдите в магазин")
-						end
+		if srp_ini.bools.repairkit then
+			if var.need.buy and dialogid == dialogs.shop.id and style == dialogs.shop.style and title == dialogs.shop.title and button1 == dialogs.shop.button1 and button2 == dialogs.shop.button2 then
+				local kit = tonumber(text:match(strings.repairkitshop))
+				if kit ~= nil and not var.is.purchased then
+					if kit <= tonumber(srp_ini.values.repairkit) then
+						lua_thread.create(function() wait(200) sampSendDialogResponse(16, 1, 8, "") sampCloseCurrentDialogWithButton(0) end) return false
+						else
+						script.sendMessage("Покупки ремкомплектов не будет, цена выше лимита. Если желаете закупить - измените лимит и перезайдите в 24/7")
 					end
 				end
-				needtobuy = false
+				var.need.buy = false
 			end
 		end
 		inicfg.save(srp_ini, settings)
@@ -2274,16 +2503,16 @@ end
 
 function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
 	if script.loaded then
-		if srp_ini.bools.psychoheal and (message == u8:decode"Употребил психохил" or message == u8:decode"Употребила психохил") then
+		if srp_ini.bools.psycho and (message == u8:decode"Употребил психохил" or message == u8:decode"Употребила психохил") then
 			local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
 			script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(playerId) .. "[" .. playerId .. "] {FFFAFA}- употребил психохил")
 		end
 		if srp_ini.bools.squad then
 			local afk = tonumber(message:match(strings.afksec))
 			if afk ~= nil then
-				for k, v in ipairs(smem) do
+				for k, v in ipairs(var.squad) do
 					if v.id == playerId then
-						smem[k].afk = afk
+						var.squad[k].afk = afk
 					end
 				end
 			end
@@ -2293,15 +2522,15 @@ end
 
 function ev.onSendTakeDamage(playerId)
 	if playerId ~= 65535 then
-		killerid = tonumber(playerId)
+		var.killerid = tonumber(playerId)
 	end
 end
 
 function ev.onSendDeathNotification(reason, id)
-	if tonumber(killerid) ~= nil then
+	if tonumber(var.killerid) ~= nil then
 		table.insert(CTaskArr[1], 2)
 		table.insert(CTaskArr[2], os.time())
-		table.insert(CTaskArr[3], killerid)
+		table.insert(CTaskArr[3], var.killerid)
 	end
 end
 
@@ -2321,73 +2550,61 @@ function ev.onSendPickedUpPickup(id)
 end
 
 function ev.onSetPlayerColor(id, color)
-	if rCache.enable and saveid[id] then
+	if var.squadenable and var.squadIndex[id] then
 		local r, g, b, a = explode_argb(color)
-		smem[saveid[id]].color = join_argb(230.0, r, g, b)
-		smem[saveid[id]].colorns = join_argb(150.0, r, g, b)
+		local clist = string.format("%02x%02x%02x", r, g, b)
+		var.squad[var.squadIndex[id]].clist = clist
 	end
 end
 
 function ev.onShowTextDraw(id, data)
 	if data.text:find("SQUAD") then
-		rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(data.position.x + 1, data.position.y + 25)
-		rCache.enable = true
-		td = id
-		smem = {}
-		saveid = {}
+		var.squadenable = true
+		var.td = id
+		var.squad = {}
+		var.squadIndex = {}
 		local list = data.text:split("~n~")
 		table.remove(list, 1)
 		for k, v in ipairs(list) do
 			local id = sampGetPlayerIdByNickname(v)
 			if id then
-				local color = sampGetPlayerColor(id)
-				local a, r, g, b = explode_argb(color)
-				table.insert(smem, {
+				local clist = ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+				table.insert(var.squad, {
 					id = id,
 					name = v,
 					afk = 0,
-					color = join_argb(230.0, r, g, b),
-					colorns = join_argb(150.0, r, g, b),
+					clist = clist
 				})
-				saveid[id] = #smem
+				var.squadIndex[id] = #var.squad
 			end
 		end
-		--data.position.x = 1488
-		--data.position.y = 1488
 		return {id, data}
 	end
 end
 
-function ev.onTextDrawSetString(id, str)
-	if td == nil then
-		if str:find("SQUAD") then
-			local x, y = sampTextdrawGetPos(id)
-			rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x + 1, y + 25)
-			rCache.enable = true
-			td = id
-			--[[if sampTextdrawIsExists(id) then
-				sampTextdrawSetPos(id, 1488, 1488)
-			end]]
+function ev.onTextDrawSetString(id, text)
+	if var.td == nil then
+		if text:find("SQUAD") then
+			var.squadenable = true
+			var.td = id
 		end
 	end
-	if id == td and str then
-		smem = {}
-		saveid = {}
-		local list = str:split("~n~")
+	if id == var.td and text then
+		var.squad = {}
+		var.squadIndex = {}
+		local list = text:split("~n~")
 		table.remove(list, 1)
 		for k, v in ipairs(list) do
 			local id = sampGetPlayerIdByNickname(v)
 			if id then
-				local color = sampGetPlayerColor(id)
-				local a, r, g, b = explode_argb(color)
-				table.insert(smem, {
+				local clist = ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+				table.insert(var.squad, {
 					id = id,
 					name = v,
 					afk = 0,
-					color = join_argb(230.0, r, g, b),
-					colorns = join_argb(150.0, r, g, b),
+					clist = clist
 				})
-				saveid[id] = #smem
+				var.squadIndex[id] = #var.squad
 			end
 		end
 	end
@@ -2395,14 +2612,14 @@ end
 
 function usedrugs(arg)
 	lua_thread.create(function()
-		if srp_ini.bools.lomka and isLomka and srp_ini.bools.withoutcops then 
+		if srp_ini.bools.withdrawal and var.is.withdrawal and srp_ini.bools.withoutcops then 
 			for _, v in ipairs(getAllChars()) do 
 				if v ~= PLAYER_PED then 
-					if copskins[getCharModel(v)] ~= nil and sampGetPlayerIdByCharHandle(v) then 
+					if var.copskins[getCharModel(v)] and sampGetPlayerIdByCharHandle(v) then 
 						local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
 						local cX, cY, cZ = getCharCoordinates(v) 
-						if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 35 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
-							script.sendMessage("Наркотики не будут употреблены, возле вас стоит коп!")
+						if math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) <= 20 and isLineOfSightClear(myX, myY, myZ, cX, cY, cZ, true, false, false, true, false) then 
+							script.sendMessage("Наркотики не будут употреблены, возле вас стоит полицейский!")
 							return 
 						end
 					end
@@ -2413,11 +2630,15 @@ function usedrugs(arg)
 	end)
 end
 
-function checkdialogs()
-	script.sendMessage("Начинаю собирать информацию из диалогов...")
-	if srp_ini.bools.drugs then isBoost = true checkedBoost = false chatManager.addMessageToQueue("/boostinfo") else checkedBoost = true end -- проверка множителя КД нарко
-	if srp_ini.bools.equest then isQuest = true checkedQuest = false chatManager.addMessageToQueue("/equest") else checkedQuest = true end -- проверка ежедневных квестов
-	isInventory = true checkedInventory = false chatManager.addMessageToQueue("/inventory") -- проверка предметов инвентаря
+function checkdialog(dialog)
+	if dialog == "boostinfo" then
+		var.is.boost = true
+		elseif dialog == "equest" then
+		var.is.equest = true 
+		elseif dialog == "inventory" then
+		var.is.inventory = true 
+	end
+	chatManager.addMessageToQueue("/" .. dialog)
 end
 
 function getcars()
@@ -2434,29 +2655,25 @@ end
 
 function findsquad()
 	for i = 0, 3000 do
-		if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match(u8:decode"SQUAD") then
-			local x, y = sampTextdrawGetPos(i)
-			rCache.pos.x, rCache.pos.y = convertGameScreenCoordsToWindowScreenCoords(x == 1488 and x - 1485 or x + 1, y == 1488 and y - 1291 or y + 25)
-			rCache.enable = true
-			td = i
-			smem = {}
-			saveid = {}
+		if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match("SQUAD") then
+			var.squadenable = true
+			var.td = i
+			var.squad = {}
+			var.squadIndex = {}
 			local list = sampTextdrawGetString(i):split("~n~")
 			table.remove(list, 1)
 			for k, v in ipairs(list) do
-				if v == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then currentNick = v end
+				if v == sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) then var.current.nick = v end
 				local id = sampGetPlayerIdByNickname(v)
 				if id then
-					local color = sampGetPlayerColor(id)
-					local a, r, g, b = explode_argb(color)
-					table.insert(smem, {
+					local clist = ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+					table.insert(var.squad, {
 						id = id,
 						name = v,
 						afk = 0,
-						color = join_argb(230.0, r, g, b),
-						colorns = join_argb(150.0, r, g, b),
+						clist = clist
 					})
-					saveid[id] = #smem
+					var.squadIndex[id] = #var.squad
 				end
 			end
 			break
@@ -2465,10 +2682,10 @@ function findsquad()
 end
 
 function ev.onTextDrawHide(id)
-	if id == td then
-		rCache.enable = false
-		smem = {}
-		saveid = {}
+	if id == var.td then
+		var.squadenable = false
+		var.squad = {}
+		var.squadIndex = {}
 	end
 end
 
@@ -2566,11 +2783,11 @@ function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
 			end
 		end
 		
-		if currentClient ~= nil then
+		if var.current.client ~= nil then
 			local players = getClosestPlayersId()
 			if players ~= nil then
-				if players[currentClient] ~= nil then
-					local clientHandle = players[currentClient]
+				if players[var.current.client] ~= nil then
+					local clientHandle = players[var.current.client]
 					if isCharInAnyCar(PLAYER_PED) then
 						fcarHandle = storeCarCharIsInNoSave(PLAYER_PED)
 						if getDriverOfCar(fcarHandle) == PLAYER_PED then
@@ -2580,11 +2797,11 @@ function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
 								local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2)))
 								if distance <= 20 then
 									CTaskTaxiClear()
-									currentClientRP = currentClient:gsub("_", " ")
+									var.current.clientRP = var.current.client:gsub("_", " ")
 									table.insert(CTaskArr[1], 7)
 									table.insert(CTaskArr[2], os.time())
-									table.insert(CTaskArr[3], currentClientRP)
-									currentClient = nil
+									table.insert(CTaskArr[3], var.current.clientRP)
+									var.current.client = nil
 								end
 							end
 						end
@@ -2597,14 +2814,29 @@ function CTask() -- ### КОНТЕКСТНАЯ КЛАВИША
 	end
 end
 
+function setSquadPos()
+	while true do 
+		wait(0)
+		for i = 0, 3000 do
+			if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match("SQUAD") then
+				if srp_ini.bools.squad then
+					sampTextdrawSetPos(i, 1488, 1488)
+					else
+					sampTextdrawSetPos(i, 1, 172)
+				end
+			end
+		end
+	end
+end
+
 function ct()
 	lua_thread.create(function()
 		local key = CTaskArr["CurrentID"]
 		if key == 0 then script.sendMessage("Событие не найдено") return end
-		if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then
+		if isKeyDown(makeHotKey('context')[1]) then
 			sortCarr()
 			wait(300)
-			if isKeyDown(makeHotKey("Контекстная клавиша")[1]) then goto done end
+			if isKeyDown(makeHotKey('context')[1]) then goto done end
 		end
 		
 		if CTaskArr[1][key] == 1 then chatManager.addMessageToQueue("/repairkit") end
@@ -2628,7 +2860,7 @@ function onfoot()
 	while true do
 		wait(0)
 		if isCharOnFoot(PLAYER_PED) then
-			if needtohold then setGameKeyState(1, (isCharInWater(PLAYER_PED) or isKeyDown(vkeys.VK_RBUTTON)) and -128 or -256) end
+			if var.need.hold then setGameKeyState(1, (isCharInWater(PLAYER_PED) or isKeyDown(vkeys.VK_RBUTTON)) and -128 or -256) end
 		end
 	end
 end
@@ -2660,9 +2892,9 @@ function eject()
 	if isCharInAnyCar(PLAYER_PED) then
 		lua_thread.create(function()
 			local carhandle1 = storeCarCharIsInNoSave(PLAYER_PED)
-			if isKeyDown(makeHotKey("eject")[1]) then
+			if isKeyDown(makeHotKey('eject')[1]) then
 				wait(600)
-				if isKeyDown(makeHotKey("eject")[1]) then
+				if isKeyDown(makeHotKey('eject')[1]) then
 					sampSetChatInputEnabled(true)
 					sampSetChatInputText("/eject ")
 					return
@@ -2710,7 +2942,7 @@ function binder(i)
 						end
 					end
 					if empty ~= 0 then script.sendMessage("В бинде №" .. i .. (empty ~= 0 and " обнаружено пустых строк: " .. empty or " обнаружена пустая строка")) end
-					if kol   == 0 then script.sendMessage("В бинде №" .. i .. " отсутствуют строки") end
+					if kol == 0 then script.sendMessage("В бинде №" .. i .. " отсутствуют строки") end
 					return 
 				end
 			end
@@ -2724,8 +2956,8 @@ function insertvars(str, bind)
 		if bind ~= nil then
 			if tonumber(bind) ~= nil then
 				if binder_ini.list[bind] ~= nil then
-					if argument[bind] ~= nil then
-						str = str:gsub("@params@", u8(tostring(argument[bind])))
+					if var.argument[bind] ~= nil then
+						str = str:gsub("@params@", u8(tostring(var.argument[bind])))
 						else
 						script.sendMessage("Аргумент команды бинда №" .. bind .. ' не задан!')
 					end
@@ -2737,9 +2969,9 @@ function insertvars(str, bind)
 		if bind ~= nil then
 			if tonumber(bind) ~= nil then
 				if binder_ini.list[bind] ~= nil then
-					if argument[bind] ~= nil then
+					if var.argument[bind] ~= nil then
 						local params = {}
-						for s in string.gmatch(argument[bind], "[^ ]+") do
+						for s in string.gmatch(var.argument[bind], "[^ ]+") do
 							table.insert(params, s)
 						end
 						for i = 1, #params do
@@ -2787,7 +3019,7 @@ function enterhouse()
 							local distance = math.ceil(math.sqrt( ((myX-cX)^2) + ((myY-cY)^2) + ((myZ-cZ)^2))) -- расстояние между мной и машиной
 							local cars = {[482] = "Burrito", [498] = "Boxville", [609] = "Boxville"} -- ид фургонов ограбы домов
 							if sampGetDialogCaption():match(u8:decode"Дом занят") then sampCloseCurrentDialogWithButton(0) end
-							if cars[idcar] ~= nil and distance <= 30 and isRobbing then
+							if cars[idcar] ~= nil and distance <= 30 and var.is.robbing then
 								for _, l in pairs(getAllObjects()) do
 									local _, bX, bY, bZ = getObjectCoordinates(l)
 									local myX, myY, myZ = getCharCoordinates(PLAYER_PED)
@@ -2863,64 +3095,13 @@ function CTaskTaxiClear()
 	end
 end
 
-function cmd_setoverlay()
-	if not SetMode then
-		chatManager.addMessageToQueue("/mm")
-		script.sendMessage("Начата настройка местоположения элементов overlay")
-		script.sendMessage("Перетащите элементы в нужное место и пропишите /setov - произойдет сохранение координат")
-		script.sendMessage("Для сброса всех координат зажмите среднюю кнопку мыши")
-		srp_ini.bools.date = true
-		srp_ini.bools.nick = true
-		srp_ini.bools.ping = true
-		srp_ini.bools.drugs = true
-		srp_ini.bools.event = true
-		srp_ini.bools.stream = true
-		srp_ini.bools.status = true
-		srp_ini.bools.squad = true
-		srp_ini.bools.equest = true
-		srp_ini.bools.inventory = true
-		srp_ini.bools.kd = true
-		SetMode, SetModeFirstShow = true, true
-		imgui.ShowCursor, imgui.LockPlayer = true, true
-		
-		else
-		
-		srp_ini.overlay.dateX, srp_ini.overlay.dateY = soverlay.date.x, soverlay.date.y
-		srp_ini.overlay.nickX, srp_ini.overlay.nickY = soverlay.nick.x, soverlay.nick.y
-		srp_ini.overlay.pingX, srp_ini.overlay.pingY = soverlay.ping.x, soverlay.ping.y
-		srp_ini.overlay.narkoX, srp_ini.overlay.narkoY = soverlay.drugs.x, soverlay.drugs.y
-		srp_ini.overlay.eventX, srp_ini.overlay.eventY = soverlay.event.x, soverlay.event.y
-		srp_ini.overlay.streamX, srp_ini.overlay.streamY = soverlay.stream.x, soverlay.stream.y
-		srp_ini.overlay.statusX, srp_ini.overlay.statusY = soverlay.status.x, soverlay.status.y
-		srp_ini.overlay.squadX, srp_ini.overlay.squadY = soverlay.squad.x, soverlay.squad.y
-		srp_ini.overlay.deilyX, srp_ini.overlay.deilyY = soverlay.equest.x, soverlay.equest.y
-		srp_ini.overlay.inventoryX, srp_ini.overlay.inventoryY = soverlay.inventory.x, soverlay.inventory.y
-		srp_ini.overlay.robbingX, srp_ini.overlay.robbingY = soverlay.robbing.x, soverlay.robbing.y
-		
-		script.sendMessage("Местоположения всех элементов успешно задано")
-		srp_ini.bools.date = togglebools.date.v and true or false
-		srp_ini.bools.nick = togglebools.nick.v and true or false
-		srp_ini.bools.ping = togglebools.ping.v and true or false
-		srp_ini.bools.drugs = togglebools.drugs.v and true or false
-		srp_ini.bools.event = togglebools.event.v and true or false
-		srp_ini.bools.stream = togglebools.stream.v and true or false
-		srp_ini.bools.status = togglebools.status.v and true or false
-		srp_ini.bools.squad = togglebools.squad.v and true or false
-		srp_ini.bools.equest = togglebools.equest.v and true or false
-		srp_ini.bools.inventory = togglebools.inventory.v and true or false
-		srp_ini.bools.kd = togglebools.kd.v and true or false
-		inicfg.save(srp_ini, settings)
-		SetMode, SetModeFirstShow, imgui.ShowCursor, imgui.LockPlayer = false, false, false, false
-	end
-end
-
 function cmd_flood(arg)
-	isFlood = not isFlood
-	if not isFlood then script.sendMessage("Флуд сообщением завершён") chatManager.initQueue() return end
+	var.is.flood = not var.is.flood
+	if not var.is.flood then script.sendMessage("Флуд сообщением завершён") chatManager.initQueue() return end
 	if arg ~= nil and arg ~= "" then
 		script.sendMessage("Начинаю флудить сообщением: " .. arg)
 		lua_thread.create(function()
-			while isFlood do
+			while var.is.flood do
 				wait(0)
 				chatManager.addMessageToQueue(u8(arg))
 			end
@@ -2932,8 +3113,8 @@ function medcall(hospital)
 	local fc = u8:decode"Организации"
 	local sc = u8:decode"Меню"
 	lua_thread.create(function()
-		wait(0)
-		chatManager.addMessageToQueue("/dir")
+		wait(100)
+		sampSendChat("/dir")
 		while not sampIsDialogActive() do wait(0) end
 		sampSendDialogResponse(sampGetCurrentDialogId(), 1, 2)
 		while sampGetDialogCaption() ~= fc do wait(0) end
@@ -2945,7 +3126,8 @@ function medcall(hospital)
 		for v in med:gmatch('[^\n]+') do
 			local n, fname, sname, id, numb, afk = v:match("%[(%d+)%] (%a+)_(%a+)%[(%d+)%]	(%d+)(.*)")
 			if n ~= nil then
-				chatManager.addMessageToQueue("/t " .. id .. " Нужен медик в " .. hospital .. "")
+				wait(1300)
+				sampSendChat("/t " .. id .. u8:decode" Нужен медик в " .. hospital .. "")
 			end
 		end
 	end)
@@ -3133,9 +3315,9 @@ function textLabelOverPlayerNickname()
 	for i = 0, 1000 do 
 		if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
 			local nick = sampGetPlayerNickname(i)
-			if script.label[nick] ~= nil then
+			if script.label.fame[nick] ~= nil then
 				if textlabel[i] == nil then
-					textlabel[i] = sampCreate3dText(u8:decode(script.label[nick].text), tonumber(script.label[nick].color), 0.0, 0.0, 0.8, 21.5, false, i, -1)
+					textlabel[i] = sampCreate3dText(u8:decode(script.label.fame[nick].text), tonumber(script.label.fame[nick].color), 0.0, 0.0, 0.8, 21.5, false, i, -1)
 				end
 			end
 			else
@@ -3266,14 +3448,14 @@ function imgui.Hotkey(name, numkey, width)
 					end
 				end
 				
-				local keys = ""
+				local keys = "0"
 				if tonumber(curkeys) == vkeys.VK_BACK then
 					srp_ini.hotkey[numkey] = "0"
 					else
 					local tNames = string.split(curkeys, " ")
 					for _, v in ipairs(tNames) do
 						local val = (tonumber(v) == 162 or tonumber(v) == 163) and 17 or (tonumber(v) == 160 or tonumber(v) == 161) and 16 or (tonumber(v) == 164 or tonumber(v) == 165) and 18 or tonumber(v)
-						keys = keys == "" and val or "" .. keys .. ", " .. val .. ""
+						keys = keys == "0" and val or "" .. keys .. ", " .. val .. ""
 					end
 				end
 				
@@ -3293,7 +3475,7 @@ function imgui.binderHotkey(name, numkey, width)
 		end
 	end
 	hstr = (hstr == "" or hstr == "nil") and "Нет клавиши" or hstr
-	imgui.Button(hstr, imgui.ImVec2(90.0, width))
+	imgui.Button(hstr, imgui.ImVec2(100.0, width))
 	if imgui.IsItemClicked() then
 		lua_thread.create(
 			function()
@@ -3356,31 +3538,65 @@ function imgui.binderHotkey(name, numkey, width)
 	end
 end
 
+function toScreenY(gY)
+	local x, y = convertGameScreenCoordsToWindowScreenCoords(0, gY)
+	return y
+end
+
+function toScreenX(gX)
+	local x, y = convertGameScreenCoordsToWindowScreenCoords(gX, 0)
+	return x
+end
+
+function vec(gX, gY)
+	local x, y = convertGameScreenCoordsToWindowScreenCoords(gX, gY)
+	return imgui.ImVec2(x, y)
+end
+
 function checkUpdates() -- проверка обновлений
 	lua_thread.create(function()
 		local response = request("https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/version.json")
-		local info = decodeJson(response)
-		if info == nil then script.sendMessage("Не удалось получить информацию про обновления") script.unload = true thisScript():unload() return end
-		script.v.num = info.version_num
-		script.v.date = info.version_date
-		script.url = info.version_url
-		script.quest = info.version_quest
-		script.label = info.version_label
-		script.upd.changes = info.version_upd
+		local data = decodeJson(response)
+		if data == nil then script.sendMessage("Не удалось получить информацию про обновления") script.unload = true thisScript():unload() return end
+		script.v.num = data.version
+		script.v.date = data.date
+		script.url = data.url
+		if data.author then script.author = data.author end
+		if data.telegram then script.telegram = data.telegram end
+		script.quest = data.quest
+		script.label.fame = data.fame
+		script.upd.changes = data.changelog
 		if script.quest then
 			for k, v in pairs(script.quest) do
 				srp_ini.description[k] = v
 			end
 			inicfg.save(srp_ini, settings)
 		end
+		script.label.sort = {}
+		if script.label then
+			for k, v in pairs(script.label.fame) do
+				table.insert(script.label.sort, {nick = k, order = v.order, color = v.color, text = v.text})
+			end
+			table.sort(script.label.sort, function(a, b) return tonumber(a.order) < tonumber(b.order) end)
+		end
+		script.upd.sort = {}
 		if script.upd.changes then
 			for k in pairs(script.upd.changes) do
-				table.insert(script.upd.sort, k)
+				table.insert(script.upd.sort, tonumber(k))
 			end
 			table.sort(script.upd.sort, function(a, b) return a > b end)
 		end
-		if info['version_num'] > thisScript()['version_num'] then
-			script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. info['version_date'] .. ", начинаю обновление...")
+		if data.version > thisScript()['version_num'] then
+			script.sendMessage(updatingprefix .. "Обнаружена новая версия скрипта от " .. data.date .. ", начинаю обновление...")
+			local text = script.upd.changes[tostring(script.upd.sort[1])].text
+			local upd = string.split(text, "\n\n")
+			local add, fix = string.split(upd[1], "\n\t"), string.split(upd[2], "\n\t")
+			for _, change in ipairs(add) do
+				script.sendMessage(updatingprefix .. change)
+			end
+			for _, change in ipairs(fix) do
+				script.sendMessage(updatingprefix .. change)
+			end
 			updateScript()
 			return true
 		end
@@ -3388,24 +3604,23 @@ function checkUpdates() -- проверка обновлений
 	end)
 end
 
-function request(u)
+function request(url) -- запрос по URL
 	while not script.request.free do wait(0) end
 	script.request.free = false
-	local url = u
-	local file_path = os.tmpname()
+	local path = os.tmpname()
 	while true do
 		script.request.complete = false
-		download_id = downloadUrlToFile(url, file_path, download_handler)
+		download_id = downloadUrlToFile(url, path, download_handler)
 		while not script.request.complete do wait(0) end
-		local responsefile = io.open(file_path, "r")
-		if responsefile ~= nil then
-			local responsetext = responsefile:read("*a")
-			io.close(responsefile)
-			os.remove(file_path)
+		local file = io.open(path, "r")
+		if file ~= nil then
+			local text = file:read("*a")
+			io.close(file)
+			os.remove(path)
 			script.request.free = true
-			return responsetext
+			return text
 		end
-		os.remove(file_path)
+		os.remove(path)
 	end
 	return ""
 end
@@ -3443,10 +3658,15 @@ function onScriptTerminate(s, bool)
 				textlabel[i] = nil
 			end
 		end
+		for i = 0, 3000 do
+			if sampTextdrawIsExists(i) and sampTextdrawGetString(i):match("SQUAD") then
+				sampTextdrawSetPos(i, 1, 172)
+			end
+		end
 		if not script.reload then
 			if not script.update then
 				if not script.unload then
-					script.sendMessage("Скрипт крашнулся: отправьте moonloader.log разработчику tg: " .. script.telegram.nick)
+					script.sendMessage(errorprefix .. "Скрипт крашнулся: отправьте файл moonloader\\moonloader.log разработчику в tg: " .. script.telegram.nick)
 					else
 					script.sendMessage("Скрипт был выгружен")
 				end
