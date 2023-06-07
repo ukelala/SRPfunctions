@@ -2,6 +2,11 @@
     "version": 27,
     "date": "12.04.2023",
     "url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
+	"author": "Cody_Webb",
+	"telegram": {
+		"nick": "@ibm287",
+		"url": "https://t.me/ibm287"
+	},
     "quest": {
         "Нежность и спокойствие": "Поцелуйте трех человек",
         "Экстрим на крыше": "Поучаствуйте в дерби",
