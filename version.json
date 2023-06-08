@@ -1,7 +1,7 @@
 {
     "version": 28,
     "date": "07.06.2023",
-    "git": "github.com/WebbLua/SRPfunctions",
+    "source": "github.com/WebbLua/SRPfunctions",
     "url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
 	"author": "Cody_Webb",
 	"telegram": {
