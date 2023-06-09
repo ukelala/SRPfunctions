@@ -692,7 +692,6 @@ function main()
 	
 	script.sendMessage("Скрипт запущен. Открыть меню - " .. main_color_hex .. "/srp")
 	imgui.Process = true
-	imgui.ShowCursor = false
 	
 	chatManager.initQueue()
 	lua_thread.create(chatManager.checkMessagesQueueThread)
@@ -706,20 +705,22 @@ function main()
 	findsquad()
 	
 	script.sendMessage("Начинаю сбор информации из диалогов...")
-	checkdialog("boostinfo")
+	checkDialog("boostinfo")
 	while var.is.boost do wait(0) end
 	if srp_ini.bools.equest then
-		checkdialog("equest")
+		checkDialog("equest")
 		while var.is.equest do wait(0) end
 	end
 	if srp_ini.bools.inventory then
-		checkdialog("inventory")
+		checkDialog("inventory")
 		while var.is.inventory do wait(0) end
 	end
 	script.sendMessage("Информация успешно получена, приятной игры")
 	
 	while true do
 		wait(0)
+		
+		imgui.ShowCursor = false
 		
 		if time then setTimeOfDay(time, 0) end
 		
@@ -764,10 +765,10 @@ function main()
 			suspendkeys = 0
 		end
 		
-		if not imgui.main.v then 
-			imgui.ShowCursor = false
+		if not imgui.main.v then
+			imgui.closeAllSections()
 			if suspendkeys == 1 then 
-				suspendkeys = 2 
+				suspendkeys = 2
 				sampSetChatDisplayMode(3) 
 			end
 			else
@@ -783,7 +784,6 @@ function main()
 			else 
 			wait(0) 
 			menu.fastbinder.bool.v = false 
-			imgui.ShowCursor = false 
 		end
 		
 		if var.need.hold and not sampIsChatInputActive() and not sampIsDialogActive(-1) and not isSampfuncsConsoleActive() and (wasKeyPressed(vkeys.VK_W) or wasKeyPressed(vkeys.VK_S)) then var.need.hold = false end
@@ -1050,15 +1050,15 @@ function imgui.OnDrawFrame()
 			if imgui.ToggleButton("date", togglebools.date) then srp_ini.bools.date = togglebools.date.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение даты и времени на экране")
 			if imgui.ToggleButton("nick", togglebools.nick) then srp_ini.bools.nick = togglebools.nick.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение никнейма и IDа в цвете клиста")
 			if imgui.ToggleButton("ping", togglebools.ping) then srp_ini.bools.ping = togglebools.ping.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение текущего пинга")
-			if imgui.ToggleButton("drugscooldown", togglebools.drugscooldown) then srp_ini.bools.drugscooldown = togglebools.drugscooldown.v inicfg.save(srp_ini, settings) if srp_ini.bools.drugscooldown then checkdialog("boostinfo") end end imgui.SameLine() imgui.Text("Отображение КД употребления нарко (синхронизировано с /boostinfo)")
+			if imgui.ToggleButton("drugscooldown", togglebools.drugscooldown) then srp_ini.bools.drugscooldown = togglebools.drugscooldown.v inicfg.save(srp_ini, settings) if srp_ini.bools.drugscooldown then checkDialog("boostinfo") end end imgui.SameLine() imgui.Text("Отображение КД употребления нарко (синхронизировано с /boostinfo)")
 			if imgui.ToggleButton("event", togglebools.event) then srp_ini.bools.event = togglebools.event.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение таймеров до начала системных мероприятий")
 			if imgui.ToggleButton("stream", togglebools.stream) then srp_ini.bools.stream = togglebools.stream.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение количества игроков в зоне прорисовки")
 			if imgui.ToggleButton("status", togglebools.status) then srp_ini.bools.status = togglebools.status.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение статуса контекстной клавиши") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Контекстная клавиша - это единичный биндер который отправляет сообщение в чат в той или иной ситуации.") imgui.TextUnformatted("На данный момент имеются следующие ситуации:") imgui.TextUnformatted("1) Возле вас поломанный транспорт - /rkt") imgui.TextUnformatted("2) Вы зашли в больницу а в ней нет врачей? - отправить всем врачам (кто в игре) СМС прийти в вашу больницу") imgui.TextUnformatted("3) Вас заДМили? - отправить репорт на жалкого урода ДМщика") imgui.TextUnformatted("4) Кто-то сел к вам в такси - спросить куда ехать") imgui.TextUnformatted("5) Клиент сказал куда ехать - положительно ответить") imgui.TextUnformatted("6) Клиент вышел из такси - красиво попрощаться") imgui.TextUnformatted("7) Приняли вызов и приехали к клиенту - сказать что бы сел в такси") imgui.TextUnformatted("Обязательно задайте клавишу в меню \"Клавиши и команды\"") imgui.EndTooltip() end
 			if imgui.ToggleButton("squad", togglebools.squad) then srp_ini.bools.squad = togglebools.squad.v inicfg.save(srp_ini, settings) end imgui.SameLine()  imgui.Text("Отображение улучшенного вида сквада") if srp_ini.bools.squad then  imgui.SameLine() if imgui.Checkbox("Скрывать сквад если активна строка чата", togglebools.disablesquad) then srp_ini.bools.disablesquad = togglebools.disablesquad.v inicfg.save(srp_ini, settings) end end
 			if imgui.ToggleButton("hpcars", togglebools.hpcars) then srp_ini.bools.hpcars = togglebools.hpcars.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение ХП на окружающем транспорте")
 			if imgui.ToggleButton("chatinfo", togglebools.chatinfo) then srp_ini.bools.chatinfo = togglebools.chatinfo.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение раскладки, капса, и кол-ва символов под строкой чата")
-			if imgui.ToggleButton("equest", togglebools.equest) then srp_ini.bools.equest = togglebools.equest.v inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkdialog("equest") end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг " .. script.telegram.nick .. " название и описание задания") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(toScreenX(67)) if imgui.Combo("##Combo", buffer.timezonedifference, timezones) then srp_ini.values.timezonedifference = tostring(u8:decode(buffer.timezonedifference.v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkdialog("equest") end end
-			if imgui.ToggleButton("inventory", togglebools.inventory) then srp_ini.bools.inventory = togglebools.inventory.v inicfg.save(srp_ini, settings) if srp_ini.bools.inventory then checkdialog("inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine() imgui.PushFont(fonts.arial16) if imgui.Button("Настроить предметы инвентаря", vec(80.00, 9.54)) then imgui.section('inventory') end imgui.PopFont()
+			if imgui.ToggleButton("equest", togglebools.equest) then srp_ini.bools.equest = togglebools.equest.v inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkDialog("equest") end end imgui.SameLine() imgui.Text("Отображение активных ежедневных заданий. Обязательно установите ваш часовой пояс:") if imgui.IsItemHovered() then imgui.BeginTooltip() imgui.TextUnformatted("Если в рендере описание не указано (задание светится красным), то это означает что в базе данных скрипта отсутствует описание данного задания") imgui.TextUnformatted("Что бы получить описание задания, нужно открыть его в /equest, далее скрипт сохранит описание") imgui.TextUnformatted("Настоятельно рекомендую в такой ситуации отписать разработчику в тг " .. script.telegram.nick .. " название и описание задания") imgui.EndTooltip() end imgui.SameLine() imgui.PushItemWidth(toScreenX(67)) if imgui.Combo("##Combo", buffer.timezonedifference, timezones) then srp_ini.values.timezonedifference = tostring(u8:decode(buffer.timezonedifference.v) - 14) inicfg.save(srp_ini, settings) if srp_ini.bools.equest then checkDialog("equest") end end
+			if imgui.ToggleButton("inventory", togglebools.inventory) then srp_ini.bools.inventory = togglebools.inventory.v inicfg.save(srp_ini, settings) if srp_ini.bools.inventory then checkDialog("inventory") end end imgui.SameLine() imgui.Text("Отображение содержимого инвентаря") imgui.SameLine() imgui.PushFont(fonts.arial16) if imgui.Button("Настроить предметы инвентаря", vec(80.00, 9.54)) then imgui.section('inventory') end imgui.PopFont()
 			if imgui.ToggleButton("kd", togglebools.kd) then srp_ini.bools.kd = togglebools.kd.v inicfg.save(srp_ini, settings) end imgui.SameLine() imgui.Text("Отображение КД до следующего ограбления домов/автоугона")			
 		end
 		
@@ -2366,19 +2366,17 @@ end
 
 function ev.onShowDialog(dialogid, style, title, button1, button2, text)
 	if script.loaded then
-		if srp_ini.bools.drugs then
-			if dialogid == dialogs.drugs.id and style == dialogs.drugs.style and title == dialogs.drugs.title then
-				for v in text:gmatch("[^\n]+") do
-					if v:match(dialogs.drugs.str) then
-						local faktor = tonumber(v:match(dialogs.drugs.str))
-						var.drugtimer = math.ceil(var.drugtimer * faktor)
-					end
+		if dialogid == dialogs.drugs.id and style == dialogs.drugs.style and title == dialogs.drugs.title then
+			for v in text:gmatch("[^\n]+") do
+				if v:match(dialogs.drugs.str) then
+					local faktor = tonumber(v:match(dialogs.drugs.str))
+					var.drugtimer = math.ceil(var.drugtimer * faktor)
 				end
-				if var.is.boost then 
-					sampCloseCurrentDialogWithButton(0) 
-					var.is.boost = false
-					return false 
-				end
+			end
+			if var.is.boost then 
+				sampCloseCurrentDialogWithButton(0) 
+				var.is.boost = false
+				return false 
 			end
 		end
 		if srp_ini.bools.equest then
@@ -2656,7 +2654,7 @@ function usedrugs(arg)
 	end)
 end
 
-function checkdialog(dialog)
+function checkDialog(dialog)
 	if dialog == "boostinfo" then
 		var.is.boost = true
 		elseif dialog == "equest" then
@@ -3563,6 +3561,14 @@ function imgui.binderHotkey(name, numkey, width)
 				inicfg.save(binder_ini, binds)
 			end
 		)
+	end
+end
+
+function imgui.closeAllSections()
+	for name, section in pairs(menu) do
+		if not section.sure then
+			menu[name].bool.v = false
+		end
 	end
 end
 
