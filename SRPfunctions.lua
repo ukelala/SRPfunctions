@@ -691,7 +691,6 @@ function main()
 	while not script.checkedUpdates do wait(0) end
 	
 	script.sendMessage("Скрипт запущен. Открыть меню - " .. main_color_hex .. "/srp")
-	imgui.Process = true
 	
 	chatManager.initQueue()
 	lua_thread.create(chatManager.checkMessagesQueueThread)
@@ -716,6 +715,8 @@ function main()
 		while var.is.inventory do wait(0) end
 	end
 	script.sendMessage("Информация успешно получена, приятной игры")
+	
+	imgui.Process = true
 	
 	while true do
 		wait(0)
