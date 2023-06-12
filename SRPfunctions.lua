@@ -6,8 +6,8 @@ script_author("Webb")
     donatik.lua / Author: vlaek aka bier from Revolution
     taximate.lua / Author: 21se aka pivo
 ]]
-script_version("09.06.2023")
-script_version_number(30)
+script_version("12.06.2023")
+script_version_number(31)
 
 local main_color, main_color_hex, error_color = 0xB30000, "{B30000}", 0xFF0000
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}", "{FF0000}[ERROR] "
