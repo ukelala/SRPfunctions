@@ -62,7 +62,7 @@ try(function()
     u8 = encoding.UTF8
 end, function(e)
     sampAddChatMessage(prefix .. error_prefix .. "An error occurred while loading libraries", error_color)
-    sampAddChatMessage(prefix .. error_prefix .. "For more information, watch the console (~)", error_color)
+    sampAddChatMessage(prefix .. error_prefix .. "For more information, view the console (~)", error_color)
     print(error_prefix .. e)
     thisScript():unload()
 end)
