@@ -9,7 +9,7 @@ script_author("Webb")
 script_version("12.06.2023")
 script_version_number(32)
 
-local main_color, main_color_hex, error_color = 0xB30000, "{B30000}", 0xFF0000
+local main_color, main_color_hex = 0xB30000, "{B30000}"
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}", "{FF0000}[ERROR] "
 
 local script = {
@@ -61,8 +61,8 @@ try(function()
     encoding.default = 'CP1251'
     u8 = encoding.UTF8
 end, function(e)
-    sampAddChatMessage(prefix .. error_prefix .. "An error occurred while loading libraries", error_color)
-    sampAddChatMessage(prefix .. error_prefix .. "For more information, view the console (~)", error_color)
+    sampAddChatMessage(prefix .. error_prefix .. "An error occurred while loading libraries", 0xFF0000)
+    sampAddChatMessage(prefix .. error_prefix .. "For more information, view the console (~)", 0xFF0000)
     print(error_prefix .. e)
     thisScript():unload()
 end)
