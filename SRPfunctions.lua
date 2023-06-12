@@ -7,7 +7,7 @@ script_author("Webb")
     taximate.lua / Author: 21se aka pivo
 ]]
 script_version("12.06.2023")
-script_version_number(31)
+script_version_number(32)
 
 local main_color, main_color_hex, error_color = 0xB30000, "{B30000}", 0xFF0000
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}", "{FF0000}[ERROR] "
@@ -105,7 +105,7 @@ local config = {
         variables = false,
         spam = false,
         house = false,
-        repairkit = false,
+        rkt = false,
         jfleader = false,
         quitfromcops = false
     },
@@ -157,7 +157,7 @@ local config = {
         robbing = 0,
         cartheft = 0,
         house = 0,
-        repairkit = 2500,
+        rkt = 2500,
         jf = "",
         jfjob = ""
     },
@@ -891,7 +891,7 @@ function main()
         variables = srp_ini.bools.variables and imgui.ImBool(true) or imgui.ImBool(false),
         spam = srp_ini.bools.spam and imgui.ImBool(true) or imgui.ImBool(false),
         house = srp_ini.bools.house and imgui.ImBool(true) or imgui.ImBool(false),
-        repairkit = srp_ini.bools.repairkit and imgui.ImBool(true) or imgui.ImBool(false),
+        rkt = srp_ini.bools.rkt and imgui.ImBool(true) or imgui.ImBool(false),
         jfleader = srp_ini.bools.jfleader and imgui.ImBool(true) or imgui.ImBool(false),
         quitfromcops = srp_ini.bools.quitfromcops and imgui.ImBool(true) or imgui.ImBool(false)
     }
@@ -903,7 +903,7 @@ function main()
         password = imgui.ImBuffer(u8(srp_ini.values.password), 256),
         autorent = imgui.ImBuffer(u8(srp_ini.values.autorent), 256),
         timezonedifference = imgui.ImInt(srp_ini.values.timezonedifference + 14),
-        repairkit = imgui.ImBuffer(u8(srp_ini.values.repairkit), 256)
+        rkt = imgui.ImBuffer(u8(srp_ini.values.rkt), 256)
     }
 
     sampRegisterChatCommand("samprp", function()
@@ -1616,8 +1616,8 @@ function imgui.OnDrawFrame()
                     "Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слёта недвижимости")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("repairkit", togglebools.repairkit) then
-                srp_ini.bools.repairkit = togglebools.repairkit.v
+            if imgui.ToggleButton("rkt", togglebools.rkt) then
+                srp_ini.bools.rkt = togglebools.rkt.v
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1630,8 +1630,8 @@ function imgui.OnDrawFrame()
             end
             imgui.SameLine()
             imgui.PushItemWidth(toScreenX(30))
-            if imgui.InputText('##d4', buffer.repairkit) then
-                srp_ini.values.repairkit = tostring(u8:decode(buffer.repairkit.v))
+            if imgui.InputText('##d4', buffer.rkt) then
+                srp_ini.values.rkt = tostring(u8:decode(buffer.rkt.v))
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -3959,7 +3959,7 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
                 end
             end
         end
-        if srp_ini.bools.repairkit then
+        if srp_ini.bools.rkt then
             if var.need.buy and dialogid == dialogs.shop.id and style == dialogs.shop.style and title ==
                 dialogs.shop.title and button1 == dialogs.shop.button1 and button2 == dialogs.shop.button2 then
                 local kit = tonumber(text:match(strings.repairkitshop))
