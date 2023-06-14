@@ -4528,7 +4528,7 @@ function setclist()
         end
         if myclist == 0 then
             if tonumber(srp_ini.values.clist) == 0 then
-                script.sendMessage("На вас уже нету клиста!")
+                script.sendMessage("У вас уже нулевой клист!")
                 return
             end
             chatManager.addMessageToQueue("/clist " .. srp_ini.values.clist .. "")
