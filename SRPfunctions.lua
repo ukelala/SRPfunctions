@@ -5490,15 +5490,6 @@ function script.checkUpdates() -- проверка обновлений
         if data.version > thisScript()['version_num'] then
             script.sendMessage(updating_prefix .. "Обнаружена новая версия скрипта от " ..
                                    data.date .. ", начинаю обновление...")
-            local text = script.upd.changes[tostring(script.upd.sort[1])].text
-            local upd = string.split(text, "\n\n")
-            local add, fix = string.split(upd[1], "\n\t"), string.split(upd[2], "\n\t")
-            for _, change in ipairs(add) do
-                script.sendMessage(updating_prefix .. change)
-            end
-            for _, change in ipairs(fix) do
-                script.sendMessage(updating_prefix .. change)
-            end
             script.updateScript()
             return true
         end
