@@ -2,6 +2,7 @@
 	"version": 32,
 	"date": "12.06.2023",
 	"url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
+	"label": "https://raw.githubusercontent.com/WebbLua/TextLabels/main/TextLabels.json",
 	"author": "Cody_Webb",
 	"telegram": {
 		"nick": "@ibm287",
@@ -67,38 +68,6 @@
 		"Что там у автодилера?": "Посмотрите автомобиль в салоне",
 		"Запасливый автолюбитель": "Купите канистру на АЗС",
 		"Шприц в грудь": "Вылечите пострадавшего от передозировки"
-	},
-	"fame": {
-		"Cody_Webb": {
-			"order": "1",
-			"color": "0xFFB30000",
-			"text": "Основатель SRPfunctions"
-		},
-		"James_Webb": {
-			"order": "2",
-			"color": "0xFFB30000",
-			"text": "Основатель SRPfunctions"
-		},
-		"Sebastian_Melgaard": {
-			"order": "3",
-			"color": "0xFFB30000",
-			"text": "Основатель SRPfunctions"
-		},
-		"bier": {
-			"order": "3",
-			"color": "0xFFFFFF00",
-			"text": "Пухляш"
-		},
-		"Vladanus": {
-			"order": "4",
-			"color": "0xFFFFFF00",
-			"text": "Пухляш"
-		},
-		"pivo": {
-			"order": "5",
-			"color": "0xFFFFFF00",
-			"text": "Лучший таксист"
-		}
 	},
 	"changelog": {
 		"31": {
