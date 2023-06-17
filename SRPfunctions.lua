@@ -6,11 +6,12 @@ script_author("Webb")
     donatik.lua / Author: vlaek aka bier from Revolution
     taximate.lua / Author: 21se aka pivo
 ]]
-script_version("12.06.2023")
-script_version_number(32)
+script_version("17.06.2023")
+script_version_number(33)
 
 local main_color, main_color_hex = 0xB30000, "{B30000}"
-local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}", "{FF0000}[ERROR] "
+local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}",
+    "{FF0000}[ERROR] "
 
 local script = {
     author = "Cody_Webb",
@@ -34,10 +35,7 @@ local script = {
         changes = {},
         sort = {}
     },
-    label = {
-        fame = {},
-        sort = {}
-    }
+    label = {}
 }
 -------------------------------------------------------------------------[Библиотеки/Зависимости]---------------------------------------------------------------------
 function try(f, catch_f)
@@ -325,10 +323,6 @@ local menu = { -- imgui-меню
         bool = imgui.ImBool(false)
     },
     commands = {
-        sure = false,
-        bool = imgui.ImBool(false)
-    },
-    fame = {
         sure = false,
         bool = imgui.ImBool(false)
     },
@@ -2133,12 +2127,6 @@ function imgui.OnDrawFrame()
         if menu.information.bool.v then
             imgui.Text(
                 "Данный скрипт является многофункциональным хелпером для игроков проекта Samp RP")
-            imgui.SameLine()
-            imgui.PushFont(fonts.arial16)
-            if imgui.Button("Список уважаемых игроков", vec(70.00, 9.54)) then
-                imgui.section('fame')
-            end
-            imgui.PopFont()
             imgui.Text("Автор: " .. script.author .. " | Telegram: " .. script.telegram.nick)
             imgui.SameLine()
             imgui.PushFont(fonts.arial16)
@@ -2187,19 +2175,23 @@ function imgui.OnDrawFrame()
         local found = false
         for i = 0, 1000 do
             if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
-                if sampGetPlayerNickname(i) == script.author then
-                    if imgui.CustomButton(script.author .. "[" .. i .. "] сейчас в сети",
-                        imgui.ImVec4(0.48, 0.16, 0.16, 0.54), imgui.ImVec4(0.98, 0.43, 0.26, 0.67),
-                        imgui.ImVec4(0.98, 0.43, 0.26, 0.40), vec(100, 12)) then
-                        chatManager.addMessageToQueue("/t " .. i .. " Привет, мой хороший")
+                local nick = sampGetPlayerNickname(i)
+                if script.label[server][nick] and not found then
+                    if script.label[server][nick].button then
+                        found = true
+                        if imgui.CustomButton(nick .. "[" .. i .. "] сейчас в сети",
+                            ImVec4(0.85, 0.98, 0.26, 0.40), ImVec4(0.85, 0.98, 0.26, 1.00),
+                            ImVec4(0.82, 0.98, 0.06, 1.00), vec(100, 12)) then
+                            chatManager.addMessageToQueue("/t " .. i .. " Привет, мой хороший")
+                        end
                     end
-                    found = true
                 end
             end
         end
         if not found then
             if imgui.Button(script.author .. " сейчас не в сети", vec(100.00, 12.00)) then
-                script.sendMessage(script.author .. " играет на Revolution (сейчас не онлайн)")
+                script.sendMessage(script.author .. " играет на Samp-RP (на " .. server ..
+                                       " сейчас не онлайн)")
             end
         end
         imgui.PushFont(fonts.arial16)
@@ -2450,37 +2442,6 @@ function imgui.OnDrawFrame()
         imgui.BeginChild('variables', vec(594, 144), true)
         for k, v in ipairs(vars) do
             imgui.Text(v)
-        end
-        imgui.EndChild()
-        imgui.End()
-        imgui.PopFont()
-    end
-
-    if menu.fame.bool.v then
-        imgui.PushFont(fonts.arial20)
-        local sw, sh = getScreenResolution()
-        imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, vec(0.17, 0.21))
-        imgui.SetNextWindowSize(vec(250, 200), imgui.Cond.FirstUseEver, imgui.WindowFlags.NoCollapse +
-            imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
-        imgui.Begin(
-            "Список уважаемых игроков, которые внесли свой вклад в развитие скрипта",
-            menu.fame.bool, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
-        imgui.Text(
-            "Что бы попасть в список, осуществите пожертвование игроку " ..
-                script.author)
-        imgui.BeginChild('fame', vec(245, 173), true)
-        imgui.Columns(2, "Columns", true)
-        imgui.Text("Ник:")
-        imgui.NextColumn()
-        imgui.Text("Подпись:")
-        imgui.NextColumn()
-        for _, v in ipairs(script.label.sort) do
-            imgui.Separator()
-            imgui.Text(v.nick)
-            imgui.NextColumn()
-            local color = string.format("{%X}", v.color % 0x1000000)
-            imgui.TextColoredRGB(color .. v.text)
-            imgui.NextColumn()
         end
         imgui.EndChild()
         imgui.End()
@@ -5183,10 +5144,10 @@ function textLabelOverPlayerNickname()
     for i = 0, 1000 do
         if sampIsPlayerConnected(i) and sampGetPlayerScore(i) ~= 0 then
             local nick = sampGetPlayerNickname(i)
-            if script.label.fame[nick] ~= nil then
+            if script.label[server][nick] ~= nil then
                 if textlabel[i] == nil then
-                    textlabel[i] = sampCreate3dText(u8:decode(script.label.fame[nick].text),
-                        tonumber(script.label.fame[nick].color), 0.0, 0.0, 0.8, 21.5, false, i, -1)
+                    textlabel[i] = sampCreate3dText(u8:decode(script.label[server][nick].text),
+                        tonumber(script.label[server][nick].color), 0.0, 0.0, 0.8, 15.0, false, i, -1)
                 end
             end
         else
@@ -5509,27 +5470,13 @@ function script.checkUpdates() -- проверка обновлений
             script.telegram = data.telegram
         end
         script.quest = data.quest
-        script.label.fame = data.fame
+        script.label = decodeJson(request(data.label))
         script.upd.changes = data.changelog
         if script.quest then
             for k, v in pairs(script.quest) do
                 srp_ini.description[k] = v
             end
             inicfg.save(srp_ini, settings)
-        end
-        script.label.sort = {}
-        if script.label then
-            for k, v in pairs(script.label.fame) do
-                table.insert(script.label.sort, {
-                    nick = k,
-                    order = v.order,
-                    color = v.color,
-                    text = v.text
-                })
-            end
-            table.sort(script.label.sort, function(a, b)
-                return tonumber(a.order) < tonumber(b.order)
-            end)
         end
         script.upd.sort = {}
         if script.upd.changes then
