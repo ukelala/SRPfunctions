@@ -6,8 +6,8 @@ script_author("Webb")
     donatik.lua / Author: vlaek aka bier from Revolution
     taximate.lua / Author: 21se aka pivo
 ]]
-script_version("18.06.2023")
-script_version_number(34)
+script_version("19.06.2023")
+script_version_number(35)
 
 local main_color, main_color_hex = 0xB30000, "{B30000}"
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}",
@@ -3228,7 +3228,7 @@ function ev.onServerMessage(col, text)
                 end
             end
             if srp_ini.bools.jfleader and spassenger ~= nil and stxt ~= nil and stxt ~= "" then
-                if stxt:match(u8:decode"[ПпPp][РрRr][ОоOo][ФфFf]") or smstxt:match(u8:decode"[ИиIi][НнNn][ВвVv]") then
+                if stxt:match(u8:decode"[ПпPp][РрRr][ОоOo][ФфFf]") or stxt:match(u8:decode"[ИиIi][НнNn][ВвVv]") then
                     lua_thread.create(function()
                         var.offer.bool = true
                         script.sendMessage(spassenger .. "[" .. sid .. "] возможно просится в профсоюз. Нажмите Y для согласия и N для отказа добавления")
