@@ -6,8 +6,8 @@ script_author("Webb")
     donatik.lua / Author: vlaek aka bier from Revolution
     taximate.lua / Author: 21se aka pivo
 ]]
-script_version("17.06.2023")
-script_version_number(33)
+script_version("18.06.2023")
+script_version_number(34)
 
 local main_color, main_color_hex = 0xB30000, "{B30000}"
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}",
@@ -834,62 +834,6 @@ function main()
         inicfg.save(binder_ini, binds)
     end
 
-    togglebools = {
-        autorepair = srp_ini.bools.autorepair and imgui.ImBool(true) or imgui.ImBool(false),
-        autofill = srp_ini.bools.autofill and imgui.ImBool(true) or imgui.ImBool(false),
-        autorefill = srp_ini.bools.autorefill and imgui.ImBool(true) or imgui.ImBool(false),
-        autorefillcanister = srp_ini.bools.autorefillcanister and imgui.ImBool(true) or imgui.ImBool(false),
-        autocanister = srp_ini.bools.autocanister and imgui.ImBool(true) or imgui.ImBool(false),
-        jfcoloring = srp_ini.bools.jfcoloring and imgui.ImBool(true) or imgui.ImBool(false),
-        fcoloring = srp_ini.bools.fcoloring and imgui.ImBool(true) or imgui.ImBool(false),
-        quit = srp_ini.bools.quit and imgui.ImBool(true) or imgui.ImBool(false),
-        psycho = srp_ini.bools.psycho and imgui.ImBool(true) or imgui.ImBool(false),
-        knockpsycho = srp_ini.bools.knockpsycho and imgui.ImBool(true) or imgui.ImBool(false),
-        psychoeat = srp_ini.bools.psychoeat and imgui.ImBool(true) or imgui.ImBool(false),
-        knockmushroom = srp_ini.bools.knockmushroom and imgui.ImBool(true) or imgui.ImBool(false),
-        autologin = srp_ini.bools.autologin and imgui.ImBool(true) or imgui.ImBool(false),
-        autorent = srp_ini.bools.autorent and imgui.ImBool(true) or imgui.ImBool(false),
-        robbing = srp_ini.bools.robbing and imgui.ImBool(true) or imgui.ImBool(false),
-        withdrawal = srp_ini.bools.withdrawal and imgui.ImBool(true) or imgui.ImBool(false),
-        withoutcops = srp_ini.bools.withoutcops and imgui.ImBool(true) or imgui.ImBool(false),
-        date = srp_ini.bools.date and imgui.ImBool(true) or imgui.ImBool(false),
-        nick = srp_ini.bools.nick and imgui.ImBool(true) or imgui.ImBool(false),
-        ping = srp_ini.bools.ping and imgui.ImBool(true) or imgui.ImBool(false),
-        drugscooldown = srp_ini.bools.drugscooldown and imgui.ImBool(true) or imgui.ImBool(false),
-        event = srp_ini.bools.event and imgui.ImBool(true) or imgui.ImBool(false),
-        stream = srp_ini.bools.stream and imgui.ImBool(true) or imgui.ImBool(false),
-        status = srp_ini.bools.status and imgui.ImBool(true) or imgui.ImBool(false),
-        squad = srp_ini.bools.squad and imgui.ImBool(true) or imgui.ImBool(false),
-        disablesquad = srp_ini.bools.disablesquad and imgui.ImBool(true) or imgui.ImBool(false),
-        hpcars = srp_ini.bools.hpcars and imgui.ImBool(true) or imgui.ImBool(false),
-        chatinfo = srp_ini.bools.chatinfo and imgui.ImBool(true) or imgui.ImBool(false),
-        equest = srp_ini.bools.equest and imgui.ImBool(true) or imgui.ImBool(false),
-        inventory = srp_ini.bools.inventory and imgui.ImBool(true) or imgui.ImBool(false),
-        drugs = srp_ini.inventoryItem.drugs and imgui.ImBool(true) or imgui.ImBool(false),
-        mats = srp_ini.inventoryItem.mats and imgui.ImBool(true) or imgui.ImBool(false),
-        keys = srp_ini.inventoryItem.keys and imgui.ImBool(true) or imgui.ImBool(false),
-        canister = srp_ini.inventoryItem.canister and imgui.ImBool(true) or imgui.ImBool(false),
-        fish = srp_ini.inventoryItem.fish and imgui.ImBool(true) or imgui.ImBool(false),
-        cookedfish = srp_ini.inventoryItem.cookedfish and imgui.ImBool(true) or imgui.ImBool(false),
-        mushroom = srp_ini.inventoryItem.mushroom and imgui.ImBool(true) or imgui.ImBool(false),
-        repairkit = srp_ini.inventoryItem.repairkit and imgui.ImBool(true) or imgui.ImBool(false),
-        psychoheal = srp_ini.inventoryItem.psychoheal and imgui.ImBool(true) or imgui.ImBool(false),
-        cookedmushroom = srp_ini.inventoryItem.cookedmushroom and imgui.ImBool(true) or imgui.ImBool(false),
-        adrenaline = srp_ini.inventoryItem.adrenaline and imgui.ImBool(true) or imgui.ImBool(false),
-        cork = srp_ini.inventoryItem.cork and imgui.ImBool(true) or imgui.ImBool(false),
-        balaclava = srp_ini.inventoryItem.balaclava and imgui.ImBool(true) or imgui.ImBool(false),
-        scrap = srp_ini.inventoryItem.scrap and imgui.ImBool(true) or imgui.ImBool(false),
-        energy = srp_ini.inventoryItem.energy and imgui.ImBool(true) or imgui.ImBool(false),
-        robkit = srp_ini.inventoryItem.robkit and imgui.ImBool(true) or imgui.ImBool(false),
-        kd = srp_ini.bools.kd and imgui.ImBool(true) or imgui.ImBool(false),
-        variables = srp_ini.bools.variables and imgui.ImBool(true) or imgui.ImBool(false),
-        spam = srp_ini.bools.spam and imgui.ImBool(true) or imgui.ImBool(false),
-        house = srp_ini.bools.house and imgui.ImBool(true) or imgui.ImBool(false),
-        rkt = srp_ini.bools.rkt and imgui.ImBool(true) or imgui.ImBool(false),
-        jfleader = srp_ini.bools.jfleader and imgui.ImBool(true) or imgui.ImBool(false),
-        quitfromcops = srp_ini.bools.quitfromcops and imgui.ImBool(true) or imgui.ImBool(false)
-    }
-
     buffer = {
         autorefill = imgui.ImBuffer(u8(srp_ini.values.autorefill), 256),
         autofill = imgui.ImBuffer(u8(srp_ini.values.autofill), 256),
@@ -1366,8 +1310,8 @@ function imgui.OnDrawFrame()
 
         imgui.BeginChild('main', vec(395, 233.5), true)
         if menu.automatic.bool.v then
-            if imgui.ToggleButton("autorepair", togglebools.autorepair) then
-                srp_ini.bools.autorepair = togglebools.autorepair.v
+            if imgui.ToggleButton("autorepair", imgui.ImBool(srp_ini.bools.autorepair)) then
+                srp_ini.bools.autorepair = not srp_ini.bools.autorepair
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1378,8 +1322,8 @@ function imgui.OnDrawFrame()
                     "Если вы водитель транспорта, то скрипт будет автоматически соглашатся с предложением починить вас от механика")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("autorefill", togglebools.autorefill) then
-                srp_ini.bools.autorefill = togglebools.autorefill.v
+            if imgui.ToggleButton("autorefill", imgui.ImBool(srp_ini.bools.autorefill)) then
+                srp_ini.bools.autorefill = not srp_ini.bools.autorefill
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1400,8 +1344,8 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.PopItemWidth()
             imgui.Text(" вирт.)")
-            if imgui.ToggleButton("autofill", togglebools.autofill) then
-                srp_ini.bools.autofill = togglebools.autofill.v
+            if imgui.ToggleButton("autofill", imgui.ImBool(srp_ini.bools.autofill)) then
+                srp_ini.bools.autofill = not srp_ini.bools.autofill
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1421,8 +1365,8 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.PopItemWidth()
             imgui.Text(" вирт.)")
-            if imgui.ToggleButton("autocanister", togglebools.autocanister) then
-                srp_ini.bools.autocanister = togglebools.autocanister.v
+            if imgui.ToggleButton("autocanister", imgui.ImBool(srp_ini.bools.autocanister)) then
+                srp_ini.bools.autocanister = not srp_ini.bools.autocanister
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1433,8 +1377,8 @@ function imgui.OnDrawFrame()
                     "Как только вы заедите на заправку и скрипт убедится в том что цена приемлима (цена заправки на АЗС), вы автоматически купите канистру если её нет в инвентаре")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("autorefillcanister", togglebools.autorefillcanister) then
-                srp_ini.bools.autorefillcanister = togglebools.autorefillcanister.v
+            if imgui.ToggleButton("autorefillcanister", imgui.ImBool(srp_ini.bools.autorefillcanister)) then
+                srp_ini.bools.autorefillcanister = not srp_ini.bools.autorefillcanister
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1446,8 +1390,8 @@ function imgui.OnDrawFrame()
                     "Как только в вашем транспорте закончится топливо, скрипт моментально использует канистру (если она есть в инвентаре)")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("jfcoloring", togglebools.jfcoloring) then
-                srp_ini.bools.jfcoloring = togglebools.jfcoloring.v
+            if imgui.ToggleButton("jfcoloring", imgui.ImBool(srp_ini.bools.jfcoloring)) then
+                srp_ini.bools.jfcoloring = not srp_ini.bools.jfcoloring
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1458,8 +1402,8 @@ function imgui.OnDrawFrame()
                     "Все новые появляющиеся сообщения в рации профсоюза будут иметь одну особенность: ник и ID игрока будет в цвете его клиста")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("fcoloring", togglebools.fcoloring) then
-                srp_ini.bools.fcoloring = togglebools.fcoloring.v
+            if imgui.ToggleButton("fcoloring", imgui.ImBool(srp_ini.bools.fcoloring)) then
+                srp_ini.bools.fcoloring = not srp_ini.bools.fcoloring
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1470,8 +1414,8 @@ function imgui.OnDrawFrame()
                     "Все новые появляющиеся сообщения в рации фракции будут иметь одну особенность: ник и ID игрока будет в цвете его клиста")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("quit", togglebools.quit) then
-                srp_ini.bools.quit = togglebools.quit.v
+            if imgui.ToggleButton("quit", imgui.ImBool(srp_ini.bools.quit)) then
+                srp_ini.bools.quit = not srp_ini.bools.quit
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1483,8 +1427,8 @@ function imgui.OnDrawFrame()
                     "Если кто-то в зоне прорисовке, по той или иной причине покинет игру, то в чате появится сообщение о том кто вышел (в цвете клиста) и с какой причиной")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("psycho", togglebools.psycho) then
-                srp_ini.bools.psycho = togglebools.psycho.v
+            if imgui.ToggleButton("psycho", imgui.ImBool(srp_ini.bools.psycho)) then
+                srp_ini.bools.psycho = not srp_ini.bools.psycho
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1496,8 +1440,8 @@ function imgui.OnDrawFrame()
                     "Если кто-то в зоне прорисовке употребит психохил, то в чате появится сообщение о том кто употребил (в цвете клиста)")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("knockpsycho", togglebools.knockpsycho) then
-                srp_ini.bools.knockpsycho = togglebools.knockpsycho.v
+            if imgui.ToggleButton("knockpsycho", imgui.ImBool(srp_ini.bools.knockpsycho)) then
+                srp_ini.bools.knockpsycho = not srp_ini.bools.knockpsycho
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1508,8 +1452,8 @@ function imgui.OnDrawFrame()
                     "При употреблении психохила (/grib heal) анимация собъётся пустым сообщением в чат")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("autologin", togglebools.autologin) then
-                srp_ini.bools.autologin = togglebools.autologin.v
+            if imgui.ToggleButton("autologin", imgui.ImBool(srp_ini.bools.autologin)) then
+                srp_ini.bools.autologin = not srp_ini.bools.autologin
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1528,8 +1472,8 @@ function imgui.OnDrawFrame()
                 end
                 imgui.PopFont()
             end
-            if imgui.ToggleButton("autorent", togglebools.autorent) then
-                srp_ini.bools.autorent = togglebools.autorent.v
+            if imgui.ToggleButton("autorent", imgui.ImBool(srp_ini.bools.autorent)) then
+                srp_ini.bools.autorent = not srp_ini.bools.autorent
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1549,8 +1493,8 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.PopItemWidth()
             imgui.Text(" вирт.)")
-            if imgui.ToggleButton("robbing", togglebools.robbing) then
-                srp_ini.bools.robbing = togglebools.robbing.v
+            if imgui.ToggleButton("robbing", imgui.ImBool(srp_ini.bools.robbing)) then
+                srp_ini.bools.robbing = not srp_ini.bools.robbing
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1572,8 +1516,8 @@ function imgui.OnDrawFrame()
                                           ", обязательно припаркуйте фургон таким образом, что бы его пикап находился чётко возле пикапа дома")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("withdrawal", togglebools.withdrawal) then
-                srp_ini.bools.withdrawal = togglebools.withdrawal.v
+            if imgui.ToggleButton("withdrawal", imgui.ImBool(srp_ini.bools.withdrawal)) then
+                srp_ini.bools.withdrawal = not srp_ini.bools.withdrawal
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1581,12 +1525,12 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             if imgui.Checkbox(
                 "Не употреблять нарко при ломке, если на экране есть копы",
-                togglebools.withoutcops) then
-                srp_ini.bools.withoutcops = togglebools.withoutcops.v
+                imgui.ImBool(srp_ini.bools.withoutcops)) then
+                srp_ini.bools.withoutcops = not srp_ini.bools.withoutcops
                 inicfg.save(srp_ini, settings)
             end
-            if imgui.ToggleButton("spam", togglebools.spam) then
-                srp_ini.bools.spam = togglebools.spam.v
+            if imgui.ToggleButton("spam", imgui.ImBool(srp_ini.bools.spam)) then
+                srp_ini.bools.spam = not srp_ini.bools.spam
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1598,8 +1542,8 @@ function imgui.OnDrawFrame()
                     "На сервере работает анти-спам система, игроки до 3 LVL не могут всем рассылать сообщения, от них стоит защита и у них КД на СМС 30 секунд")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("house", togglebools.house) then
-                srp_ini.bools.house = togglebools.house.v
+            if imgui.ToggleButton("house", imgui.ImBool(srp_ini.bools.house)) then
+                srp_ini.bools.house = not srp_ini.bools.house
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1610,8 +1554,8 @@ function imgui.OnDrawFrame()
                     "Когда вы оплатите квартплату или же наступит пейдей, скрипт запомнит дату слёта недвижимости")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("rkt", togglebools.rkt) then
-                srp_ini.bools.rkt = togglebools.rkt.v
+            if imgui.ToggleButton("rkt", imgui.ImBool(srp_ini.bools.rkt)) then
+                srp_ini.bools.rkt = not srp_ini.bools.rkt
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1631,8 +1575,8 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.PopItemWidth()
             imgui.Text(" вирт.)")
-            if imgui.ToggleButton("jfleader", togglebools.jfleader) then
-                srp_ini.bools.jfleader = togglebools.jfleader.v
+            if imgui.ToggleButton("jfleader", imgui.ImBool(srp_ini.bools.jfleader)) then
+                srp_ini.bools.jfleader = not srp_ini.bools.jfleader
                 inicfg.save(srp_ini, settings)
                 if srp_ini.bools.jfleader then
                     sampRegisterChatCommand("jfadd", cmd_jfadd)
@@ -1663,8 +1607,8 @@ function imgui.OnDrawFrame()
                 end
                 imgui.PopFont()
             end
-            if imgui.ToggleButton("quitfromcops", togglebools.quitfromcops) then
-                srp_ini.bools.quitfromcops = togglebools.quitfromcops.v
+            if imgui.ToggleButton("quitfromcops", imgui.ImBool(srp_ini.bools.quitfromcops)) then
+                srp_ini.bools.quitfromcops = not srp_ini.bools.quitfromcops
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1719,8 +1663,8 @@ function imgui.OnDrawFrame()
             imgui.Text("Употребить психохил\n(/grib heal)")
             if srp_ini.hotkey["psycho"] ~= "0" then
                 imgui.SameLine()
-                if imgui.ToggleButton("psychoeat", togglebools.psychoeat) then
-                    srp_ini.bools.psychoeat = togglebools.psychoeat.v
+                if imgui.ToggleButton("psychoeat", imgui.ImBool(srp_ini.bools.psychoeat)) then
+                    srp_ini.bools.psychoeat = not srp_ini.bools.psychoeat
                     inicfg.save(srp_ini, settings)
                 end
                 imgui.SameLine()
@@ -1743,8 +1687,9 @@ function imgui.OnDrawFrame()
                 end
                 if srp_ini.bools.psychoeat then
                     imgui.SameLine()
-                    if imgui.Checkbox("Кушать грибы вместо рыбы", togglebools.knockmushroom) then
-                        srp_ini.bools.knockmushroom = togglebools.knockmushroom.v
+                    if imgui.Checkbox("Кушать грибы вместо рыбы",
+                        imgui.ImBool(srp_ini.bools.knockmushroom)) then
+                        srp_ini.bools.knockmushroom = not srp_ini.bools.knockmushroom
                         inicfg.save(srp_ini, settings)
                     end
                     if imgui.IsItemHovered() then
@@ -1802,26 +1747,26 @@ function imgui.OnDrawFrame()
             imgui.Text(
                 "Что бы изменить положение элемента, перетяните его на экране")
             imgui.Text("Положение элемента сохранится автоматически")
-            if imgui.ToggleButton("date", togglebools.date) then
-                srp_ini.bools.date = togglebools.date.v
+            if imgui.ToggleButton("date", imgui.ImBool(srp_ini.bools.date)) then
+                srp_ini.bools.date = not srp_ini.bools.date
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text("Отображение даты и времени на экране")
-            if imgui.ToggleButton("nick", togglebools.nick) then
-                srp_ini.bools.nick = togglebools.nick.v
+            if imgui.ToggleButton("nick", imgui.ImBool(srp_ini.bools.nick)) then
+                srp_ini.bools.nick = not srp_ini.bools.nick
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text("Отображение никнейма и IDа в цвете клиста")
-            if imgui.ToggleButton("ping", togglebools.ping) then
-                srp_ini.bools.ping = togglebools.ping.v
+            if imgui.ToggleButton("ping", imgui.ImBool(srp_ini.bools.ping)) then
+                srp_ini.bools.ping = not srp_ini.bools.ping
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text("Отображение текущего пинга")
-            if imgui.ToggleButton("drugscooldown", togglebools.drugscooldown) then
-                srp_ini.bools.drugscooldown = togglebools.drugscooldown.v
+            if imgui.ToggleButton("drugscooldown", imgui.ImBool(srp_ini.bools.drugscooldown)) then
+                srp_ini.bools.drugscooldown = not srp_ini.bools.drugscooldown
                 inicfg.save(srp_ini, settings)
                 if srp_ini.bools.drugscooldown then
                     checkDialog("boostinfo")
@@ -1830,21 +1775,21 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.Text(
                 "Отображение КД употребления нарко (синхронизировано с /boostinfo)")
-            if imgui.ToggleButton("event", togglebools.event) then
-                srp_ini.bools.event = togglebools.event.v
+            if imgui.ToggleButton("event", imgui.ImBool(srp_ini.bools.event)) then
+                srp_ini.bools.event = not srp_ini.bools.event
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text(
                 "Отображение таймеров до начала системных мероприятий")
-            if imgui.ToggleButton("stream", togglebools.stream) then
-                srp_ini.bools.stream = togglebools.stream.v
+            if imgui.ToggleButton("stream", imgui.ImBool(srp_ini.bools.stream)) then
+                srp_ini.bools.stream = not srp_ini.bools.stream
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text("Отображение количества игроков в зоне прорисовки")
-            if imgui.ToggleButton("status", togglebools.status) then
-                srp_ini.bools.status = togglebools.status.v
+            if imgui.ToggleButton("status", imgui.ImBool(srp_ini.bools.status)) then
+                srp_ini.bools.status = not srp_ini.bools.status
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1872,8 +1817,8 @@ function imgui.OnDrawFrame()
                     "Обязательно задайте клавишу в меню \"Клавиши и команды\"")
                 imgui.EndTooltip()
             end
-            if imgui.ToggleButton("squad", togglebools.squad) then
-                srp_ini.bools.squad = togglebools.squad.v
+            if imgui.ToggleButton("squad", imgui.ImBool(srp_ini.bools.squad)) then
+                srp_ini.bools.squad = not srp_ini.bools.squad
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -1881,26 +1826,26 @@ function imgui.OnDrawFrame()
             if srp_ini.bools.squad then
                 imgui.SameLine()
                 if imgui.Checkbox("Скрывать сквад если активна строка чата",
-                    togglebools.disablesquad) then
-                    srp_ini.bools.disablesquad = togglebools.disablesquad.v
+                    imgui.ImBool(srp_ini.bools.disablesquad)) then
+                    srp_ini.bools.disablesquad = not srp_ini.bools.disablesquad
                     inicfg.save(srp_ini, settings)
                 end
             end
-            if imgui.ToggleButton("hpcars", togglebools.hpcars) then
-                srp_ini.bools.hpcars = togglebools.hpcars.v
+            if imgui.ToggleButton("hpcars", imgui.ImBool(srp_ini.bools.hpcars)) then
+                srp_ini.bools.hpcars = not srp_ini.bools.hpcars
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text("Отображение ХП на окружающем транспорте")
-            if imgui.ToggleButton("chatinfo", togglebools.chatinfo) then
-                srp_ini.bools.chatinfo = togglebools.chatinfo.v
+            if imgui.ToggleButton("chatinfo", imgui.ImBool(srp_ini.bools.chatinfo)) then
+                srp_ini.bools.chatinfo = not srp_ini.bools.chatinfo
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
             imgui.Text(
                 "Отображение раскладки, капса, и кол-ва символов под строкой чата")
-            if imgui.ToggleButton("equest", togglebools.equest) then
-                srp_ini.bools.equest = togglebools.equest.v
+            if imgui.ToggleButton("equest", imgui.ImBool(srp_ini.bools.equest)) then
+                srp_ini.bools.equest = not srp_ini.bools.equest
                 inicfg.save(srp_ini, settings)
                 if srp_ini.bools.equest then
                     checkDialog("equest")
@@ -1929,8 +1874,8 @@ function imgui.OnDrawFrame()
                     checkDialog("equest")
                 end
             end
-            if imgui.ToggleButton("inventory", togglebools.inventory) then
-                srp_ini.bools.inventory = togglebools.inventory.v
+            if imgui.ToggleButton("inventory", imgui.ImBool(srp_ini.bools.inventory)) then
+                srp_ini.bools.inventory = not srp_ini.bools.inventory
                 inicfg.save(srp_ini, settings)
                 if srp_ini.bools.inventory then
                     checkDialog("inventory")
@@ -1944,8 +1889,8 @@ function imgui.OnDrawFrame()
                 imgui.section('inventory')
             end
             imgui.PopFont()
-            if imgui.ToggleButton("kd", togglebools.kd) then
-                srp_ini.bools.kd = togglebools.kd.v
+            if imgui.ToggleButton("kd", imgui.ImBool(srp_ini.bools.kd)) then
+                srp_ini.bools.kd = not srp_ini.bools.kd
                 inicfg.save(srp_ini, settings)
             end
             imgui.SameLine()
@@ -2265,98 +2210,98 @@ function imgui.OnDrawFrame()
         imgui.BeginChild('inventory', vec(205.00, 215.00), true)
         imgui.Text(
             "Выберите предметы, количество которых будет выводится на экран\nЕсли предмет светится жёлтым/красным - значит его мало/отсутствует")
-        if imgui.ToggleButton("drugs", togglebools.drugs) then
-            srp_ini.inventoryItem.drugs = togglebools.drugs.v
+        if imgui.ToggleButton("drugs", imgui.ImBool(srp_ini.inventoryItem.drugs)) then
+            srp_ini.inventoryItem.drugs = not srp_ini.inventoryItem.drugs
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Наркотики\"")
-        if imgui.ToggleButton("mats", togglebools.mats) then
-            srp_ini.inventoryItem.mats = togglebools.mats.v
+        if imgui.ToggleButton("mats", imgui.ImBool(srp_ini.inventoryItem.mats)) then
+            srp_ini.inventoryItem.mats = not srp_ini.inventoryItem.mats
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Материалы\"")
-        if imgui.ToggleButton("keys", togglebools.keys) then
-            srp_ini.inventoryItem.keys = togglebools.keys.v
+        if imgui.ToggleButton("keys", imgui.ImBool(srp_ini.inventoryItem.keys)) then
+            srp_ini.inventoryItem.keys = not srp_ini.inventoryItem.keys
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Ключи от камеры\"")
-        if imgui.ToggleButton("canister", togglebools.canister) then
-            srp_ini.inventoryItem.canister = togglebools.canister.v
+        if imgui.ToggleButton("canister", imgui.ImBool(srp_ini.inventoryItem.canister)) then
+            srp_ini.inventoryItem.canister = not srp_ini.inventoryItem.canister
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Канистра с бензином\"")
-        if imgui.ToggleButton("fish", togglebools.fish) then
-            srp_ini.inventoryItem.fish = togglebools.fish.v
+        if imgui.ToggleButton("fish", imgui.ImBool(srp_ini.inventoryItem.fish)) then
+            srp_ini.inventoryItem.fish = not srp_ini.inventoryItem.fish
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Сырая рыба\"")
-        if imgui.ToggleButton("cookedfish", togglebools.cookedfish) then
-            srp_ini.inventoryItem.cookedfish = togglebools.cookedfish.v
+        if imgui.ToggleButton("cookedfish", imgui.ImBool(srp_ini.inventoryItem.cookedfish)) then
+            srp_ini.inventoryItem.cookedfish = not srp_ini.inventoryItem.cookedfish
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Готовая рыба\"")
-        if imgui.ToggleButton("mushroom", togglebools.mushroom) then
-            srp_ini.inventoryItem.mushroom = togglebools.mushroom.v
+        if imgui.ToggleButton("mushroom", imgui.ImBool(srp_ini.inventoryItem.mushroom)) then
+            srp_ini.inventoryItem.mushroom = not srp_ini.inventoryItem.mushroom
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Грибы\"")
-        if imgui.ToggleButton("repairkit", togglebools.repairkit) then
-            srp_ini.inventoryItem.repairkit = togglebools.repairkit.v
+        if imgui.ToggleButton("repairkit", imgui.ImBool(srp_ini.inventoryItem.repairkit)) then
+            srp_ini.inventoryItem.repairkit = not srp_ini.inventoryItem.repairkit
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Комплект «автомеханик»\"")
-        if imgui.ToggleButton("psychoheal", togglebools.psychoheal) then
-            srp_ini.inventoryItem.psychoheal = togglebools.psychoheal.v
+        if imgui.ToggleButton("psychoheal", imgui.ImBool(srp_ini.inventoryItem.psychoheal)) then
+            srp_ini.inventoryItem.psychoheal = not srp_ini.inventoryItem.psychoheal
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Психохил\"")
-        if imgui.ToggleButton("cookedmushroom", togglebools.cookedmushroom) then
-            srp_ini.inventoryItem.cookedmushroom = togglebools.cookedmushroom.v
+        if imgui.ToggleButton("cookedmushroom", imgui.ImBool(srp_ini.inventoryItem.cookedmushroom)) then
+            srp_ini.inventoryItem.cookedmushroom = not srp_ini.inventoryItem.cookedmushroom
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Готовые грибы\"")
-        if imgui.ToggleButton("adrenaline", togglebools.adrenaline) then
-            srp_ini.inventoryItem.adrenaline = togglebools.adrenaline.v
+        if imgui.ToggleButton("adrenaline", imgui.ImBool(srp_ini.inventoryItem.adrenaline)) then
+            srp_ini.inventoryItem.adrenaline = not srp_ini.inventoryItem.adrenaline
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Адреналин\"")
-        if imgui.ToggleButton("cork", togglebools.cork) then
-            srp_ini.inventoryItem.cork = togglebools.cork.v
+        if imgui.ToggleButton("cork", imgui.ImBool(srp_ini.inventoryItem.cork)) then
+            srp_ini.inventoryItem.cork = not srp_ini.inventoryItem.cork
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Защита от насильников\"")
-        if imgui.ToggleButton("balaclava", togglebools.balaclava) then
-            srp_ini.inventoryItem.balaclava = togglebools.balaclava.v
+        if imgui.ToggleButton("balaclava", imgui.ImBool(srp_ini.inventoryItem.balaclava)) then
+            srp_ini.inventoryItem.balaclava = not srp_ini.inventoryItem.balaclava
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Балаклава\"")
-        if imgui.ToggleButton("scrap", togglebools.scrap) then
-            srp_ini.inventoryItem.scrap = togglebools.scrap.v
+        if imgui.ToggleButton("scrap", imgui.ImBool(srp_ini.inventoryItem.scrap)) then
+            srp_ini.inventoryItem.scrap = not srp_ini.inventoryItem.scrap
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Лом\"")
-        if imgui.ToggleButton("energy", togglebools.energy) then
-            srp_ini.inventoryItem.energy = togglebools.energy.v
+        if imgui.ToggleButton("energy", imgui.ImBool(srp_ini.inventoryItem.energy)) then
+            srp_ini.inventoryItem.energy = not srp_ini.inventoryItem.energy
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
         imgui.Text("Предмет: \"Энергетик\"")
-        if imgui.ToggleButton("robkit", togglebools.robkit) then
-            srp_ini.inventoryItem.robkit = togglebools.robkit.v
+        if imgui.ToggleButton("robkit", imgui.ImBool(srp_ini.inventoryItem.robkit)) then
+            srp_ini.inventoryItem.robkit = not srp_ini.inventoryItem.robkit
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
@@ -2427,8 +2372,8 @@ function imgui.OnDrawFrame()
             imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar)
         imgui.Text(
             "Переменные можно использовать в биндере, и просто в чате:")
-        if imgui.ToggleButton("variables", togglebools.variables) then
-            srp_ini.bools.variables = togglebools.variables.v
+        if imgui.ToggleButton("variables", imgui.ImBool(srp_ini.bools.variables)) then
+            srp_ini.bools.variables = not srp_ini.bools.variables
             inicfg.save(srp_ini, settings)
         end
         imgui.SameLine()
@@ -3282,6 +3227,18 @@ function ev.onServerMessage(col, text)
                     end
                 end
             end
+            if srp_ini.bools.jfleader and spassenger ~= nil and stxt ~= nil and stxt ~= "" then
+                if stxt:match(u8:decode"[ПпPp][РрRr][ОоOo][ФфFf]") or smstxt:match(u8:decode"[ИиIi][НнNn][ВвVv]") then
+                    lua_thread.create(function()
+                        var.offer.bool = true
+                        script.sendMessage(spassenger .. "[" .. sid .. "] возможно просится в профсоюз. Нажмите Y для согласия и N для отказа добавления")
+                        while var.offer.bool do wait(0) end
+                        if var.offer.status then 
+                            cmd_jfadd(sid)
+                        end
+                    end)
+                end
+            end
         end
         if col == strings.color.taxi then
             if isCharInAnyCar(PLAYER_PED) then
@@ -3625,7 +3582,6 @@ function ev.onServerMessage(col, text)
         if col == strings.color.nohouse and text:match(strings.nohouse) then
             if srp_ini.bools.house then
                 srp_ini.bools.house = false
-                togglebools.house.v = false
                 script.sendMessage(
                     "У вас отсутствует дом. Уведомления о слёте были отключены")
             end
@@ -3894,7 +3850,6 @@ function ev.onShowDialog(dialogid, style, title, button1, button2, text)
                 script.sendMessage(
                     "Пароль в настройках задан неверно, исправьте ошибку!")
                 srp_ini.bools.autologin = false
-                togglebools.autologin.v = false
                 srp_ini.values.password = ""
                 buffer.password = imgui.ImBuffer(u8(srp_ini.values.password), 256)
                 inicfg.save(srp_ini, settings)

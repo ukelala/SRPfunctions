@@ -1,6 +1,6 @@
 {
-	"version": 33,
-	"date": "17.06.2023",
+	"version": 34,
+	"date": "18.06.2023",
 	"url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
 	"label": "https://raw.githubusercontent.com/WebbLua/TextLabels/main/TextLabels.json",
 	"author": "Cody_Webb",
@@ -70,6 +70,10 @@
 		"Шприц в грудь": "Вылечите пострадавшего от передозировки"
 	},
 	"changelog": {
+		"34": {
+			"date": "18.06.2023",
+			"text": "Добавлено:\n\tХук текста из SMS для добавления в профсоюз\n\nИсправлено:\n\tImBools"
+		},
 		"33": {
 			"date": "17.06.2023",
 			"text": "Удалено:\n\tНавязчивая информация в чате при обновлении\n\nИсправлено:\n\tСистема надписей и прочее"
