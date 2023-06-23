@@ -6,15 +6,14 @@ script_author("Webb")
     donatik.lua / Author: vlaek aka bier from Revolution
     taximate.lua / Author: 21se aka pivo
 ]]
-script_version("19.06.2023")
-script_version_number(35)
+script_version("23.06.2023")
+script_version_number(36)
 
 local main_color, main_color_hex = 0xB30000, "{B30000}"
 local prefix, updating_prefix, error_prefix = "{B30000}[SRP] {FFFAFA}", "{FF0000}[ОБНОВЛЕНИЕ] {FFFAFA}",
     "{FF0000}[ERROR] "
 
 local script = {
-    author = "Cody_Webb",
     telegram = {
         nick = "@ibm287",
         url = "https://t.me/ibm287"
@@ -572,7 +571,7 @@ local strings = {
     acceptrepair = u8:decode "^ Механик .* хочет отремонтировать ваш автомобиль за %d+ вирт.*",
     acceptrefill = u8:decode "^ Механик .* хочет заправить ваш автомобиль за (%d+) вирт%{FFFFFF%} %(%( Нажмите Y%/N для принятия%/отмены %)%)",
     gasstation = u8:decode "Цена за 200л%: %$(%d+)",
-    jfchat = u8:decode "^ (.*)%[(%d+)]%<(.*)%>%: (.*)",
+    jfchat = u8:decode "^ (.*)%[(%d+)%]%<(.*)%>%: (.*)",
     faction = u8:decode "^ (.*)  (.*)%[(%d+)%]%: (.*)",
     boost = u8:decode "^ Действует до%: %d+%/%d+%/%d+ %d+%:%d+%:%d+",
     noboost = u8:decode "^ Бонусы отключены",
@@ -776,6 +775,8 @@ local dialogs = {
     }
 }
 -------------------------------------------------------------------------[MAIN]--------------------------------------------------------------------------------------------
+local servers = {"Underground", "Revolution", "Legacy"}
+
 function main()
     if not isSampLoaded() or not isSampfuncsLoaded() then
         return
@@ -783,13 +784,16 @@ function main()
     while not isSampAvailable() do
         wait(0)
     end
-
     while sampGetCurrentServerName() == "SA-MP" do
         wait(0)
     end
-    server = sampGetCurrentServerName():gsub('|', '')
-    server = (server:find('02') and 'Two' or (server:find('Revo') and 'Revolution' or
-                 (server:find('Legacy') and 'Legacy' or (server:find('Classic') and 'Classic' or nil))))
+    local serverName = sampGetCurrentServerName()
+    for k, v in ipairs(servers) do
+        if serverName:find(v) then
+            server = v
+            break
+        end
+    end
     if server == nil then
         script.sendMessage('Данный сервер не поддерживается, выгружаюсь...')
         script.unload = true
@@ -1078,8 +1082,6 @@ function main()
                 suspendkeys = 2
                 sampSetChatDisplayMode(3)
             end
-        else
-            imgui.LockPlayer = true
         end
 
         textLabelOverPlayerNickname()
@@ -2072,7 +2074,7 @@ function imgui.OnDrawFrame()
         if menu.information.bool.v then
             imgui.Text(
                 "Данный скрипт является многофункциональным хелпером для игроков проекта Samp RP")
-            imgui.Text("Автор: " .. script.author .. " | Telegram: " .. script.telegram.nick)
+            imgui.Text("Автор: " .. unpack(thisScript().authors) .. " | Telegram: " .. script.telegram.nick)
             imgui.SameLine()
             imgui.PushFont(fonts.arial16)
             if imgui.Button("Написать разработчику", vec(60.00, 9.54)) then
@@ -2089,9 +2091,8 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.PushFont(fonts.arial16)
             if imgui.Button("Открыть папку с настройками", vec(71.67, 9.54)) then
-                os.execute(
-                    "explorer " .. thisScript().directory .. "\\config\\SRPfunctions by Webb\\" .. server .. "\\" ..
-                        var.current.nick)
+                os.execute(string.format("explorer %s\\config\\SRPfunctions by Webb\\%s\\%s", thisScript().directory,
+                    server, var.current.nick))
             end
             imgui.PopFont()
             if imgui.IsItemHovered() then
@@ -2124,18 +2125,18 @@ function imgui.OnDrawFrame()
                 if script.label[server][nick] and not found then
                     if script.label[server][nick].button then
                         found = true
-                        if imgui.CustomButton(nick .. "[" .. i .. "] сейчас в сети",
+                        if imgui.CustomButton(string.format("%s[%d] сейчас в сети", nick, i),
                             ImVec4(0.85, 0.98, 0.26, 0.40), ImVec4(0.85, 0.98, 0.26, 1.00),
                             ImVec4(0.82, 0.98, 0.06, 1.00), vec(100, 12)) then
-                            chatManager.addMessageToQueue("/t " .. i .. " Привет, мой хороший")
+                            chatManager.addMessageToQueue(string.format("/t %d Привет, мой хороший", i))
                         end
                     end
                 end
             end
         end
         if not found then
-            if imgui.Button(script.author .. " сейчас не в сети", vec(100.00, 12.00)) then
-                script.sendMessage(script.author .. " играет на Samp-RP (на " .. server ..
+            if imgui.Button("Разработчик сейчас не в сети", vec(100.00, 12.00)) then
+                script.sendMessage(unpack(thisScript().authors) .. " играет на Samp-RP (на " .. server ..
                                        " сейчас не онлайн)")
             end
         end
@@ -2635,10 +2636,12 @@ function imgui.OnDrawFrame()
                 imgui.WindowFlags.AlwaysAutoResize)
         imgui.PushFont(fonts.arial20)
         local CStatus = CTaskArr["CurrentID"] == 0 and "{FFFAFA}Ожидание события" or "" ..
-                            CTaskArr["n"][CTaskArr[1][CTaskArr["CurrentID"]]] .. " " ..
-                            (indexof(CTaskArr[1][CTaskArr["CurrentID"]], CTaskArr["nn"]) ~= false and
-                                CTaskArr[3][CTaskArr["CurrentID"]] or "") .. ""
-        imgui.TextColoredRGB('Статус контекстной клавиши: ' .. CStatus .. '')
+                            CTaskArr["n"][CTaskArr[1][CTaskArr["CurrentID"]]] ..
+                            (indexof(CTaskArr[1][CTaskArr["CurrentID"]], CTaskArr["nn"]) ~= false and " " ..
+                                CTaskArr[3][CTaskArr["CurrentID"]] or "") .. " " .. "[" ..
+                            (20 - (os.time() - CTaskArr[2][CTaskArr["CurrentID"]])) .. "]"
+        imgui.TextColoredRGB(CStatus)
+
         imgui.PopFont()
         local newPos = imgui.GetWindowPos()
         local savePosX, savePosY = convertWindowScreenCoordsToGameScreenCoords(newPos.x, newPos.y)
@@ -2845,7 +2848,6 @@ function imgui.OnDrawFrame()
             imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize +
                 imgui.WindowFlags.AlwaysAutoResize)
         imgui.PushFont(fonts.arial20)
-        imgui.Text("Инвентарь:")
         for item, status in pairs(srp_ini.inventoryItem) do
             local amount = tonumber(srp_ini.inventory[item])
             local name = var.items.NameFromIndex[item]
@@ -3066,7 +3068,7 @@ function ev.onServerMessage(col, text)
                 carHandle = storeCarCharIsInNoSave(PLAYER_PED)
                 if getDriverOfCar(carHandle) == PLAYER_PED then
                     if srp_ini.bools.autorepair then -- починка у механика
-                        if text:match(strings.acceptrepair) and getCarHealth(carHandle) < 100 then
+                        if text:match(strings.acceptrepair) then
                             chatManager.addMessageToQueue("/ac repair")
                             return
                         end
@@ -3090,11 +3092,11 @@ function ev.onServerMessage(col, text)
         if col == strings.color.jfchat then
             if srp_ini.bools.jfcoloring then -- окраска ников в чате профсоюза
                 local nick, stringid, rank, txt = text:match(strings.jfchat)
-                id = tonumber(stringid)
+                local id = tonumber(stringid)
                 if id ~= nil then
                     local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) .. "}"
-                    local color2 = "{" .. ("%06x"):format(bit.band(bit.rshift(col, 8), 0xFFFFFF)) .. "}"
-                    text = clist .. nick .. "[" .. id .. "]" .. color2 .. "<" .. rank .. ">: " .. txt
+                    local clr = "{" .. ("%06x"):format(bit.band(bit.rshift(col, 8), 0xFFFFFF)) .. "}"
+                    text = string.format(" %s%s[%d]%s<%s>: %s", clist, nick, id, clr, rank, txt)
                     return {col, text}
                 end
             end
@@ -3103,12 +3105,9 @@ function ev.onServerMessage(col, text)
             if srp_ini.bools.fcoloring then -- окраска ников в чате фракции
                 local frank, fnick, fid, ftxt = text:match(strings.faction)
                 if fid ~= nil then
-                    local color = "{" .. bit.tohex(bit.rshift(col, 8), 6) .. "}"
+                    local clr = "{" .. bit.tohex(bit.rshift(col, 8), 6) .. "}"
                     local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(fid), 0xFFFFFF)) .. "}"
-                    local color2 = "{" .. ("%06x"):format(bit.band(bit.rshift(col, 8), 0xFFFFFF)) .. "}"
-                    text =
-                        " " .. color .. frank .. " " .. clist .. fnick .. "[" .. fid .. "]" .. color .. ": " .. ftxt ..
-                            ""
+                    text = string.format(" %s%s %s%s[%d]%s: %s", clr, frank, clist, fnick, fid, clr, ftxt)
                     return {col, text}
                 end
             end
@@ -3228,12 +3227,17 @@ function ev.onServerMessage(col, text)
                 end
             end
             if srp_ini.bools.jfleader and spassenger ~= nil and stxt ~= nil and stxt ~= "" then
-                if stxt:match(u8:decode"[ПпPp][РрRr][ОоOo][ФфFf]") or stxt:match(u8:decode"[ИиIi][НнNn][ВвVv]") then
+                if stxt:match(u8:decode "[ПпPp][РрRr][ОоOo][ФфFf]") or
+                    stxt:match(u8:decode "[ИиIi][НнNn][ВвVv]") then
                     lua_thread.create(function()
                         var.offer.bool = true
-                        script.sendMessage(spassenger .. "[" .. sid .. "] возможно просится в профсоюз. Нажмите Y для согласия и N для отказа добавления")
-                        while var.offer.bool do wait(0) end
-                        if var.offer.status then 
+                        script.sendMessage(string.format(
+                            "%s[%d] возможно просится в профсоюз. Нажмите Y для согласия и N для отказа добавления",
+                            spassenger, sid))
+                        while var.offer.bool do
+                            wait(0)
+                        end
+                        if var.offer.status then
                             cmd_jfadd(sid)
                         end
                     end)
@@ -3321,8 +3325,8 @@ function ev.onServerMessage(col, text)
             end
         end
         if col == strings.color.rent and text:match(strings.rent) and var.rent ~= nil then
-            script.sendMessage(
-                'Вы арендовали транспортное средство за ' .. var.rent .. ' вирт')
+            script.sendMessage(string.format(
+                "Вы арендовали транспортное средство за %d вирт", var.rent))
             chatManager.addMessageToQueue('/en')
             return false
         end
@@ -3527,9 +3531,9 @@ function ev.onServerMessage(col, text)
                 maxloaded = tonumber(maxloaded)
                 if loaded ~= nil and maxloaded ~= nil then
                     if loaded < maxloaded then
-                        script.sendMessage(
-                            "Положил награбленное в фургон: " .. loaded .. "/" .. maxloaded ..
-                                ", пытаюсь зайти в дом")
+                        script.sendMessage(string.format(
+                            "Положил награбленное в фургон: %d/%d, пытаюсь зайти в дом",
+                            loaded, maxloaded))
                         enterhouse()
                         return false
                     end
@@ -3567,8 +3571,9 @@ function ev.onServerMessage(col, text)
         if srp_ini.bools.spam then
             if col == strings.color.spam and text:match(strings.spam) then
                 local smsid = text:match(strings.spam)
-                chatManager.addMessageToQueue('/t ' .. smsid ..
-                                                  ' СМС попало в спам, попробуй ещё раз написать через 30 сек')
+                chatManager.addMessageToQueue(string.format(
+                    "/t %d СМС попало в спам, попробуй ещё раз написать через 30 сек",
+                    smsid))
             end
         end
         if col == strings.color.noequest and text:match(strings.noequest) then
@@ -3649,15 +3654,16 @@ function ev.onServerMessage(col, text)
                 if text:match(strings.jfnojob) then
                     lua_thread.create(function()
                         var.offer.bool = true
-                        script.sendMessage(var.jf.nick .. "[" .. var.jf.id ..
-                                               "] не устроен на необходимую работу. Нажмите Y для согласия и N для отказа отправки ему SMS")
+                        script.sendMessage(string.format(
+                            "%s[%d] не устроен на необходимую работу. Нажмите Y для согласия и N для отказа отправки ему SMS",
+                            var.jf.nick, var.jf.id))
                         while var.offer.bool do
                             wait(0)
                         end
                         if var.offer.status then
-                            chatManager.addMessageToQueue(
-                                "/t " .. var.jf.id .. " Устройся на работу '" .. srp_ini.values.jfjob ..
-                                    "' в мэрии и отпиши мне ещё раз")
+                            chatManager.addMessageToQueue(string.format(
+                                "/t %d Устройся на работу \"%s\" в мэрии и отпиши мне ещё раз",
+                                var.jf.id, srp_ini.values.jfjob))
                         end
                         return
                     end)
@@ -3665,14 +3671,15 @@ function ev.onServerMessage(col, text)
                 if text:match(strings.jfalready) then
                     lua_thread.create(function()
                         var.offer.bool = true
-                        script.sendMessage(var.jf.nick .. "[" .. var.jf.id ..
-                                               "] уже состоит в каком-то профсоюзе. Нажмите Y для согласия и N для отказа отправки ему SMS")
+                        script.sendMessage(string.format(
+                            "%s[%d] уже состоит в каком-то профсоюзе. Нажмите Y для согласия и N для отказа отправки ему SMS",
+                            var.jf.nick, var.jf.id))
                         while var.offer.bool do
                             wait(0)
                         end
                         if var.offer.status then
-                            chatManager.addMessageToQueue("/t " .. var.jf.id ..
-                                                              " Пропиши /jf dellme и отпиши мне ещё раз")
+                            chatManager.addMessageToQueue(string.format(
+                                "/t %d Пропиши /jf dellme и отпиши мне ещё раз", var.jf.id))
                         end
                         return
                     end)
@@ -3725,8 +3732,9 @@ function ev.onServerMessage(col, text)
                             sendEmptyPacket(PACKET_CONNECTION_LOST)
                             closeConnect()
                             wait(300)
-                            script.sendMessage("Полицейский " .. copnick:gsub('_', ' ') ..
-                                                   " попытался надеть на вас наручники, соединение разорвано")
+                            script.sendMessage(string.format(
+                                "Полицейский %s попытался надеть на вас наручники, соединение разорвано",
+                                copnick:gsub("_", " ")))
                         end)
                     end
                 end
@@ -3742,8 +3750,9 @@ function ev.onServerMessage(col, text)
                             sendEmptyPacket(PACKET_CONNECTION_LOST)
                             closeConnect()
                             wait(300)
-                            script.sendMessage("Полицейский " .. copnick:gsub('_', ' ') ..
-                                                   " попытался обыскать вас, соединение разорвано")
+                            script.sendMessage(string.format(
+                                "Полицейский %s попытался обыскать вас, соединение разорвано",
+                                copnick:gsub("_", " ")))
                         end)
                     end
                 end
@@ -3971,9 +3980,9 @@ function ev.onPlayerQuit(id, reason)
                 [1] = '/q',
                 [2] = 'кик'
             }
-            script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(id) .. "[" .. tostring(id) ..
-                                   "] {FFFAFA}вышел с игры. Причина: {FF0000}" .. reasons[reason] ..
-                                   ".")
+            script.sendMessage(string.format(
+                "Игрок %s%s[%d] {FFFAFA}вышел с игры. Причина: {FF0000}%s.", clist,
+                sampGetPlayerNickname(id), id, reasons[reason]))
         end
     end
 end
@@ -3983,8 +3992,8 @@ function ev.onPlayerChatBubble(playerId, color, distance, duration, message)
         if srp_ini.bools.psycho and (message == u8:decode "Употребил психохил" or message ==
             u8:decode "Употребила психохил") then
             local clist = "{" .. ("%06x"):format(bit.band(sampGetPlayerColor(playerId), 0xFFFFFF)) .. "}"
-            script.sendMessage("Игрок " .. clist .. sampGetPlayerNickname(playerId) .. "[" .. playerId ..
-                                   "] {FFFAFA}- употребил психохил")
+            script.sendMessage(string.format("Игрок %s%s[%d] {FFFAFA}- употребил психохил", clist,
+                sampGetPlayerNickname(playerId), playerId))
         end
         if srp_ini.bools.squad then
             local afk = tonumber(message:match(strings.afksec))
@@ -4390,7 +4399,7 @@ function ct()
             end
         end
         if CTaskArr[1][key] == 3 then
-            medcall(CTaskArr[3][key])
+            CTaskMedCall(CTaskArr[3][key])
         end
         if CTaskArr[1][key] == 4 then
             chatManager.addMessageToQueue("Куда едем?")
@@ -4498,8 +4507,9 @@ function eject()
                                     chatManager.addMessageToQueue("/eject " .. id)
                                 else
                                     local nick = sampGetPlayerNickname(id)
-                                    script.sendMessage("Не удалось выкинуть игрока " .. nick ..
-                                                           "[" .. id .. "] - сейчас АФК!")
+                                    script.sendMessage(string.format(
+                                        "Не удалось выкинуть игрока %s[%d] - сейчас АФК!",
+                                        nick, id))
                                 end
                             end
                         end
@@ -4775,7 +4785,7 @@ function cmd_flood(arg)
         return
     end
     if arg ~= nil and arg ~= "" then
-        script.sendMessage("Начинаю флудить сообщением: " .. arg)
+        script.sendMessage(string.format("Начинаю флудить сообщением: %s"), arg)
         lua_thread.create(function()
             while var.is.flood do
                 wait(0)
@@ -4785,7 +4795,7 @@ function cmd_flood(arg)
     end
 end
 
-function medcall(hospital)
+function CTaskMedCall(hospital)
     local fc = u8:decode "Организации"
     local sc = u8:decode "Меню"
     lua_thread.create(function()
@@ -4813,7 +4823,7 @@ function medcall(hospital)
             local n, fname, sname, id, numb, afk = v:match("%[(%d+)%] (%a+)_(%a+)%[(%d+)%]	(%d+)(.*)")
             if n ~= nil then
                 wait(1300)
-                sampSendChat("/t " .. id .. u8:decode " Нужен медик в " .. hospital .. "")
+                sampSendChat(string.format(u8:decode "/t %d Нужен медик в %s", id, hospital))
             end
         end
     end)
@@ -4884,7 +4894,7 @@ function cmd_jfadd(sparams)
     local nick = sampGetPlayerNickname(id)
     var.jf.nick = nick
     var.jf.id = id
-    chatManager.addMessageToQueue("/jf addmember " .. srp_ini.values.jf .. " " .. id)
+    chatManager.addMessageToQueue(string.format("/jf addmember %s %d", srp_ini.values.jf, id))
 end
 
 function cmd_jfdel(sparams)
@@ -4906,7 +4916,7 @@ function cmd_jfdel(sparams)
     local nick = id ~= nil and sampGetPlayerNickname(id) or sparams
     var.jf.nick = nick
     var.jf.id = id
-    chatManager.addMessageToQueue("/jf dellmember " .. srp_ini.values.jf .. " " .. nick)
+    chatManager.addMessageToQueue(string.format("/jf dellmember %s %s", srp_ini.values.jf, nick))
 end
 
 function cmd_jfmute(sparams)
@@ -4932,7 +4942,7 @@ function cmd_jfmute(sparams)
     var.jf.nick = nick
     var.jf.id = id
     var.jf.sec = sec
-    chatManager.addMessageToQueue("/jf mute " .. srp_ini.values.jf .. " " .. nick .. " " .. sec)
+    chatManager.addMessageToQueue(string.format("/jf mute %s %s %d", srp_ini.values.jf, nick, sec))
 end
 
 function cmd_jffine(sparams)
@@ -4958,7 +4968,7 @@ function cmd_jffine(sparams)
     var.jf.nick = nick
     var.jf.id = id
     var.jf.fine = fine
-    chatManager.addMessageToQueue("/jf fine " .. srp_ini.values.jf .. " " .. nick .. " " .. fine)
+    chatManager.addMessageToQueue(string.format("/jf fine %s %s %d", srp_ini.values.jf, nick, fine))
 end
 
 function currentSector()
@@ -4992,7 +5002,7 @@ function currentSector()
     X = math.ceil((X + 3000) / 250)
     Y = math.ceil((Y * -1 + 3000) / 250)
     Y = u8:decode(KV[Y])
-    local KVX = (Y .. "-" .. X)
+    local KVX = string.format("%s-%d", Y, X)
     return KVX
 end
 
@@ -5418,9 +5428,6 @@ function script.checkUpdates() -- проверка обновлений
         script.v.num = data.version
         script.v.date = data.date
         script.url = data.url
-        if data.author then
-            script.author = data.author
-        end
         if data.telegram then
             script.telegram = data.telegram
         end

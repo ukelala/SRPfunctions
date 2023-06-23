@@ -1,9 +1,8 @@
 {
-	"version": 35,
-	"date": "19.06.2023",
+	"version": 36,
+	"date": "23.06.2023",
 	"url": "https://raw.githubusercontent.com/WebbLua/SRPfunctions/main/SRPfunctions.lua",
 	"label": "https://raw.githubusercontent.com/WebbLua/TextLabels/main/TextLabels.json",
-	"author": "Cody_Webb",
 	"telegram": {
 		"nick": "@ibm287",
 		"url": "https://t.me/ibm287"
@@ -73,6 +72,10 @@
 		"Снайпер": "Убейте три человека на войнах за бизнесы"
 	},
 	"changelog": {
+		"36": {
+			"date": "23.06.2023",
+			"text": "Добавлено:\n\tПоддержка работы на новом сервере Underground\n\nУдалено:\n\tОтключена поддержка работы на 02 и Classic\n\nИсправлено:\n\tКонкатенация некоторых строк"
+		},
 		"34": {
 			"date": "18.06.2023",
 			"text": "Добавлено:\n\tХук текста из SMS для добавления в профсоюз\n\nИсправлено:\n\tImBools"
